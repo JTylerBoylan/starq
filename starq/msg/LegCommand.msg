@@ -1,0 +1,8 @@
+uint8 leg_id
+
+uint32 control_mode
+uint32 input_mode
+
+geometry_msgs/Vector3 input_position
+geometry_msgs/Vector3 input_velocity
+geometry_msgs/Vector3 input_force

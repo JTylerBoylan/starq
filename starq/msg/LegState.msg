@@ -1,0 +1,5 @@
+uint8 leg_id
+
+geometry_msgs/Vector3 position_estimate
+geometry_msgs/Vector3 velocity_estimate
+geometry_msgs/Vector3 force_estimate

@@ -1,0 +1,10 @@
+uint8 motor_id
+
+uint32 axis_state
+uint32 axis_error
+float32 iq_setpoint
+float32 iq_measured
+float32 fet_temperature
+float32 motor_temperature
+float32 dc_bus_voltage
+float32 dc_bus_current
