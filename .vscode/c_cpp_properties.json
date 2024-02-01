@@ -8,6 +8,7 @@
       "includePath": [
         "/opt/ros/humble/include/**",
         "/home/nvidia/starq_ws/src/starq/include/**",
+        "/home/nvidia/starq_ws/install/starq/include/**",
         "/usr/include/**"
       ],
       "name": "ROS",

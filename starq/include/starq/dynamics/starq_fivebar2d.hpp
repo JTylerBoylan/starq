@@ -6,6 +6,7 @@
 namespace starq::dynamics
 {
 
+    /// @brief Implementation of LegDynamics for the 2D symmetric five-bar leg
     class STARQ_FiveBar2D : public LegDynamics
     {
     public:

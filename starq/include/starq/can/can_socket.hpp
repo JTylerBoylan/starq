@@ -18,20 +18,20 @@
 
 namespace starq::can
 {
-    /// @brief Connect to a CAN interface
+    /// @brief Read and write frames to a CAN interface
     class CANSocket
     {
     public:
         using Ptr = std::shared_ptr<CANSocket>;
 
-        /// @brief Connect to a CAN interface.
+        /// @brief Create a CANSocket object.
         /// @param interface The name of the CAN interface.
         CANSocket(const std::string &interface);
 
-        /// @brief Disconnect from the CAN interface.
+        /// @brief Destroy the CANSocket object.
         ~CANSocket();
 
-        /// @brief Initialize the CAN interface.
+        /// @brief Connect to the CAN interface.
         bool connect();
 
         /// @brief Send a CAN frame.

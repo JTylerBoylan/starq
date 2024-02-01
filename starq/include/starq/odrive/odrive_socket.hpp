@@ -10,7 +10,7 @@
 namespace starq::odrive
 {
 
-    /// @brief Send ODrive commands and listen for ODrive information over CAN bus
+    /// @brief Convert ODrive commands to CAN frames
     class ODriveSocket : public ThreadRunner
     {
     public:

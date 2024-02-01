@@ -25,6 +25,7 @@ namespace starq
         VectorXf target_force = VectorXf();
     };
 
+    /// @brief Handles leg commands from multiple processes and republishes them at a fixed rate
     class LegCommandPublisher : public ThreadRunner
     {
     public:

@@ -10,6 +10,7 @@ namespace starq
 {
     using namespace Eigen;
 
+    /// @brief Uses LegDynamics to convert leg commands into motor commands
     class LegController
     {
 

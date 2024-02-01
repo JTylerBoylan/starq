@@ -33,7 +33,7 @@ namespace starq
         TORQUE_RAMP = 0x6
     };
 
-    /// @brief Abstract class to send motor commands and get motor information
+    /// @brief Abstract class for motor controllers. Used as a template for derived classes.
     class MotorController
     {
     public:

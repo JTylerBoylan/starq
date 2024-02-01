@@ -7,6 +7,7 @@
 namespace starq 
 {
 
+    /// @brief Publishes a leg trajectory at a fixed frequency
     class TrajectoryPublisher : public ThreadRunner
     {
         public:

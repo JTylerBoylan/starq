@@ -1,5 +1,3 @@
-uint8 motor_id
-
 uint32 axis_state
 uint32 control_mode
 uint32 input_mode

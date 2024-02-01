@@ -6,6 +6,7 @@
 namespace starq
 {
 
+    /// @brief Reads leg trajectories from text files
     class TrajectoryFileReader
     {
 

@@ -1,5 +1,3 @@
-uint8 leg_id
-
 uint32 control_mode
 uint32 input_mode
 

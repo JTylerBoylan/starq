@@ -1,5 +1,3 @@
-uint8 motor_id
-
 uint32 axis_state
 uint32 axis_error
 float32 iq_setpoint

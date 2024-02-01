@@ -6,6 +6,8 @@
 
 namespace starq
 {
+
+    /// @brief Abstract class for running a thread
     class ThreadRunner
     {
     public:

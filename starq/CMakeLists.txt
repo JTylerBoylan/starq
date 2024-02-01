@@ -24,6 +24,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   DEPENDENCIES geometry_msgs
 )
 
+rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 # Include directories for Eigen and project-specific headers
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 include_directories(include)
@@ -36,12 +38,14 @@ add_library(starqlib SHARED
   src/lib/dynamics/starq_fivebar2d.cpp
   src/lib/leg_controller.cpp
   src/lib/leg_command_publisher.cpp
+  src/lib/ros2/motor_controller.cpp
+  src/lib/ros2/odrive_controller.cpp
 )
 target_include_directories(starqlib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(starqlib PUBLIC Eigen3::Eigen)
+target_link_libraries(starqlib PUBLIC rclcpp::rclcpp Eigen3::Eigen "${cpp_typesupport_target}")
 
 # Export library for use in other packages
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
@@ -57,15 +61,11 @@ install(TARGETS starqlib
 )
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
-# Create and configure the executable node
+# ROS executables
 add_executable(starq_node src/starq_node.cpp)
-ament_target_dependencies(starq_node rclcpp geometry_msgs)
-rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
-if(cpp_typesupport_target)
-  target_link_libraries(starq_node "${cpp_typesupport_target}")
-endif()
+target_link_libraries(starq_node starqlib)
 
-# Install the executable to the appropriate directory
+# Install the ROS executables to the appropriate directory
 install(TARGETS starq_node DESTINATION lib/${PROJECT_NAME})
 
 # Example executables
