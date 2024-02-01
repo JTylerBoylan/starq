@@ -1,5 +1,5 @@
 # STARQ Documentation
-*Updated 01/29/2023*
+*Updated 02/01/2023*
 
 ## NVIDIA Jetson AGX Orin 64GB Developer Kit
 
@@ -80,7 +80,7 @@ Instructions on how to enable CAN on the Jetson.
 
 ### Jetson CAN Setup
 1. Open the Terminal on the Jetson
-2. Go to the `docs` folder: $`cd ~/starq-lib/docs`
+2. Go to the `docs` folder: $`cd ~/starq_ws/docs`
 3. Run the command: $`sudo ./loadcan_jetson.sh` \
 *Note: This needs to be run every time the Jetson is booted.*
 
@@ -88,22 +88,21 @@ Instructions on how to enable CAN on the Jetson.
 
 ### Installation
 1. Open the Terminal
-2. Go to home folder: $`cd ~`
-3. Run the command: `git clone https://github.com/JTylerBoylan/starq-lib`
-4. Create a build directory: $`cd starq-lib && mkdir build`
-5. Build the project: $`cd build && cmake .. && make`
-6. Test executables will be generated in the build folder
+2. Go to workspace folder: $`cd ~/starq_ws`
+3. Clone the project into the `src` folder: `git clone https://github.com/JTylerBoylan/starq src`
+4. Build the project: $`colcon build`
+6. Test executables will be generated in the `build/starq` folder
 
-### Creating an executable
-1. Open `~/starq-lib/CMakeLists.txt`
-2. Add the lines:
+### Creating an executable (Not in ROS)
+1. Open `~/starq_ws/src/starq/CMakeLists.txt`
+2. Add the lines near the bottom:
 ```
 add_executable(my_executable examples/my_executable.cpp)
 target_include_directories(my_executable PUBLIC include)
-target_link_libraries(my_executable PUBLIC stdc++ stdc++fs m starq pthread)
+target_link_libraries(my_executable PUBLIC stdc++ stdc++fs m pthread starqlib)
 ```
 - *Replace `my_executable` with your executable name*
-3. Create the file: `~/starq-lib/examples/my_executable.cpp`
+3. Create the file: `~/starq_ws/src/starq/examples/my_executable.cpp`
 4. Add the lines:
 ```
 #include <stdio.h>
@@ -119,8 +118,9 @@ int main()
 ### Compiling and Running an executable
 
 1. Open the Terminal
-2. Go to `~/starq-lib/build`
-3. Run the command: $`cmake .. && make`
+2. Go to `~/starq_ws`
+3. Run the command: $`colcon build`
+4. Go to the executable location: $`cd build/starq`
 4. Run the executable: $`./my_executable`
 
 ### Classes
@@ -128,7 +128,7 @@ int main()
 #### CANSocket
 
 * Read and write frames to a CAN interface
-* Source: `~/starq-lib/src/can/can_socket.hpp`
+* Source: `~/starq_ws/src/starq/src/lib/can/can_socket.hpp`
 * Include: `#include "starq/can/can_socket.hpp"`
 * Namespace `starq::can`
 * Functions:
@@ -147,7 +147,7 @@ ssize_t receive(struct can_frame &frame);
 #### ODriveSocket
 
 * Convert ODrive commands to CAN frames
-* Source: `~/starq-lib/src/odrive/odrive_socket.hpp`
+* Source: `~/starq_ws/src/starq/src/lib/odrive/odrive_socket.hpp`
 * Include: `#include "starq/odrive/odrive_socket.hpp`
 * Namespace: `starq::odrive`
 * Constructor:
@@ -186,7 +186,7 @@ float getTorqueEstimate();
 #### ODriveController
 
 * Implementation of MotorController for ODrive controllers
-* Source: `~/starq-lib/src/odrive/odrive_controller.hpp`
+* Source: `~/starq_ws/src/starq/src/lib/odrive/odrive_controller.hpp`
 * Include: `#include "starq/odrive/odrive_controller.hpp`
 * Namespace: `starq::odrive`
 * Functions:
@@ -243,7 +243,7 @@ getJacobian(const VectorXf &joint_angles, MatrixXf &jacobian);
 #### STARQ_FiveBar2D
 
 * Implementation of LegDynamics for the 2D symmetric five-bar leg
-* Source: `~/starq-lib/src/dynamics/starq_fivebar2d.hpp`
+* Source: `~/starq_ws/src/starq/src/lib/dynamics/starq_fivebar2d.hpp`
 * Include: `#include "starq/dynamics/starq_fivebar2d.hpp`
 * Namespace: `starq::dynamics`
 * Functions:
@@ -488,7 +488,7 @@ int main() {
 ```
 
 ### STARQ Test Executables
-Executables located in the `build` folder:
+Executables located in the `build/starq` folder:
 * `test_can_connection`: Prints 10 CAN frames to the console.
 * `test_odrive_control`: Moves ODrive motors to a few set positions.
 * `test_clear_errors`: Clears errors for all connected ODrives.

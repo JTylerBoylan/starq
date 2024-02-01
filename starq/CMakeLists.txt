@@ -68,6 +68,11 @@ endif()
 # Install the executable to the appropriate directory
 install(TARGETS starq_node DESTINATION lib/${PROJECT_NAME})
 
+# Example executables
+add_executable(example_control examples/example_control.cpp)
+target_include_directories(example_control PUBLIC include)
+target_link_libraries(example_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)
