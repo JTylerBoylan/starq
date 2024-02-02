@@ -7,7 +7,7 @@
 #include "starq/ros2/motor_controller.hpp"
 #include "starq/msg/o_drive_info.hpp"
 
-#define ODRIVE_CONTROLLER_INFO_PUBLISH_RATE 20
+#define ODRIVE_CONTROLLER_INFO_PUBLISH_RATE 50
 
 namespace starq::ros2 
 {

@@ -18,7 +18,7 @@ namespace starq::ros2
             "/starq/motor" + motor_name_ + "/state", getFastQoS());
 
         publish_state_timer_ = node_->create_wall_timer(
-            std::chrono::milliseconds(MOTOR_CONTROLLER_STATE_PUBLISH_RATE),
+            std::chrono::milliseconds(1000 / MOTOR_CONTROLLER_STATE_PUBLISH_RATE),
             std::bind(&MotorControllerROS2::publishStateCallback, this));
     }
 

@@ -13,7 +13,7 @@ namespace starq::ros2
             "/starq/motor/" + motor_name_ + "/odrive_info", getFastQoS());
 
         publish_odrive_info_timer_ = node_->create_wall_timer(
-            std::chrono::milliseconds(ODRIVE_CONTROLLER_INFO_PUBLISH_RATE),
+            std::chrono::milliseconds(1000 / ODRIVE_CONTROLLER_INFO_PUBLISH_RATE),
             std::bind(&ODriveControllerROS2::publishODriveInfoCallback, this));
     }
 

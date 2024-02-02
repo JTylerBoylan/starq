@@ -11,7 +11,7 @@
 #include "starq/msg/motor_state.hpp"
 #include "starq/ros2/ros2_util.hpp"
 
-#define MOTOR_CONTROLLER_STATE_PUBLISH_RATE 20
+#define MOTOR_CONTROLLER_STATE_PUBLISH_RATE 50
 
 namespace starq::ros2
 {

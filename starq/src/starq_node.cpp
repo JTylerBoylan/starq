@@ -14,7 +14,7 @@ using namespace starq::dynamics;
 using namespace starq;
 
 #include "starq/ros2/odrive_controller.hpp"
-// #include "starq/ros2/leg_controller.hpp"
+#include "starq/ros2/leg_controller.hpp"
 using namespace starq::ros2;
 
 #define CAN_ID_A 0
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     ODriveControllerROS2::Ptr odrive_ros2_B = std::make_shared<ODriveControllerROS2>(node, odrive_B, "B");
 
     // Create Leg ROS2 Controller
-    // LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller);
+    LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller);
 
     rclcpp::spin(node);
     rclcpp::shutdown();
