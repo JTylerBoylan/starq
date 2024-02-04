@@ -60,11 +60,11 @@ int main(int argc, char **argv)
     auto node = std::make_shared<rclcpp::Node>("starq_node");
 
     // Create ODrive ROS2 Controllers
-    ODriveControllerROS2::Ptr odrive_ros2_A = std::make_shared<ODriveControllerROS2>(node, odrive_A, "A");
-    ODriveControllerROS2::Ptr odrive_ros2_B = std::make_shared<ODriveControllerROS2>(node, odrive_B, "B");
+    ODriveControllerROS2::Ptr odrive_ros2_A = std::make_shared<ODriveControllerROS2>(node, odrive_A, "odrv0");
+    ODriveControllerROS2::Ptr odrive_ros2_B = std::make_shared<ODriveControllerROS2>(node, odrive_B, "odrv1");
 
     // Create Leg ROS2 Controller
-    LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller);
+    LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller, "leg0");
 
     rclcpp::spin(node);
     rclcpp::shutdown();

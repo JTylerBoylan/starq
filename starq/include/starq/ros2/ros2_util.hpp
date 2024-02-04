@@ -1,7 +1,8 @@
 #ifndef STARQ_ROS2__ROS2_UTIL_HPP_
 #define STARQ_ROS2__ROS2_UTIL_HPP_
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
 
 #include "eigen3/Eigen/Dense"
 

@@ -40,6 +40,7 @@ add_library(starqlib SHARED
   src/lib/leg_command_publisher.cpp
   src/lib/ros2/motor_controller.cpp
   src/lib/ros2/odrive_controller.cpp
+  src/lib/ros2/leg_controller.cpp
 )
 target_include_directories(starqlib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
