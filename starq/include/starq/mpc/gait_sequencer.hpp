@@ -22,27 +22,25 @@ namespace starq::mpc
             {
                 current_gait_ = gait;
                 start_time_ = getCurrentTime();
-                end_time_ = start_time_ + current_gait_->getDuration();
             }
 
             next_gait_ = gait;
         }
 
-        void sync()
+        bool sync()
         {
-            const auto current_time = getCurrentTime();
-
             if (next_gait_ == nullptr)
             {
-                return;
+                return false;
             }
 
-            if (current_time >= end_time_)
+            const auto current_time = getCurrentTime();
+            if (current_time >= start_time_ + current_gait_->getDuration())
             {
                 current_gait_ = next_gait_;
                 start_time_ = current_time;
-                end_time_ = current_time + current_gait_->getDuration();
             }
+            return true;
         }
 
         StanceState getStanceState(const milliseconds &time) const
@@ -52,28 +50,38 @@ namespace starq::mpc
                 return StanceState();
             }
 
+            const auto end_time = start_time_ + current_gait_->getDuration();
             if (time < start_time_)
             {
                 return current_gait_->getStanceState(milliseconds(0));
             }
-            else if (time < end_time_)
+            else if (time < end_time)
             {
                 return current_gait_->getStanceState(time - start_time_);
             }
             else
             {
-                return next_gait_->getStanceState((time - end_time_) % next_gait_->getDuration());
+                return next_gait_->getStanceState((time - end_time) % next_gait_->getDuration());
             }
         }
 
-    private:
-        inline milliseconds getCurrentTime() const
+        StanceTrajectory getStanceTrajectory(const float time_step, const size_t window_size) const
         {
-            return duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+            StanceTrajectory stances;
+            stances.reserve(window_size);
+
+            const auto current_time = getCurrentTime();
+            for (int i = 0; i < window_size; i++)
+            {
+                stances.push_back(getStanceState(current_time + milliseconds(static_cast<int>(time_step * i))));
+            }
+
+            return stances;
         }
 
+    private:
+
         milliseconds start_time_;
-        milliseconds end_time_;
 
         Gait::Ptr current_gait_;
         Gait::Ptr next_gait_;

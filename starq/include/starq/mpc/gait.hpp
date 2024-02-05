@@ -3,15 +3,15 @@
 
 #include <memory>
 #include <vector>
-#include <chrono>
 #include <string>
 #include <map>
 
+#include "starq/mpc/mpc_types.hpp"
+
+#define GAIT_RESOLUTION 1000
+
 namespace starq::mpc
 {
-    using namespace std::chrono;
-    using StanceState = std::vector<bool>;
-
     class Gait
     {
     public:
@@ -40,7 +40,9 @@ namespace starq::mpc
                 return StanceState();
             }
 
-            auto stance = stance_pattern_.lower_bound(time);
+            auto time_scaled = milliseconds((GAIT_RESOLUTION * time.count()) / duration_.count());
+
+            auto stance = stance_pattern_.lower_bound(time_scaled);
 
             if (stance == stance_pattern_.end())
             {
