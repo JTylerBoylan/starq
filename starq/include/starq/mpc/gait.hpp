@@ -12,47 +12,51 @@
 
 namespace starq::mpc
 {
+    /// @brief Gait class
     class Gait
     {
     public:
         using Ptr = std::shared_ptr<Gait>;
 
+        /// @brief Create a new Gait object
         Gait();
 
+        /// @brief Destroy the Gait object
         ~Gait();
 
-        void load(const std::string &filename);
+        /// @brief Load the gait pattern from a file
+        /// @param file_path The file to load the gait pattern from
+        /// @return True if the gait pattern was loaded, false otherwise
+        bool load(const std::string &file_path);
 
-        void setFrequency(const double &frequency)
-        {
-            duration_ = milliseconds(static_cast<int>(1000.0 / frequency));
-        }
+        /// @brief Set the frequency of the gait pattern
+        /// @param frequency The frequency of the gait pattern
+        void setFrequency(const double &frequency);
 
-        milliseconds getDuration() const
-        {
-            return duration_;
-        }
+        /// @brief Set the velocity of the gait pattern
+        /// @param linear_velocity The linear velocity of the gait pattern
+        void setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity);
 
-        StanceState getStanceState(const milliseconds &time) const 
-        {
-            if (stance_pattern_.empty())
-            {
-                return StanceState();
-            }
+        /// @brief Get the duration of the gait pattern
+        /// @return The duration of the gait pattern
+        milliseconds getDuration() const;
 
-            auto time_scaled = milliseconds((GAIT_RESOLUTION * time.count()) / duration_.count());
+        /// @brief Get the linear velocity of the gait pattern
+        /// @return The linear velocity of the gait pattern
+        Vector3f getLinearVelocity() const;
 
-            auto stance = stance_pattern_.lower_bound(time_scaled);
+        /// @brief Get the angular velocity of the gait pattern
+        /// @return The angular velocity of the gait pattern
+        Vector3f getAngularVelocity() const;
 
-            if (stance == stance_pattern_.end())
-            {
-                return stance_pattern_.rbegin()->second;
-            }
-
-            return stance->second;
-        }
+        /// @brief Get the stance state of the gait pattern at a given time
+        /// @param time The time to get the stance state at in milliseconds between 0 and the duration
+        /// @return The stance state of the gait pattern at the given time
+        StanceState getStanceState(const milliseconds &time) const;
 
     private:
+        Vector3f linear_velocity_;
+        Vector3f angular_velocity_;
         milliseconds duration_;
         std::map<milliseconds, StanceState> stance_pattern_;
     };

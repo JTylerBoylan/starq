@@ -7,80 +7,47 @@
 
 namespace starq::mpc
 {
+    /// @brief GaitSequencer class
     class GaitSequencer
     {
     public:
         using Ptr = std::shared_ptr<GaitSequencer>;
 
+        /// @brief Create a new GaitSequencer object
         GaitSequencer();
 
+        /// @brief Destroy the GaitSequencer object
         ~GaitSequencer();
 
-        void setNextGait(Gait::Ptr gait)
-        {
-            if (current_gait_ == nullptr)
-            {
-                current_gait_ = gait;
-                start_time_ = getCurrentTime();
-            }
+        /// @brief Set the next gait pattern
+        /// @param gait The next gait pattern
+        void setNextGait(Gait::Ptr gait);
 
-            next_gait_ = gait;
-        }
+        /// @brief Synchronize the gait sequencer
+        /// @return True if the gait sequencer was synchronized, false otherwise
+        bool sync();
 
-        bool sync()
-        {
-            if (next_gait_ == nullptr)
-            {
-                return false;
-            }
+        /// @brief Configure the MPC
+        /// @param config The MPC configuration
+        /// @return True if the MPC was configured, false otherwise
+        bool configure(MPCConfiguration &config) const;
 
-            const auto current_time = getCurrentTime();
-            if (current_time >= start_time_ + current_gait_->getDuration())
-            {
-                current_gait_ = next_gait_;
-                start_time_ = current_time;
-            }
-            return true;
-        }
+        /// @brief Get the stance state
+        /// @param time The time in milliseconds
+        /// @return The stance state
+        StanceState getStanceState(const milliseconds &time) const;
 
-        StanceState getStanceState(const milliseconds &time) const
-        {
-            if (current_gait_ == nullptr)
-            {
-                return StanceState();
-            }
+        /// @brief Get the linear velocity
+        /// @param time The time in milliseconds
+        /// @return Linear velocity in m/s
+        Vector3f getLinearVelocity(const milliseconds &time) const;
 
-            const auto end_time = start_time_ + current_gait_->getDuration();
-            if (time < start_time_)
-            {
-                return current_gait_->getStanceState(milliseconds(0));
-            }
-            else if (time < end_time)
-            {
-                return current_gait_->getStanceState(time - start_time_);
-            }
-            else
-            {
-                return next_gait_->getStanceState((time - end_time) % next_gait_->getDuration());
-            }
-        }
-
-        StanceTrajectory getStanceTrajectory(const float time_step, const size_t window_size) const
-        {
-            StanceTrajectory stances;
-            stances.reserve(window_size);
-
-            const auto current_time = getCurrentTime();
-            for (int i = 0; i < window_size; i++)
-            {
-                stances.push_back(getStanceState(current_time + milliseconds(static_cast<int>(time_step * i))));
-            }
-
-            return stances;
-        }
+        /// @brief Get the angular velocity
+        /// @param time The time in milliseconds
+        /// @return Angular velocity in rad/s
+        Vector3f getAngularVelocity(const milliseconds &time) const;
 
     private:
-
         milliseconds start_time_;
 
         Gait::Ptr current_gait_;

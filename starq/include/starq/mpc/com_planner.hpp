@@ -6,48 +6,24 @@
 
 namespace starq::mpc
 {
+    /// @brief CenterOfMassPlanner class
     class CenterOfMassPlanner
     {
     public:
         using Ptr = std::shared_ptr<CenterOfMassPlanner>;
 
+        /// @brief Create a new CenterOfMassPlanner object
         CenterOfMassPlanner();
 
+        /// @brief Destroy the CenterOfMassPlanner object
         ~CenterOfMassPlanner();
 
-        void setInitialState(const CenterOfMassState &initial_state)
-        {
-            initial_state_ = initial_state;
-        }
-
-        void setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity)
-        {
-            linear_velocity_ = linear_velocity;
-            angular_velocity_ = angular_velocity;
-        }
-
-        CenterOfMassTrajectory getCenterOfMassTrajectory(const float time_step, const size_t window_size) const
-        {
-            CenterOfMassTrajectory com_trajectory;
-            com_trajectory.reserve(window_size);
-            com_trajectory.push_back(initial_state_);
-
-            CenterOfMassState com_state = initial_state_;
-            com_state.velocity = linear_velocity_;
-            com_state.angular_velocity = angular_velocity_;
-            for (int i = 1; i < window_size; i++)
-            {
-                com_state.orientation.z() += angular_velocity_.z() * time_step;
-                com_state.position.x() += linear_velocity_.x() * std::cos(com_state.orientation.z()) * time_step;
-                com_state.position.y() += linear_velocity_.y() * std::sin(com_state.orientation.z()) * time_step;
-                com_trajectory.push_back(com_state);
-            }
-        }
+        /// @brief Configure the MPC
+        /// @param config The MPC configuration
+        /// @return True if the MPC was configured, false otherwise
+        bool configure(MPCConfiguration &config) const;
 
     private:
-        CenterOfMassState initial_state_;
-        Vector3f linear_velocity_;
-        Vector3f angular_velocity_;
     };
 }
 

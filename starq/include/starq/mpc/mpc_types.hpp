@@ -21,7 +21,7 @@ namespace starq::mpc
     {
         Vector3f position;
         Vector3f orientation;
-        Vector3f velocity;
+        Vector3f linear_velocity;
         Vector3f angular_velocity;
     };
     using CenterOfMassTrajectory = std::vector<CenterOfMassState>;
@@ -38,9 +38,9 @@ namespace starq::mpc
         Matrix3f inertia;
         Vector3f gravity;
 
-        float time_step;
+        milliseconds time_step;
         size_t window_size;
-        uint8_t number_of_legs;
+
         CenterOfMassTrajectory com_trajectory;
         StanceTrajectory stance_trajectory;
         FootholdTrajectory foothold_trajectory;
