@@ -4,7 +4,7 @@ project(starq)
 
 # Compiler options for GCC and Clang to ensure code quality
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -Wno-dev)
 endif()
 
 # Find required dependencies for the project
@@ -13,6 +13,8 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(mujoco REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 
 # Generate ROS interfaces from message definitions
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -102,6 +104,10 @@ target_link_libraries(test_clear_errors PUBLIC stdc++ stdc++fs m pthread starqli
 add_executable(test_command_publisher_dummy tests/test_command_publisher_dummy.cpp)
 target_include_directories(test_command_publisher_dummy PUBLIC include)
 target_link_libraries(test_command_publisher_dummy PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+add_executable(test_mujoco tests/test_mujoco.cpp)
+target_include_directories(test_mujoco PUBLIC include)
+target_link_libraries(test_mujoco PUBLIC stdc++ stdc++fs m pthread mujoco::mujoco glfw starqlib)
 
 # Code quality and testing settings
 if(BUILD_TESTING)
