@@ -4,7 +4,7 @@ project(starq)
 
 # Compiler options for GCC and Clang to ensure code quality
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Wno-dev)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 # Find required dependencies for the project
@@ -43,12 +43,13 @@ add_library(starqlib SHARED
   src/lib/ros2/motor_controller.cpp
   src/lib/ros2/odrive_controller.cpp
   src/lib/ros2/leg_controller.cpp
+  src/lib/mujoco/mujoco_sim.cpp
 )
 target_include_directories(starqlib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(starqlib PUBLIC rclcpp::rclcpp Eigen3::Eigen "${cpp_typesupport_target}")
+target_link_libraries(starqlib PUBLIC rclcpp::rclcpp Eigen3::Eigen mujoco::mujoco glfw "${cpp_typesupport_target}")
 
 # Export library for use in other packages
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
@@ -107,7 +108,7 @@ target_link_libraries(test_command_publisher_dummy PUBLIC stdc++ stdc++fs m pthr
 
 add_executable(test_mujoco tests/test_mujoco.cpp)
 target_include_directories(test_mujoco PUBLIC include)
-target_link_libraries(test_mujoco PUBLIC stdc++ stdc++fs m pthread mujoco::mujoco glfw starqlib)
+target_link_libraries(test_mujoco PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 # Code quality and testing settings
 if(BUILD_TESTING)
