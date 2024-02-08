@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <mutex>
+#include <functional>
 
 #include "GLFW/glfw3.h"
 #include "mujoco/mujoco.h"
@@ -12,12 +12,16 @@
 namespace starq::mujoco
 {
 
+    using MuJoCoControlFunction = std::function<void(const mjModel *model, mjData *data)>;
+
     /// @brief MuJoCo simulation class
     class MuJoCo
     {
     public:
         using Ptr = std::shared_ptr<MuJoCo>;
 
+        /// @brief Get the static MuJoCo instance
+        /// @return The MuJoCo instance
         static MuJoCo::Ptr getInstance();
 
         /// @brief Constructor
@@ -38,14 +42,9 @@ namespace starq::mujoco
         /// @return If the simulation is open
         bool isOpen();
 
-        /// @brief Set the number of motors
-        /// @param size Number of motors
-        void setMotorCount(const int size);
-
-        /// @brief Set the motor control
-        /// @param index Motor index
-        /// @param value Motor control value
-        void setMotorControl(const int index, const mjtNum value);
+        /// @brief Add a motor control function
+        /// @param control_function Motor control function
+        void addMotorControlFunction(const MuJoCoControlFunction &control_function);
 
         /// @brief [Deleted]
         MuJoCo(const MuJoCo &) = delete;
@@ -86,9 +85,7 @@ namespace starq::mujoco
             double lasty = 0;
         } mouse_;
 
-        std::vector<mjtNum> ctrl_vec_;
-
-        std::mutex mutex_;
+        std::vector<MuJoCoControlFunction> control_functions_;
 
         /// @brief GLFW key press callback
         static void keyPressCallback(GLFWwindow *window, int key, int scancode, int act, int mods);

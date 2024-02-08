@@ -68,7 +68,6 @@ namespace starq::mujoco
 
     bool MuJoCo::isOpen()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         return is_open_;
     }
 
@@ -226,23 +225,16 @@ namespace starq::mujoco
         mjv_moveCamera(instance_->model_, mjMOUSE_ZOOM, 0, 0.05 * yoffset, &instance_->scene_, &instance_->camera_);
     }
 
-    void MuJoCo::setMotorCount(const int motor_count)
+    void MuJoCo::addMotorControlFunction(const MuJoCoControlFunction &control_function)
     {
-        ctrl_vec_.resize(motor_count);
-    }
-
-    void MuJoCo::setMotorControl(const int index, const mjtNum value)
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        ctrl_vec_[index] = value;
+        control_functions_.push_back(control_function);
     }
 
     void MuJoCo::controlCallback(const mjModel *model, mjData *data)
     {
-        std::lock_guard<std::mutex> lock(instance_->mutex_);
-        for (size_t i = 0; i < instance_->ctrl_vec_.size(); i++)
+        for (const auto &control_function : instance_->control_functions_)
         {
-            data->ctrl[i] = instance_->ctrl_vec_[i];
+            control_function(model, data);
         }
     }
 

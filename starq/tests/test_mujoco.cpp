@@ -6,24 +6,22 @@
 
 using namespace starq::mujoco;
 
+void computeControlInput(const mjModel *m, mjData *d)
+{
+    for (int i = 0; i < m->nu; i++)
+    {
+        d->ctrl[i] = 0;
+    }
+}
+
 int main(void)
 {
 
-    MuJoCo::getInstance()->setMotorCount(12);
-    MuJoCo::getInstance()->setMotorControl(0, 0);
-    MuJoCo::getInstance()->setMotorControl(1, 0);
-    MuJoCo::getInstance()->setMotorControl(2, 0);
-    MuJoCo::getInstance()->setMotorControl(3, 0);
-    MuJoCo::getInstance()->setMotorControl(4, 0);
-    MuJoCo::getInstance()->setMotorControl(5, 0);
-    MuJoCo::getInstance()->setMotorControl(6, 0);
-    MuJoCo::getInstance()->setMotorControl(7, 0);
-    MuJoCo::getInstance()->setMotorControl(8, 0);
-    MuJoCo::getInstance()->setMotorControl(9, 0);
-    MuJoCo::getInstance()->setMotorControl(10, 0);
-    MuJoCo::getInstance()->setMotorControl(11, 0);
+    MuJoCo::Ptr mujoco = MuJoCo::getInstance();
 
-    MuJoCo::getInstance()->open("/home/nvidia/starq_ws/src/models/unitree_a1/scene.xml");
+    mujoco->addMotorControlFunction(computeControlInput);
+
+    mujoco->open("/home/nvidia/starq_ws/src/models/unitree_a1/scene.xml");
 
     return 0;
 }
