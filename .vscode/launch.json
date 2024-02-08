@@ -4,7 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [{
-        "name": "(gdb) Launch",
+        "name": "(gdb) Launch MuJoCo",
         "type": "cppdbg",
         "request": "launch",
         "program": "/home/nvidia/starq_ws/build/starq/test_mujoco",
