@@ -1,4 +1,4 @@
-#include "starq/mujoco/mujoco_sim.hpp"
+#include "starq/mujoco/mujoco.hpp"
 
 #include <iostream>
 #include <functional>
@@ -13,6 +13,14 @@ namespace starq::mujoco
             instance_ = std::make_shared<MuJoCo>();
         }
         return instance_;
+    }
+
+    MuJoCo::MuJoCo()
+    {
+    }
+
+    MuJoCo::~MuJoCo()
+    {
     }
 
     void MuJoCo::open(const std::string &model_path)
@@ -58,8 +66,9 @@ namespace starq::mujoco
         glfwSetWindowShouldClose(window_, GLFW_TRUE);
     }
 
-    bool MuJoCo::isOpen() const
+    bool MuJoCo::isOpen()
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         return is_open_;
     }
 
@@ -217,8 +226,24 @@ namespace starq::mujoco
         mjv_moveCamera(instance_->model_, mjMOUSE_ZOOM, 0, 0.05 * yoffset, &instance_->scene_, &instance_->camera_);
     }
 
+    void MuJoCo::setMotorCount(const int motor_count)
+    {
+        ctrl_vec_.resize(motor_count);
+    }
+
+    void MuJoCo::setMotorControl(const int index, const mjtNum value)
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        ctrl_vec_[index] = value;
+    }
+
     void MuJoCo::controlCallback(const mjModel *model, mjData *data)
     {
+        std::lock_guard<std::mutex> lock(instance_->mutex_);
+        for (size_t i = 0; i < instance_->ctrl_vec_.size(); i++)
+        {
+            data->ctrl[i] = instance_->ctrl_vec_[i];
+        }
     }
 
 }

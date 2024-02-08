@@ -1,8 +1,10 @@
-#ifndef STARQ_MUJOCO__MUJOCO_SIM_HPP
-#define STARQ_MUJOCO__MUJOCO_SIM_HPP
+#ifndef STARQ_MUJOCO__MUJOCO_HPP
+#define STARQ_MUJOCO__MUJOCO_HPP
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <mutex>
 
 #include "GLFW/glfw3.h"
 #include "mujoco/mujoco.h"
@@ -18,8 +20,11 @@ namespace starq::mujoco
 
         static MuJoCo::Ptr getInstance();
 
-        /// @brief Default constructor
-        MuJoCo() = default;
+        /// @brief Constructor
+        MuJoCo();
+
+        /// @brief Destructor
+        ~MuJoCo();
 
         /// @brief Open the simulation window
         /// @return If the simulation was successfully opened
@@ -31,7 +36,16 @@ namespace starq::mujoco
 
         /// @brief Check if the simulation is open
         /// @return If the simulation is open
-        bool isOpen() const;
+        bool isOpen();
+
+        /// @brief Set the number of motors
+        /// @param size Number of motors
+        void setMotorCount(const int size);
+
+        /// @brief Set the motor control
+        /// @param index Motor index
+        /// @param value Motor control value
+        void setMotorControl(const int index, const mjtNum value);
 
         /// @brief [Deleted]
         MuJoCo(const MuJoCo &) = delete;
@@ -52,12 +66,6 @@ namespace starq::mujoco
         /// @brief Cleanup GLFW and MuJoCo
         void cleanup();
 
-        static void keyPressCallback(GLFWwindow *window, int key, int scancode, int act, int mods);
-        static void mouseClickCallback(GLFWwindow *window, int button, int act, int mods);
-        static void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos);
-        static void mouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
-        static void controlCallback(const mjModel *model, mjData *data);
-
         bool is_open_ = false;
         GLFWwindow *window_ = nullptr;
 
@@ -77,6 +85,25 @@ namespace starq::mujoco
             double lastx = 0;
             double lasty = 0;
         } mouse_;
+
+        std::vector<mjtNum> ctrl_vec_;
+
+        std::mutex mutex_;
+
+        /// @brief GLFW key press callback
+        static void keyPressCallback(GLFWwindow *window, int key, int scancode, int act, int mods);
+
+        /// @brief GLFW mouse click callback
+        static void mouseClickCallback(GLFWwindow *window, int button, int act, int mods);
+
+        /// @brief GLFW mouse move callback
+        static void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos);
+
+        /// @brief GLFW mouse scroll callback
+        static void mouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
+
+        /// @brief MuJoCo control callback
+        static void controlCallback(const mjModel *model, mjData *data);
 
         static MuJoCo::Ptr instance_;
     };

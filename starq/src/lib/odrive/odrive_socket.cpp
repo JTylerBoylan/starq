@@ -151,6 +151,7 @@ namespace starq::odrive
         const uint32_t arb_id = getArbitrationID(can_id, cmd_id);
 
         uint8_t data[4];
+        std::memset(data, 0, 4);
         if (!socket_->send(arb_id, data, 4))
         {
             std::cerr << "Could not clear errors." << std::endl;
