@@ -44,6 +44,7 @@ add_library(starqlib SHARED
   src/lib/ros2/odrive_controller.cpp
   src/lib/ros2/leg_controller.cpp
   src/lib/mujoco/mujoco.cpp
+  src/lib/mujoco/mujoco_controller.cpp
 )
 target_include_directories(starqlib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -109,6 +110,10 @@ target_link_libraries(test_command_publisher_dummy PUBLIC stdc++ stdc++fs m pthr
 add_executable(test_mujoco tests/test_mujoco.cpp)
 target_include_directories(test_mujoco PUBLIC include)
 target_link_libraries(test_mujoco PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+add_executable(test_mujoco_controller tests/test_mujoco_controller.cpp)
+target_include_directories(test_mujoco_controller PUBLIC include)
+target_link_libraries(test_mujoco_controller PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 # Code quality and testing settings
 if(BUILD_TESTING)

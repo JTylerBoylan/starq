@@ -104,8 +104,7 @@ namespace starq::mujoco
 
         static MuJoCo::Ptr instance_;
     };
-
-    MuJoCo::Ptr MuJoCo::instance_ = nullptr;
+    
 }
 
 #endif

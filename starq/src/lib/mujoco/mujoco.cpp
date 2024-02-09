@@ -6,6 +6,8 @@
 namespace starq::mujoco
 {
 
+    MuJoCo::Ptr MuJoCo::instance_ = nullptr;
+
     MuJoCo::Ptr MuJoCo::getInstance()
     {
         if (!instance_)
@@ -50,7 +52,7 @@ namespace starq::mujoco
             mjrRect viewport = {0, 0, 0, 0};
             glfwGetFramebufferSize(window_, &viewport.width, &viewport.height);
 
-            mjv_updateScene(model_, data_, &option_, NULL, &camera_, mjCAT_ALL, &scene_);
+            mjv_updateScene(model_, data_, &option_, &perturb_, &camera_, mjCAT_ALL, &scene_);
             mjr_render(viewport, &scene_, &context_);
 
             glfwSwapBuffers(window_);
@@ -134,16 +136,10 @@ namespace starq::mujoco
 
     void MuJoCo::cleanup()
     {
-        if (!is_open_) return;
+        if (!is_open_)
+            return;
 
-        if (window_)
-        {
-            glfwDestroyWindow(window_);
-            window_ = nullptr;
-        }
-
-        mjv_freeScene(&scene_);
-        mjr_freeContext(&context_);
+        glfwTerminate();
 
         if (data_)
         {
@@ -157,7 +153,9 @@ namespace starq::mujoco
             model_ = nullptr;
         }
 
-        glfwTerminate();
+        mjv_freeScene(&scene_);
+        mjr_freeContext(&context_);
+
         is_open_ = false;
     }
 

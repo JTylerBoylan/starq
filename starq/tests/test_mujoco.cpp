@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <future>
 
 #include "starq/mujoco/mujoco.hpp"
 
