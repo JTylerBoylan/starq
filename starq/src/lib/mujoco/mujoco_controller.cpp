@@ -80,11 +80,11 @@ namespace starq::mujoco
     void MuJoCoController::controlMotor(const mjModel *model, mjData *data)
     {
 
-        model->actuator_gainprm[10 * motor_id_ + 0] = 1;
-        model->actuator_gainprm[10 * motor_id_ + 0] = state_.kp;
-        model->actuator_biasprm[10 * motor_id_ + 1] = -state_.kp;
-        model->actuator_gainprm[10 * motor_id_ + 0] = state_.kv;
-        model->actuator_biasprm[10 * motor_id_ + 2] = -state_.kv;
+        // model->actuator_gainprm[10 * motor_id_ + 0] = 1;
+        // model->actuator_gainprm[10 * motor_id_ + 0] = state_.kp;
+        // model->actuator_biasprm[10 * motor_id_ + 1] = -state_.kp;
+        // model->actuator_gainprm[10 * motor_id_ + 0] = state_.kv;
+        // model->actuator_biasprm[10 * motor_id_ + 2] = -state_.kv;
 
         switch (state_.control_mode)
         {

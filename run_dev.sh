@@ -20,3 +20,12 @@ docker run -it \
     -v "/${SCRIPT_DIR}:${PROJECT_DIR}" \
     ${PROJECT_NAME}:latest \
     bash
+
+# For Windows
+# docker run -it \
+#     --rm \
+#     --net host \
+#     -e DISPLAY=10.142.99.16:0.0 \
+#     -v "/${SCRIPT_DIR}:${PROJECT_DIR}" \
+#     ${PROJECT_NAME}:latest \
+#     bash
