@@ -9,7 +9,7 @@ int main()
 {
     MuJoCo::Ptr mujoco = MuJoCo::getInstance();
 
-    MuJoCoController::Ptr controller = std::make_shared<MuJoCoController>(mujoco, 1);
+    MuJoCoController::Ptr controller = std::make_shared<MuJoCoController>(mujoco, 2);
 
     printf("Controller created\n");
 
@@ -18,7 +18,7 @@ int main()
 
 
     controller->setControlMode(starq::ControlMode::POSITION);
-    controller->setGains(1000, 500, 30);
+    controller->setGains(10, 1);
     controller->setPosition(0);
 
     sim.wait();

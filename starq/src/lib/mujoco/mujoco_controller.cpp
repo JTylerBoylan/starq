@@ -70,58 +70,40 @@ namespace starq::mujoco
         return state_.torq_est;
     }
 
-    bool MuJoCoController::setGains(const float pos_gain, const float vel_gain, const float integrator_gain)
+    bool MuJoCoController::setGains(const float kp, const float kv)
     {
-        state_.pos_gain = pos_gain;
-        state_.vel_gain = vel_gain;
-        state_.int_gain = integrator_gain;
+        state_.kp = kp;
+        state_.kv = kv;
         return true;
     }
 
     void MuJoCoController::controlMotor(const mjModel *model, mjData *data)
     {
-        (void)model;
 
-        const mjtNum pos_est = data->qpos[motor_id_];
-        const mjtNum vel_est = data->qvel[motor_id_];
-        const mjtNum torq_est = data->act[motor_id_];
-
-        mjtNum pos_cmd = state_.pos_cmd;
-        mjtNum vel_cmd = state_.vel_cmd;
-        mjtNum torq_cmd = state_.torq_cmd;
-
-        const mjtNum vel_ff_cmd = state_.vel_ff_cmd;
-        const mjtNum torq_ff_cmd = state_.torq_ff_cmd;
-
-        const mjtNum pos_gain = state_.pos_gain;
-        const mjtNum vel_gain = state_.vel_gain;
-        const mjtNum int_gain = state_.int_gain;
+        model->actuator_gainprm[10 * motor_id_ + 0] = 1;
+        model->actuator_gainprm[10 * motor_id_ + 0] = state_.kp;
+        model->actuator_biasprm[10 * motor_id_ + 1] = -state_.kp;
+        model->actuator_gainprm[10 * motor_id_ + 0] = state_.kv;
+        model->actuator_biasprm[10 * motor_id_ + 2] = -state_.kv;
 
         switch (state_.control_mode)
         {
+        case ControlMode::TORQUE:
+            data->ctrl[motor_id_] = state_.torq_cmd;
+            break;
         case ControlMode::POSITION:
-        {
-            const mjtNum pos_error = pos_cmd - pos_est;
-            vel_cmd = pos_error * pos_gain + vel_ff_cmd;
-            [[fallthrough]];
-        }
+            data->ctrl[motor_id_] = state_.pos_cmd;
+            break;
         case ControlMode::VELOCITY:
-        {
-            const mjtNum vel_error = vel_cmd - vel_est;
-            state_.torq_integral += vel_error * int_gain;
-            torq_cmd = vel_error * vel_gain + state_.torq_integral + torq_ff_cmd;
-        }
+            data->ctrl[motor_id_] = state_.vel_cmd;
+            break;
         }
 
-        data->ctrl[motor_id_] = torq_cmd;
+        state_.pos_est = data->qpos[motor_id_];
+        state_.vel_est = data->qvel[motor_id_];
+        state_.torq_est = data->qfrc_actuator[motor_id_];
 
-        state_.pos_est = pos_est;
-        state_.vel_est = vel_est;
-        state_.torq_est = torq_est;
-
-        std::cout << "pos_cmd: " << pos_cmd << " pos_est: " << pos_est
-                  << " vel_cmd: " << vel_cmd << " vel_est: " << vel_est
-                  << " torq_cmd: " << torq_cmd << " torq_est: " << torq_est << std::endl;
+        std::cout << "pos: " << state_.pos_est << " vel: " << state_.vel_est << " torq: " << state_.torq_est << std::endl;
     }
 
 }

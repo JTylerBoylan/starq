@@ -46,6 +46,14 @@ namespace starq::mujoco
         /// @param control_function Motor control function
         void addMotorControlFunction(const MuJoCoControlFunction &control_function);
 
+        /// @brief Get the MuJoCo model
+        /// @return The MuJoCo model
+        mjModel *getModel() const { return model_; }
+
+        /// @brief Get the MuJoCo data
+        /// @return The MuJoCo data
+        mjData *getData() const { return data_; }
+
         /// @brief [Deleted]
         MuJoCo(const MuJoCo &) = delete;
 

@@ -65,12 +65,11 @@ namespace starq::mujoco
         /// @return The controller torque estimate in Newton-meters.
         float getTorqueEstimate() override;
 
-        /// @brief Set the position gain.
-        /// @param pos_gain The position gain to set the motor to.
-        /// @param vel_gain The velocity gain to set the motor to.
-        /// @param integrator_gain The velocity integrator gain to set the motor to.
+        /// @brief Set the gains
+        /// @param kp The position gain to set the motor to.
+        /// @param kv The velocity gain to set the motor to.
         /// @return If the command was sent successfully.
-        bool setGains(const float pos_gain, const float vel_gain, const float integrator_gain);
+        bool setGains(const float kp, const float kv);
 
     private:
         /// @brief Control the motor
@@ -92,9 +91,8 @@ namespace starq::mujoco
             float vel_cmd = 0.f;
             float torq_cmd = 0.f;
 
-            float pos_gain = 1.0f;
-            float vel_gain = 0.5f;
-            float int_gain = 0.5f;
+            float kp = 1.0f;
+            float kv = 1.0f;
 
             float torq_integral = 0.f;
 
