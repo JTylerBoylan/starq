@@ -67,9 +67,10 @@ namespace starq::mujoco
 
         /// @brief Set the gains
         /// @param kp The position gain to set the motor to.
-        /// @param kv The velocity gain to set the motor to.
+        /// @param kd The derivative gain to set the motor to.
+        /// @param ki The integral gain to set the motor to.
         /// @return If the command was sent successfully.
-        bool setGains(const float kp, const float kv);
+        bool setGains(const float kp, const float kd, const float ki);
 
     private:
         /// @brief Control the motor
@@ -87,12 +88,12 @@ namespace starq::mujoco
             uint32_t input_mode = 0x1;
 
             float pos_cmd = 0.f;
-            float vel_ff_cmd = 0.f, torq_ff_cmd = 0.f;
             float vel_cmd = 0.f;
             float torq_cmd = 0.f;
 
-            float kp = 1.0f;
-            float kv = 1.0f;
+            float kp = 100.0f;
+            float kd = 0.5f;
+            float ki = 0.1f;
 
             float torq_integral = 0.f;
 
