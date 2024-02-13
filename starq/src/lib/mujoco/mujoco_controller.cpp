@@ -91,6 +91,7 @@ namespace starq::mujoco
         switch (state_.control_mode)
         {
         case ControlMode::POSITION:
+        {
             const mjtNum pos_err = state_.pos_cmd - pos_est;
             const mjtNum vel_err = state_.vel_cmd - vel_est;
 
@@ -101,16 +102,21 @@ namespace starq::mujoco
             const mjtNum torq_cmd = state_.torq_cmd + pos_err * kp + vel_err * kd + state_.torq_integral;
             data->ctrl[motor_id_] = torq_cmd;
             break;
+        }
         case ControlMode::VELOCITY:
+        {
             const mjtNum vel_err = state_.vel_cmd - vel_est;
 
             const mjtNum kp = state_.kp;
             const mjtNum torq_cmd = state_.torq_cmd + vel_err * kp;
             data->ctrl[motor_id_] = torq_cmd;
             break;
+        }
         case ControlMode::TORQUE:
+        {
             data->ctrl[motor_id_] = state_.torq_cmd;
             break;
+        }
         }
 
         state_.pos_est = pos_est;
