@@ -88,18 +88,30 @@ namespace starq::mujoco
         const mjtNum vel_est = data->qvel[motor_id_ + MUJOCO_Q_OFFSET];
         const mjtNum torq_est = data->qfrc_applied[motor_id_ + MUJOCO_Q_OFFSET];
 
-        const mjtNum kp = state_.kp;
-        const mjtNum kv = state_.kd;
-        const mjtNum ki = state_.ki;
+        switch (state_.control_mode)
+        {
+        case ControlMode::POSITION:
+            const mjtNum pos_err = state_.pos_cmd - pos_est;
+            const mjtNum vel_err = state_.vel_cmd - vel_est;
 
-        const mjtNum pos_err = state_.pos_cmd - pos_est;
-        const mjtNum vel_err = state_.vel_cmd - vel_est;
+            const mjtNum kp = state_.kp;
+            const mjtNum kd = state_.kd;
+            const mjtNum ki = state_.ki;
+            state_.torq_integral += pos_err * ki;
+            const mjtNum torq_cmd = state_.torq_cmd + pos_err * kp + vel_err * kd + state_.torq_integral;
+            data->ctrl[motor_id_] = torq_cmd;
+            break;
+        case ControlMode::VELOCITY:
+            const mjtNum vel_err = state_.vel_cmd - vel_est;
 
-        state_.torq_integral += pos_err * ki;
-
-        const mjtNum torq_cmd = state_.torq_cmd + pos_err * kp + vel_err * kv + state_.torq_integral;
-
-        data->ctrl[motor_id_] = torq_cmd;
+            const mjtNum kp = state_.kp;
+            const mjtNum torq_cmd = state_.torq_cmd + vel_err * kp;
+            data->ctrl[motor_id_] = torq_cmd;
+            break;
+        case ControlMode::TORQUE:
+            data->ctrl[motor_id_] = state_.torq_cmd;
+            break;
+        }
 
         state_.pos_est = pos_est;
         state_.vel_est = vel_est;

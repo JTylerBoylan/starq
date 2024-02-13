@@ -28,20 +28,20 @@ namespace starq
         /// @brief Set the state for a leg.
         /// @param state State.
         /// @return If the command was sent successfully.
-        bool setState(const uint32_t state);
+        virtual bool setState(const uint32_t state);
 
         /// @brief Set the control mode for a leg.
         /// @param control_mode Control mode.
         /// @param input_mode Input mode. (default: 0x1)
         /// @return If the command was sent successfully.
-        bool setControlMode(const uint32_t control_mode, const uint32_t input_mode = 0x1);
+        virtual bool setControlMode(const uint32_t control_mode, const uint32_t input_mode = 0x1);
 
         /// @brief Set the foot position for a leg.
         /// @param foot_position Foot position.
         /// @param foot_velocity_ff Foot velocity feedforward.
         /// @param foot_torque_ff Foot torque feedforward.
         /// @return If the command was sent successfully.
-        bool setFootPosition(const VectorXf &foot_position,
+        virtual bool setFootPosition(const VectorXf &foot_position,
                              const VectorXf &foot_velocity_ff = VectorXf(),
                              const VectorXf &foot_torque_ff = VectorXf());
 
@@ -49,28 +49,28 @@ namespace starq
         /// @param foot_velocity Foot velocity.
         /// @param foot_torque_ff Foot torque feedforward.
         /// @return  If the command was sent successfully.
-        bool setFootVelocity(const VectorXf &foot_velocity,
+        virtual bool setFootVelocity(const VectorXf &foot_velocity,
                              const VectorXf &foot_torque_ff = VectorXf());
 
         /// @brief Set the foot force for a leg.
         /// @param foot_force Foot force.
         /// @return If the command was sent successfully.
-        bool setFootForce(const VectorXf &foot_force);
+        virtual bool setFootForce(const VectorXf &foot_force);
 
         /// @brief Get the foot position estimate for a leg.
         /// @param foot_position Foot position.
         /// @return If the position was retrieved successfully.
-        bool getFootPositionEstimate(VectorXf &foot_position);
+        virtual bool getFootPositionEstimate(VectorXf &foot_position);
 
         /// @brief Get the foot velocity estimate for a leg.
         /// @param foot_velocity Foot velocity.
         /// @return If the velocity was retrieved successfully.
-        bool getFootVelocityEstimate(VectorXf &foot_velocity);
+        virtual bool getFootVelocityEstimate(VectorXf &foot_velocity);
 
         /// @brief Get the foot force estimate for a leg.
         /// @param foot_force Foot force.
         /// @return If the force was retrieved successfully.
-        bool getFootForceEstimate(VectorXf &foot_force);
+        virtual bool getFootForceEstimate(VectorXf &foot_force);
 
         /// @brief Get the current joint angles for a leg.
         /// @return Vector of joint angles.
@@ -105,7 +105,7 @@ namespace starq
         /// @return If the command was sent successfully.
         bool setJointTorques(const VectorXf &joint_torques);
 
-    private:
+    protected:
         const starq::LegDynamics::Ptr dynamics_;
         const std::vector<MotorController::Ptr> motor_controllers_;
     };

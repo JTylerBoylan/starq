@@ -20,7 +20,7 @@ w_Rot_a = [1 0 0; 0 cos(thA) -sin(thA); 0 sin(thA) cos(thA)];
 % A -> B frame: Rotation about y axis (inverted)
 a_Rot_b = [cos(thB) 0 -sin(thB); 0 1 0; sin(thB) 0 cos(thB)];
 
-% B -> C frame: Rotation about y axis (inverted)
+% B -> C frame: Rotation about z axis
 b_Rot_c = [cos(thC) 0 -sin(thC); 0 1 0; sin(thC) 0 cos(thC)];
 
 % B in world frame
