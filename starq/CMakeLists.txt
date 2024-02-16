@@ -91,6 +91,10 @@ add_executable(example_control examples/example_control.cpp)
 target_include_directories(example_control PUBLIC include)
 target_link_libraries(example_control PUBLIC stdc++ stdc++fs m pthread starqlib)
 
+add_executable(two_leg_control examples/two_leg_control.cpp)
+target_include_directories(two_leg_control PUBLIC include)
+target_link_libraries(two_leg_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)

@@ -41,18 +41,18 @@ int main()
     controller11->setControlMode(starq::ControlMode::POSITION);
 
     // positions: 0 0.9 -1.8 0 0.9 -1.8 0 0.9 -1.8 0 0.9 -1.8
-    controller0->setPosition(0);
-    controller1->setPosition(0.9);
-    controller2->setPosition(-1.8);
-    controller3->setPosition(0);
-    controller4->setPosition(0.9);
-    controller5->setPosition(-1.8);
-    controller6->setPosition(0);
-    controller7->setPosition(0.9);
-    controller8->setPosition(-1.8);
-    controller9->setPosition(0);
-    controller10->setPosition(0.9);
-    controller11->setPosition(-1.8);
+    // controller0->setPosition(0);
+    // controller1->setPosition(0.9);
+    // controller2->setPosition(-1.8);
+    // controller3->setPosition(0);
+    // controller4->setPosition(0.9);
+    // controller5->setPosition(-1.8);
+    // controller6->setPosition(0);
+    // controller7->setPosition(0.9);
+    // controller8->setPosition(-1.8);
+    // controller9->setPosition(0);
+    // controller10->setPosition(0.9);
+    // controller11->setPosition(-1.8);
 
     sim.wait();
 
