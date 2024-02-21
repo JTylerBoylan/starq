@@ -50,7 +50,7 @@ int main(void)
     LegController::Ptr leg_F = std::make_shared<LegController>(fivebar_dynamics,
                                                                std::vector<MotorController::Ptr>{odrive_0, odrive_1});
     LegController::Ptr leg_B = std::make_shared<LegController>(fivebar_dynamics,
-                                                               std::vector<MotorController::Ptr>{odrive_0, odrive_1});
+                                                               std::vector<MotorController::Ptr>{odrive_2, odrive_3});
     printf("Created leg controllers.\n");
 
     if (!leg_F->setState(AxisState::CLOSED_LOOP_CONTROL) ||
