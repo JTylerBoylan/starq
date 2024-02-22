@@ -19,9 +19,10 @@ Rx = @(th) [1 0 0;
             0 sin(th) cos(th)];
 
 % Body relative positions
-d = 0.08505;
-lt = 0.02;
-syms lc 
+syms d lt lc
+% d = 0.08505;
+% lt = 0.02;
+% lc = 0.02; 
 
 b_r_ab = [0; d; 0];
 c_r_bc = [0; 0; -lt];
@@ -44,6 +45,14 @@ d_rcom_c3 = [0.00472659; 0; -0.131975];
 r_com_1 = r_a + a_R_b * b_rcom_a1;
 r_com_2 = r_b + a_R_b * b_R_c * c_rcom_b2;
 r_com_3 = r_c + a_R_b * b_R_c * c_R_d * d_rcom_c3;
+
+omega_a1 = [q1; 0; 0];
+omega_b2 = [0; q2; 0];
+omega_c3 = [0; q3; 0];
+
+omega_1 = omega_a1;
+omega_2 = omega_1 + omega_b2;
+omega_3 = omega_2 + omega_c3;
 
 % Body inertia
 m_1 = 0.696;
@@ -71,11 +80,21 @@ Mx_3 = [diag([m_3 m_3 m_3]), zeros(3);
        zeros(3), I_3];
 
 % Jacobians
-J_1 = simplify(jacobian(r_com_1, [q1; q2; q3]));
-J_2 = simplify(jacobian(r_com_2, [q1; q2; q3]));
-J_3 = simplify(jacobian(r_com_3, [q1; q2; q3]));
-J_ee = simplify(jacobian(r_d, [q1; q2; q3]));
+q = [q1; q2; q3];
 
-M = J_1'*Mx_1*J_1 + J_2'*Mx_2*J_2 + J_3'*Mx_3*J_3
+Jv_1 = simplify(jacobian(r_com_1, q));
+Jv_2 = simplify(jacobian(r_com_2, q));
+Jv_3 = simplify(jacobian(r_com_3, q));
 
+Jw_1 = simplify(jacobian(omega_1, q));
+Jw_2 = simplify(jacobian(omega_2, q));
+Jw_3 = simplify(jacobian(omega_3, q));
 
+J_1 = [Jv_1; Jw_1];
+J_2 = [Jv_2; Jw_2];
+J_3 = [Jv_3; Jw_3];
+
+M = J_1'*Mx_1*J_1 + J_2'*Mx_2*J_2 + J_3'*Mx_3*J_3;
+M = simplify(M)
+
+Jv_ee = simplify(jacobian(r_d, q));
