@@ -51,6 +51,7 @@ add_library(starqlib SHARED
   src/lib/odrive/odrive_socket.cpp
   src/lib/odrive/odrive_controller.cpp
   src/lib/dynamics/starq_fivebar2d.cpp
+  src/lib/dynamics/unitree_rrr.cpp
   src/lib/leg_controller.cpp
   src/lib/leg_command_publisher.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
@@ -145,6 +146,10 @@ if (WITH_MUJOCO)
   add_executable(test_mujoco_controller tests/test_mujoco_controller.cpp)
   target_include_directories(test_mujoco_controller PUBLIC include)
   target_link_libraries(test_mujoco_controller PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+  add_executable(test_mujoco_leg_control tests/test_mujoco_leg_control.cpp)
+  target_include_directories(test_mujoco_leg_control PUBLIC include)
+  target_link_libraries(test_mujoco_leg_control PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 endif()
 

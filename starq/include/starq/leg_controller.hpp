@@ -10,6 +10,8 @@ namespace starq
 {
     using namespace Eigen;
 
+    using MotorList = std::vector<MotorController::Ptr>;
+
     /// @brief Uses LegDynamics to convert leg commands into motor commands
     class LegController
     {
@@ -18,9 +20,10 @@ namespace starq
         using Ptr = std::shared_ptr<LegController>;
 
         /// @brief Create a leg controller.
-        /// @param controller Motor controller.
+        /// @param dynamics Leg dynamics.
+        /// @param motor_controllers Motor controllers.
         LegController(const starq::LegDynamics::Ptr dynamics,
-                      const std::vector<MotorController::Ptr> motor_controllers);
+                      const MotorList motor_controllers);
 
         /// @brief Destroy the leg controller.
         ~LegController();
