@@ -4,7 +4,7 @@ close all
 %%
 
 % Params
-stride_frequency = 1; % Hz
+stride_frequency = 0.25; % Hz
 stride_length = 0.050; % mm
 publish_frequency = 100; % Hz
 
@@ -20,7 +20,7 @@ x_stance = x_land + t * (x_lift - x_land) / (3/4 * t(end));
 x_swing = x_lift + t * (x_land - x_lift) / (1/4 * t(end));
 
 z_stance = z_nom * ones(1, 3/4*N);
-z_swing = z_nom + z_lift * sin(4 * pi * t);
+z_swing = z_nom + z_lift * sin(4 * pi * t * stride_frequency);
 
 x = [x_stance(1:3/4*N), x_swing(1:1/4*N)];
 y = 0.08505 * ones(1,N);

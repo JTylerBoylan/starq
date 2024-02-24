@@ -90,7 +90,7 @@ int main()
     while (mujoco->isOpen())
     {
         trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
-        std::this_thread::sleep_for(std::chrono::microseconds(1005000));
+        std::this_thread::sleep_for(std::chrono::microseconds(4005000));
     }
 
     sim.wait();
