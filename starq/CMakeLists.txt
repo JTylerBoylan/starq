@@ -54,6 +54,8 @@ add_library(starqlib SHARED
   src/lib/dynamics/unitree_rrr.cpp
   src/lib/leg_controller.cpp
   src/lib/leg_command_publisher.cpp
+  src/lib/trajectory_file_reader.cpp 
+  src/lib/trajectory_publisher.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>
@@ -150,6 +152,10 @@ if (WITH_MUJOCO)
   add_executable(test_mujoco_leg_control tests/test_mujoco_leg_control.cpp)
   target_include_directories(test_mujoco_leg_control PUBLIC include)
   target_link_libraries(test_mujoco_leg_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+  add_executable(test_mujoco_leg_trajectory tests/test_mujoco_leg_trajectory.cpp)
+  target_include_directories(test_mujoco_leg_trajectory PUBLIC include)
+  target_link_libraries(test_mujoco_leg_trajectory PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 endif()
 

@@ -15,8 +15,7 @@ namespace starq::dynamics
         /// @brief Constructor for RRR leg.
         /// @param d Abduction link length.
         /// @param lt Thigh link length.
-        /// @param lc Calf link length.
-        Unitree_RRR(float d, float lt, float lc, int a_axis);
+        Unitree_RRR(float d, float lt, float lc);
 
         /// @brief Forward kinematics for FiveBar2D leg.
         /// @param joint_angles Joint angles.
@@ -35,6 +34,9 @@ namespace starq::dynamics
         /// @param jacobian Jacobian matrix.
         /// @return If the Jacobian matrix was successful.
         bool getJacobian(const VectorXf &joint_angles, MatrixXf &jacobian) override;
+
+        /// @brief Flip the leg in the Y axis.
+        void flipYAxis();
 
     private:
         float d_, lt_, lc_, a_axis_;

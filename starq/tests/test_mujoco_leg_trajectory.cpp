@@ -5,6 +5,9 @@
 #include "starq/dynamics/unitree_rrr.hpp"
 #include "starq/leg_controller.hpp"
 
+#include "starq/trajectory_file_reader.hpp"
+#include "starq/trajectory_publisher.hpp"
+
 using namespace starq;
 using namespace starq::dynamics;
 using namespace starq::mujoco;
@@ -40,6 +43,7 @@ int main()
                                                                    UNITREE_A1_LENGTH_LT,
                                                                    UNITREE_A1_LENGTH_LC);
     unitree_RRR_R->flipYAxis();
+    printf("Dynamics created\n");
 
     LegController::Ptr leg_FRA = std::make_shared<LegController>(unitree_RRR_R,
                                                                  MotorList{motor_FRA, motor_FRB, motor_FRC});
@@ -49,20 +53,45 @@ int main()
                                                                  MotorList{motor_RRA, motor_RRB, motor_RRC});
     LegController::Ptr leg_RLA = std::make_shared<LegController>(unitree_RRR_L,
                                                                  MotorList{motor_RLA, motor_RLB, motor_RLC});
-
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
-    printf("Simulation started\n");
+    printf("Legs created\n");
 
     leg_FRA->setControlMode(ControlMode::POSITION);
     leg_FLA->setControlMode(ControlMode::POSITION);
     leg_RRA->setControlMode(ControlMode::POSITION);
     leg_RLA->setControlMode(ControlMode::POSITION);
+    printf("Control mode set\n");
+
+    TrajectoryFileReader::Ptr trajectory_file_reader = std::make_shared<TrajectoryFileReader>();
+    if (!trajectory_file_reader->load3D("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt"))
+    {
+        printf("Failed to load trajectory\n");
+        return 1;
+    }
+    printf("Trajectory loaded\n");
+
+    LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
+        LegList{leg_FRA, leg_FLA, leg_RRA, leg_RLA});
+    printf("Leg command publisher created\n");
+
+    TrajectoryPublisher::Ptr trajectory_publisher = std::make_shared<TrajectoryPublisher>(leg_command_publisher);
+    printf("Trajectory publisher created\n");
+
+    std::future<void> sim = std::async(std::launch::async, [&]
+                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+    printf("Simulation started\n");
 
     leg_FRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
     leg_FLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
     leg_RRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
     leg_RLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    while (mujoco->isOpen())
+    {
+        trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
+        std::this_thread::sleep_for(std::chrono::microseconds(1005000));
+    }
 
     sim.wait();
     printf("Done\n");

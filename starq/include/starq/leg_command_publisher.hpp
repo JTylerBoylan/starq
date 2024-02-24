@@ -12,18 +12,28 @@
 namespace starq
 {
 
+    using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
+
     /// @brief Leg command structure
     struct LegCommand
     {
         using Ptr = std::shared_ptr<LegCommand>;
-
+        std::chrono::microseconds delay;
         uint8_t leg_id = 0;
         uint32_t control_mode = 0;
         uint32_t input_mode = 0x1;
         VectorXf target_position = VectorXf();
         VectorXf target_velocity = VectorXf();
         VectorXf target_force = VectorXf();
+
+        time_point_t release_time;
+        void stamp()
+        {
+            release_time = std::chrono::high_resolution_clock::now() + delay;
+        }
     };
+
+    using LegList = std::vector<LegController::Ptr>;
 
     /// @brief Handles leg commands from multiple processes and republishes them at a fixed rate
     class LegCommandPublisher : public ThreadRunner
@@ -33,7 +43,7 @@ namespace starq
 
         /// @brief Construct a new Leg Command Publisher object
         /// @param leg_controllers Leg controllers to publish commands to.
-        LegCommandPublisher(const std::vector<LegController::Ptr> leg_controllers);
+        LegCommandPublisher(const LegList leg_controllers);
 
         /// @brief Destroy the Leg Command Publisher object
         ~LegCommandPublisher();

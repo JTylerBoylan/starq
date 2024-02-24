@@ -35,12 +35,14 @@ namespace starq
             std::istringstream iss(line);
 
             int leg_id;
+            time_t delay_time;
 
-            LegCommand::Ptr command;
-            command->target_position = Vector2f::Zero();
-            command->target_velocity = Vector2f::Zero();
-            command->target_force = Vector2f::Zero();
+            LegCommand::Ptr command = std::make_shared<LegCommand>();
+            command->target_position = VectorXf::Zero(2);
+            command->target_velocity = VectorXf::Zero(2);
+            command->target_force = VectorXf::Zero(2);
             if (!(iss >>
+                  delay_time >>
                   leg_id >>
                   command->control_mode >> command->input_mode >>
                   command->target_position.x() >> command->target_position.y() >>
@@ -51,6 +53,7 @@ namespace starq
                 return false;
             }
 
+            command->delay = std::chrono::microseconds(delay_time);
             command->leg_id = leg_id;
 
             trajectory_.push_back(command);
@@ -78,12 +81,14 @@ namespace starq
             std::istringstream iss(line);
 
             int leg_id;
+            time_t delay_time;
 
-            LegCommand::Ptr command;
-            command->target_position = Vector2f::Zero();
-            command->target_velocity = Vector2f::Zero();
-            command->target_force = Vector2f::Zero();
+            LegCommand::Ptr command = std::make_shared<LegCommand>();
+            command->target_position = VectorXf::Zero(3);
+            command->target_velocity = VectorXf::Zero(3);
+            command->target_force = VectorXf::Zero(3);
             if (!(iss >>
+                  delay_time >>
                   leg_id >>
                   command->control_mode >> command->input_mode >>
                   command->target_position.x() >> command->target_position.y() >> command->target_position.z() >>
@@ -94,6 +99,7 @@ namespace starq
                 return false;
             }
 
+            command->delay = std::chrono::microseconds(delay_time);
             command->leg_id = leg_id;
 
             trajectory_.push_back(command);

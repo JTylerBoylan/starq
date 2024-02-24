@@ -5,8 +5,8 @@
 namespace starq::dynamics
 {
 
-    Unitree_RRR::Unitree_RRR(float d, float lt, float lc, int a_axis)
-        : d_(d), lt_(lt), lc_(lc), a_axis_(a_axis)
+    Unitree_RRR::Unitree_RRR(float d, float lt, float lc)
+        : d_(d), lt_(lt), lc_(lc), a_axis_(1)
     {
     }
 
@@ -57,21 +57,19 @@ namespace starq::dynamics
         const float dy = y - d_ * std::cos(q1);
         const float dz = z - d_ * std::sin(q1);
 
-        const float xp = x;
-        const float yp = dy * cos(q1) + dz * sin(q1);
         const float zp = -dy * sin(q1) + dz * cos(q1);
 
-        const float r22 = xp * xp + zp * zp;
-        const float r2 = std::sqrt(r22);
-        const float phi = std::atan2(zp, xp);
+        const float r2 = std::sqrt( x * x + zp * zp);
+        const float phi = std::atan2(zp, x);
         const float f = phi + M_PI_2;
-        const float lambda = std::acos((r22 + lt_ * lt_ - lc_ * lc_) / (2 * r2 * lt_));
-        const float epsilon = std::asin(r2 * std::sin(lambda) / lc_);
-        const float q2 = lambda - f;
+        const float lambda = std::acos((r2 * r2 + lt_ * lt_ - lc_ * lc_) / (2 * r2 * lt_));
+        const float del = std::asin(lt_ * std::sin(lambda) / lc_);
+        const float epsilon = M_PI - del - lambda;
+        const float q2 = f - lambda;
         const float q3 = M_PI - epsilon;
 
         joint_angles.resize(3);
-        joint_angles << q1 * a_axis_, q2, -q3;
+        joint_angles << q1 * a_axis_, -q2, -q3;
 
         return true;
     }
@@ -109,6 +107,11 @@ namespace starq::dynamics
             dZdq1, dZdq2, dZdq3;
 
         return true;
+    }
+
+    void Unitree_RRR::flipYAxis()
+    {
+        a_axis_ = -1;
     }
 
 }
