@@ -157,6 +157,10 @@ if (WITH_MUJOCO)
   target_include_directories(test_mujoco_leg_trajectory PUBLIC include)
   target_link_libraries(test_mujoco_leg_trajectory PUBLIC stdc++ stdc++fs m pthread starqlib)
 
+  add_executable(test_mujoco_leg_forces tests/test_mujoco_leg_forces.cpp)
+  target_include_directories(test_mujoco_leg_forces PUBLIC include)
+  target_link_libraries(test_mujoco_leg_forces PUBLIC stdc++ stdc++fs m pthread starqlib)
+
 endif()
 
 if (WITH_ROS2)

@@ -5,7 +5,7 @@
 namespace starq
 {
 
-    LegCommandPublisher::LegCommandPublisher(const std::vector<LegController::Ptr> leg_controllers)
+    LegCommandPublisher::LegCommandPublisher(const LegList leg_controllers)
         : leg_controllers_(leg_controllers),
           stop_on_fail_(true),
           sleep_duration_us_(5000)
