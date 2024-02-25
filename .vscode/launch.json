@@ -7,7 +7,7 @@
         "name": "(gdb) Launch MuJoCo",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/nvidia/starq_ws/src/build/test_mujoco_leg_forces",
+        "program": "/home/nvidia/starq_ws/src/build/test_mujoco_localization",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

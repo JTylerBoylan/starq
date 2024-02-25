@@ -61,6 +61,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_controller.cpp>
+  $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
 )
 
 target_include_directories(starqlib PUBLIC 
@@ -160,6 +161,10 @@ if (WITH_MUJOCO)
   add_executable(test_mujoco_leg_forces tests/test_mujoco_leg_forces.cpp)
   target_include_directories(test_mujoco_leg_forces PUBLIC include)
   target_link_libraries(test_mujoco_leg_forces PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+  add_executable(test_mujoco_localization tests/test_mujoco_localization.cpp)
+  target_include_directories(test_mujoco_localization PUBLIC include)
+  target_link_libraries(test_mujoco_localization PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 endif()
 
