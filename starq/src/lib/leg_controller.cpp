@@ -220,9 +220,12 @@ namespace starq
         bool success = true;
         for (size_t i = 0; (i < motor_controllers_.size()) && success; i++)
         {
-            success &= motor_controllers_[i]->setPosition(joint_angles(i, 0),
-                                                          joint_velocity_ff(i, 0),
-                                                          joint_torque_ff(i, 0));
+            const float angle = joint_angles(i, 0);
+            const float velocity_ff = joint_velocity_ff(i, 0);
+            const float torque_ff = joint_torque_ff(i, 0);
+            success &= motor_controllers_[i]->setPosition(angle,
+                                                          velocity_ff,
+                                                          torque_ff);
         }
         return success;
     }
@@ -233,8 +236,10 @@ namespace starq
         bool success = true;
         for (size_t i = 0; (i < motor_controllers_.size()) && success; i++)
         {
-            success &= motor_controllers_[i]->setVelocity(joint_velocities(i, 0),
-                                                          joint_torque_ff(i, 0));
+            const float velocity = joint_velocities(i, 0);
+            const float torque_ff = joint_torque_ff(i, 0);
+            success &= motor_controllers_[i]->setVelocity(velocity,
+                                                          torque_ff);
         }
         return success;
     }
@@ -244,7 +249,8 @@ namespace starq
         bool success = true;
         for (size_t i = 0; (i < motor_controllers_.size()) && success; i++)
         {
-            success &= motor_controllers_[i]->setTorque(joint_torques(i, 0));
+            const float torque = joint_torques(i, 0);
+            success &= motor_controllers_[i]->setTorque(torque);
         }
         return success;
     }

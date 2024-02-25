@@ -86,7 +86,7 @@ namespace starq::mujoco
 
         const mjtNum pos_est = data->qpos[motor_id_ + MUJOCO_Q_OFFSET];
         const mjtNum vel_est = data->qvel[motor_id_ + MUJOCO_Q_OFFSET];
-        const mjtNum torq_est = data->qfrc_applied[motor_id_ + MUJOCO_Q_OFFSET];
+        const mjtNum torq_est = data->ctrl[motor_id_ + MUJOCO_Q_OFFSET];
 
         switch (state_.control_mode)
         {

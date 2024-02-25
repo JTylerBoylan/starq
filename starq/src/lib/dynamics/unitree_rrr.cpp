@@ -23,12 +23,13 @@ namespace starq::dynamics
         const float c1 = cos(q1);
         const float s2 = sin(q2);
         const float c2 = cos(q2);
+        const float s3 = sin(q3);
+        const float c3 = cos(q3);
         const float s23 = sin(q2 + q3);
-        const float c23 = cos(q2 + q3);
 
         const float x = -lc_ * s23 - lt_ * s2;
-        const float y = d_ * c1 + lt_ * c2 * s1 + lc_ * s1 * c23;
-        const float z = d_ * s1 - lt_ * c1 * c2 - lc_ * c1 * c23;
+        const float y = a_axis_ * d_ * c1 - lc_ * (s1 * s2 * s3 - c2 * c3 * s1) + lt_ * c2 * q1;
+        const float z = a_axis_ * d_ * s1 - lc_ * (c1 * c2 * c3 - c1 * s2 * s3) - lt_ * c1 * c2;
 
         foot_position.resize(3);
         foot_position << x, y, z;
@@ -59,7 +60,7 @@ namespace starq::dynamics
 
         const float zp = -dy * sin(q1) + dz * cos(q1);
 
-        const float r2 = std::sqrt( x * x + zp * zp);
+        const float r2 = std::sqrt(x * x + zp * zp);
         const float phi = std::atan2(zp, x);
         const float f = phi + M_PI_2;
         const float lambda = std::acos((r2 * r2 + lt_ * lt_ - lc_ * lc_) / (2 * r2 * lt_));
@@ -88,16 +89,18 @@ namespace starq::dynamics
         const float c1 = cos(q1);
         const float s2 = sin(q2);
         const float c2 = cos(q2);
+        const float s3 = sin(q3);
+        const float c3 = cos(q3);
         const float s23 = sin(q2 + q3);
         const float c23 = cos(q2 + q3);
 
         const float dXdq1 = 0.0;
         const float dXdq2 = -lc_ * c23 - lt_ * c2;
         const float dXdq3 = -lc_ * c23;
-        const float dYdq1 = lt_ * c1 * c2 - d_ * s1 + lc_ * c1 * c23;
+        const float dYdq1 = lc_ * (c1 * c2 * c3 - c1 * s2 * s3) - a_axis_ *  d_ * s1 + lt_ * c1 * c2;
         const float dYdq2 = -s1 * (lc_ * s23 + lt_ * s2);
         const float dYdq3 = -lc_ * s1 * s23;
-        const float dZdq1 = lt_ * c2 * s1 + d_ * c1 + lc_ * s1 * c23;
+        const float dZdq1 = a_axis_ * d_ * c1 - lc_ * (s1 * s2 * s3 - c2 * c3 * s1) + lt_ * c2 * s1;
         const float dZdq2 = c1 * (lc_ * s23 + lt_ * s2);
         const float dZdq3 = lc_ * c1 * s23;
 

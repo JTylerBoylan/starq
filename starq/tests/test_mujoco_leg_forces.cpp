@@ -44,33 +44,33 @@ int main()
     unitree_RRR_R->flipYAxis();
     printf("Dynamics created\n");
 
-    LegController::Ptr leg_FRA = std::make_shared<LegController>(unitree_RRR_R,
-                                                                 MotorList{motor_FRA, motor_FRB, motor_FRC});
-    LegController::Ptr leg_FLA = std::make_shared<LegController>(unitree_RRR_L,
-                                                                 MotorList{motor_FLA, motor_FLB, motor_FLC});
-    LegController::Ptr leg_RRA = std::make_shared<LegController>(unitree_RRR_R,
-                                                                 MotorList{motor_RRA, motor_RRB, motor_RRC});
-    LegController::Ptr leg_RLA = std::make_shared<LegController>(unitree_RRR_L,
-                                                                 MotorList{motor_RLA, motor_RLB, motor_RLC});
+    LegController::Ptr leg_FR = std::make_shared<LegController>(unitree_RRR_R,
+                                                                MotorList{motor_FRA, motor_FRB, motor_FRC});
+    LegController::Ptr leg_FL = std::make_shared<LegController>(unitree_RRR_L,
+                                                                MotorList{motor_FLA, motor_FLB, motor_FLC});
+    LegController::Ptr leg_RR = std::make_shared<LegController>(unitree_RRR_R,
+                                                                MotorList{motor_RRA, motor_RRB, motor_RRC});
+    LegController::Ptr leg_RL = std::make_shared<LegController>(unitree_RRR_L,
+                                                                MotorList{motor_RLA, motor_RLB, motor_RLC});
     printf("Legs created\n");
 
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
-        LegList{leg_FRA, leg_FLA, leg_RRA, leg_RLA});
+        LegList{leg_FR, leg_FL, leg_RR, leg_RL});
     printf("Leg command publisher created\n");
 
     std::future<void> sim = std::async(std::launch::async, [&]
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
     printf("Simulation started\n");
 
-    leg_FRA->setControlMode(ControlMode::POSITION);
-    leg_FLA->setControlMode(ControlMode::POSITION);
-    leg_RRA->setControlMode(ControlMode::POSITION);
-    leg_RLA->setControlMode(ControlMode::POSITION);
+    leg_FR->setControlMode(ControlMode::POSITION);
+    leg_FL->setControlMode(ControlMode::POSITION);
+    leg_RR->setControlMode(ControlMode::POSITION);
+    leg_RL->setControlMode(ControlMode::POSITION);
 
-    leg_FRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_FLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -83,6 +83,25 @@ int main()
     {
         leg_command.leg_id = id;
         leg_command_publisher->sendCommand(std::make_shared<LegCommand>(leg_command));
+    }
+
+    while (mujoco->isOpen())
+    {
+        VectorXf foot_position;
+        leg_FR->getFootPositionEstimate(foot_position);
+        VectorXf foot_force;
+        leg_FR->getFootForceEstimate(foot_force);
+        printf("Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
+        printf("Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
+
+        VectorXf joint_angles = leg_FL->getCurrentJointAngles();
+        VectorXf joint_torques = leg_FL->getCurrentJointTorques();
+        printf("Joint angles: %f, %f, %f\n", joint_angles(0), joint_angles(1), joint_angles(2));
+        printf("Joint torques: %f, %f, %f\n", joint_torques(0), joint_torques(1), joint_torques(2));
+
+        printf("\n");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     sim.wait();
