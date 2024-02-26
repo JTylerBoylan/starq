@@ -21,15 +21,15 @@ int main()
         {
             robot.setFootPosition(id, foot_position);
         }
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
 
         // Force control
-        auto foot_force = Eigen::Vector3f(0, 0, -100);
+        auto foot_force = Eigen::Vector3f(-100, 0, -250);
         for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
         {
             robot.setFootForce(id, foot_force);
         }
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     robot.waitForSimulation();
