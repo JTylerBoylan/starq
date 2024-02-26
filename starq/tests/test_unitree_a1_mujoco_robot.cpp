@@ -4,7 +4,8 @@
 
 using namespace starq;
 
-int main() {
+int main()
+{
 
     robots::UnitreeA1MuJoCoRobot robot;
     printf("UnitreeA1MuJoCoRobot created\n");
@@ -12,12 +13,24 @@ int main() {
     robot.startSimulation();
     printf("Simulation started\n");
 
-    auto foot_force = Eigen::Vector3f(0, 0, -100);
-    for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
+    while (robot.isSimulationOpen())
     {
-        robot.setFootForce(id, foot_force);
+        // Position control
+        auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2);
+        for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
+        {
+            robot.setFootPosition(id, foot_position);
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+
+        // Force control
+        auto foot_force = Eigen::Vector3f(0, 0, -100);
+        for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
+        {
+            robot.setFootForce(id, foot_force);
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
-    printf("Leg commands sent\n");
 
     robot.waitForSimulation();
     printf("Simulation closed\n");

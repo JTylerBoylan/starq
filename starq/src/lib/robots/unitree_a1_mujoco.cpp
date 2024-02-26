@@ -60,6 +60,11 @@ namespace starq::robots
     {
         simulation_ = std::async(std::launch::async, [this]()
                                  { mujoco_->open(scene_file_); });
+        
+        while (!mujoco_->isOpen())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 
     void UnitreeA1MuJoCoRobot::waitForSimulation()
