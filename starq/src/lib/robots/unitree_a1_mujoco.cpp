@@ -1,11 +1,13 @@
 #include "starq/robots/unitree_a1_mujoco.hpp"
 
+#include <iostream>
+
 namespace starq::robots
 {
 
     UnitreeA1MuJoCoRobot::UnitreeA1MuJoCoRobot()
         : mujoco_(MuJoCo::getInstance()),
-          scene_file_("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml")
+          scene_file_(UNITREE_A1_MUJOCO_SCENE_FILE)
     {
 
         auto motor_FRA = std::make_shared<MuJoCoController>(mujoco_, 0);
@@ -68,6 +70,40 @@ namespace starq::robots
     bool UnitreeA1MuJoCoRobot::isSimulationOpen()
     {
         return mujoco_->isOpen();
+    }
+
+    bool UnitreeA1MuJoCoRobot::setFootPosition(const uint8_t &leg_id, const Eigen::Vector3f &position)
+    {
+        if (leg_id >= UNITREE_A1_NUM_LEGS)
+        {
+            std::cerr << "Invalid leg id: " << leg_id << std::endl;
+            return false;
+        }
+
+        auto command = std::make_shared<LegCommand>();
+        command->control_mode = ControlMode::POSITION;
+        command->target_position = position;
+        command->leg_id = leg_id;
+
+        publisher_->sendCommand(command);
+        return true;
+    }
+
+    bool UnitreeA1MuJoCoRobot::setFootForce(const uint8_t &leg_id, const Eigen::Vector3f &force)
+    {
+        if (leg_id >= UNITREE_A1_NUM_LEGS)
+        {
+            std::cerr << "Invalid leg id: " << leg_id << std::endl;
+            return false;
+        }
+
+        auto command = std::make_shared<LegCommand>();
+        command->control_mode = ControlMode::TORQUE;
+        command->target_force = force;
+        command->leg_id = leg_id;
+
+        publisher_->sendCommand(command);
+        return true;
     }
 
 }

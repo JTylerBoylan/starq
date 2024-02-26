@@ -12,15 +12,10 @@ int main() {
     robot.startSimulation();
     printf("Simulation started\n");
 
-    LegCommand leg_command;
-    leg_command.delay = std::chrono::microseconds(0);
-    leg_command.control_mode = ControlMode::TORQUE;
-    leg_command.target_force = Eigen::Vector3f(0, 0, -100);
-
-    for (uint32_t id = 0; id < 4; id++)
+    auto foot_force = Eigen::Vector3f(0, 0, -100);
+    for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-        leg_command.leg_id = id;
-        robot.getLegCommandPublisher()->sendCommand(std::make_shared<LegCommand>(leg_command));
+        robot.setFootForce(id, foot_force);
     }
     printf("Leg commands sent\n");
 

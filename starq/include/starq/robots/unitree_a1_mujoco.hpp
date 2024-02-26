@@ -15,6 +15,11 @@
 #define UNITREE_A1_LENGTH_LT 0.2
 #define UNITREE_A1_LENGTH_LC 0.2
 
+#define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"
+
+#define UNITREE_A1_NUM_MOTORS 12
+#define UNITREE_A1_NUM_LEGS 4
+
 namespace starq::robots
 {
     using namespace starq::mujoco;
@@ -58,6 +63,10 @@ namespace starq::robots
         void waitForSimulation();
 
         bool isSimulationOpen();
+
+        bool setFootPosition(const uint8_t &leg_id, const Eigen::Vector3f &position);
+
+        bool setFootForce(const uint8_t &leg_id, const Eigen::Vector3f &force);
 
     private:
         MuJoCo::Ptr mujoco_;
