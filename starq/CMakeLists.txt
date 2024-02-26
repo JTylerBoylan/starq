@@ -62,6 +62,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_controller.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
+  $<$<BOOL:${WITH_MUJOCO}>:src/lib/robots/unitree_a1_mujoco.cpp>
 )
 
 target_include_directories(starqlib PUBLIC 
@@ -165,6 +166,10 @@ if (WITH_MUJOCO)
   add_executable(test_mujoco_localization tests/test_mujoco_localization.cpp)
   target_include_directories(test_mujoco_localization PUBLIC include)
   target_link_libraries(test_mujoco_localization PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+  add_executable(test_unitree_a1_mujoco_robot tests/test_unitree_a1_mujoco_robot.cpp)
+  target_include_directories(test_unitree_a1_mujoco_robot PUBLIC include)
+  target_link_libraries(test_unitree_a1_mujoco_robot PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 endif()
 
