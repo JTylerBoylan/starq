@@ -16,7 +16,7 @@ int main()
     while (robot.isSimulationOpen())
     {
         // Position control
-        auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2);
+        const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2);
         for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
         {
             robot.setFootPosition(id, foot_position);
@@ -24,12 +24,19 @@ int main()
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
         // Force control
-        auto foot_force = Eigen::Vector3f(-100, 0, -250);
+        const auto foot_force = Eigen::Vector3f(-100, 0, -250);
         for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
         {
             robot.setFootForce(id, foot_force);
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        const auto current_position = robot.getLocalization()->getCurrentPosition();
+        const auto current_orientation = robot.getLocalization()->getCurrentOrientation();
+        printf("Current position: %f %f %f\n", current_position.x(), current_position.y(), current_position.z());
+        printf("Current orientation: %f %f %f\n", current_orientation.x(), current_orientation.y(), current_orientation.z());
+
+        printf("\n");
     }
 
     robot.waitForSimulation();
