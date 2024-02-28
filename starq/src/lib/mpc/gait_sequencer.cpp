@@ -2,7 +2,11 @@
 
 namespace starq::mpc
 {
-    GaitSequencer::GaitSequencer()
+    GaitSequencer::GaitSequencer(starq::slam::Localization::Ptr localization)
+        : localization_(localization),
+          start_time_(localization->getCurrentTime()),
+          current_gait_(nullptr),
+          next_gait_(nullptr)
     {
     }
 
@@ -15,7 +19,7 @@ namespace starq::mpc
         if (current_gait_ == nullptr)
         {
             current_gait_ = gait;
-            start_time_ = getCurrentTime();
+            start_time_ = localization_->getCurrentTime();
         }
 
         next_gait_ = gait;
@@ -28,7 +32,7 @@ namespace starq::mpc
             return false;
         }
 
-        const auto current_time = getCurrentTime();
+        const auto current_time = localization_->getCurrentTime();
         if (current_time >= start_time_ + current_gait_->getDuration())
         {
             current_gait_ = next_gait_;
@@ -39,12 +43,12 @@ namespace starq::mpc
 
     bool GaitSequencer::configure(MPCConfiguration &config) const
     {
-        auto time = getCurrentTime();
+        auto time = localization_->getCurrentTime();
         config.stance_trajectory[0] = getStanceState(time);
         
-        for (int i = 1; i < config.window_size; i++)
+        for (size_t i = 1; i < config.window_size; i++)
         {
-            time += config.time_step * i;
+            time += config.time_step;
             config.stance_trajectory[i] = getStanceState(time);
             config.com_trajectory[i].linear_velocity = getLinearVelocity(time);
             config.com_trajectory[i].angular_velocity = getAngularVelocity(time);

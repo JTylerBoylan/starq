@@ -15,6 +15,11 @@ namespace starq::mujoco
                                                   std::placeholders::_1, std::placeholders::_2));
     }
 
+    std::chrono::milliseconds MuJoCoLocalization::getCurrentTime()
+    {
+        return std::chrono::milliseconds(time_t(last_time_ * 1E3));
+    }
+
     Eigen::Vector3f MuJoCoLocalization::getCurrentPosition()
     {
         return position_;

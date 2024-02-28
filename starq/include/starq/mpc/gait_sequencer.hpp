@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "starq/slam/localization.hpp"
 #include "starq/mpc/gait.hpp"
 
 namespace starq::mpc
@@ -14,7 +15,8 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<GaitSequencer>;
 
         /// @brief Create a new GaitSequencer object
-        GaitSequencer();
+        /// @param localization The localization object
+        GaitSequencer(starq::slam::Localization::Ptr localization);
 
         /// @brief Destroy the GaitSequencer object
         ~GaitSequencer();
@@ -48,6 +50,8 @@ namespace starq::mpc
         Vector3f getAngularVelocity(const milliseconds &time) const;
 
     private:
+        starq::slam::Localization::Ptr localization_;
+
         milliseconds start_time_;
 
         Gait::Ptr current_gait_;

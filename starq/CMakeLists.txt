@@ -56,6 +56,10 @@ add_library(starqlib SHARED
   src/lib/leg_command_publisher.cpp
   src/lib/trajectory_file_reader.cpp 
   src/lib/trajectory_publisher.cpp
+  src/lib/mpc/gait.cpp 
+  src/lib/mpc/gait_sequencer.cpp 
+  src/lib/mpc/com_planner.cpp 
+  src/lib/mpc/mpc_planner.cpp 
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>
@@ -170,6 +174,10 @@ if (WITH_MUJOCO)
   add_executable(test_unitree_a1_mujoco_robot tests/test_unitree_a1_mujoco_robot.cpp)
   target_include_directories(test_unitree_a1_mujoco_robot PUBLIC include)
   target_link_libraries(test_unitree_a1_mujoco_robot PUBLIC stdc++ stdc++fs m pthread starqlib)
+
+  add_executable(test_mujoco_mpc_planner tests/test_mujoco_mpc_planner.cpp)
+  target_include_directories(test_mujoco_mpc_planner PUBLIC include)
+  target_link_libraries(test_mujoco_mpc_planner PUBLIC stdc++ stdc++fs m pthread starqlib)
 
 endif()
 

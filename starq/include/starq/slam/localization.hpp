@@ -2,6 +2,7 @@
 #define STARQ_SLAM__LOCALIZATION_HPP_
 
 #include <memory>
+#include <chrono>
 
 #include "eigen3/Eigen/Dense"
 
@@ -13,6 +14,10 @@ namespace starq::slam
     {
     public:
         using Ptr = std::shared_ptr<Localization>;
+
+        /// @brief Get the current time.
+        /// @return The current time in milliseconds.
+        virtual std::chrono::milliseconds getCurrentTime() = 0;
 
         /// @brief Get the current position of the robot.
         /// @return Position vector [m] (x, y, z) in the world frame.

@@ -12,11 +12,6 @@ namespace starq::mpc
     using namespace std::chrono;
     using namespace Eigen;
 
-    inline const milliseconds getCurrentTime()
-    {
-        return duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-    }
-
     struct CenterOfMassState
     {
         Vector3f position;

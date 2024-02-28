@@ -8,6 +8,9 @@
 namespace starq::mpc
 {
     Gait::Gait()
+        : duration_(1000),
+          linear_velocity_(Vector3f(1, 0, 0)),
+          angular_velocity_(Vector3f::Zero())
     {
     }
 

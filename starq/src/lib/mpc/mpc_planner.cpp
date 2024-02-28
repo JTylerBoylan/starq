@@ -7,8 +7,13 @@ namespace starq::mpc
 
     MPCPlanner::MPCPlanner(starq::slam::Localization::Ptr localization)
         : localization_(localization),
-          gait_sequencer_(std::make_shared<GaitSequencer>()),
-          com_planner_(std::make_shared<CenterOfMassPlanner>())
+          gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
+          com_planner_(std::make_shared<CenterOfMassPlanner>()),
+          mass_(1.0),
+          inertia_(Eigen::Matrix3f::Identity()),
+          gravity_(Eigen::Vector3f(0, 0, -9.81)),
+          time_step_(50),
+          window_size_(21)
     {
     }
 

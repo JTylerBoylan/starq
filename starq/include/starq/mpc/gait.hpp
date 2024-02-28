@@ -55,9 +55,9 @@ namespace starq::mpc
         StanceState getStanceState(const milliseconds &time) const;
 
     private:
+        milliseconds duration_;
         Vector3f linear_velocity_;
         Vector3f angular_velocity_;
-        milliseconds duration_;
         std::map<milliseconds, StanceState> stance_pattern_;
     };
 }
