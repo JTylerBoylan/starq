@@ -12,19 +12,33 @@ int main()
     robots::UnitreeA1MuJoCoRobot robot;
     printf("UnitreeA1MuJoCoRobot created\n");
 
-    MPCPlanner mpc_planner(robot.getLocalization());
-
     Gait::Ptr gait = std::make_shared<Gait>();
     gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
+    printf("Gait loaded\n");
+
+    auto duration = gait->getDuration();
+    auto stance_duration = gait->getStanceDuration();
+    auto swing_duration = gait->getSwingDuration();
+    printf("Gait duration: %d\n", int(duration.count()));
+    printf("Stance duration: %d\n", int(stance_duration.count()));
+    printf("Swing duration: %d\n", int(swing_duration.count()));
+
+    MPCPlanner mpc_planner(robot.getLegs(), robot.getLocalization());
+    printf("MPCPlanner created\n");
+
+    mpc_planner.setNextGait(gait);
+    printf("Gait set\n");
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     robot.startSimulation();
     printf("Simulation started\n");
 
     while (robot.isSimulationOpen())
     {
-        mpc_planner.setNextGait(gait);
+
         MPCConfiguration config;
-        mpc_planner.getPlan(config);
+        mpc_planner.getConfiguration(config);
 
         auto global_time = robot.getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));

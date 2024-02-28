@@ -3,7 +3,8 @@
 namespace starq::mpc
 {
 
-    CenterOfMassPlanner::CenterOfMassPlanner()
+    CenterOfMassPlanner::CenterOfMassPlanner(starq::slam::Localization::Ptr localization)
+        : localization_(localization)
     {
     }
 
@@ -13,6 +14,11 @@ namespace starq::mpc
 
     bool CenterOfMassPlanner::configure(MPCConfiguration &config) const
     {
+        config.com_trajectory[0].position = localization_->getCurrentPosition();
+        config.com_trajectory[0].orientation = localization_->getCurrentOrientation();
+        config.com_trajectory[0].linear_velocity = localization_->getCurrentLinearVelocity();
+        config.com_trajectory[0].angular_velocity = localization_->getCurrentAngularVelocity();
+
         const float dt = config.time_step.count() / 1000.0;
         for (size_t i = 1; i < config.window_size; i++)
         {

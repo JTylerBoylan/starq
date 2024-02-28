@@ -60,6 +60,7 @@ add_library(starqlib SHARED
   src/lib/mpc/gait_sequencer.cpp 
   src/lib/mpc/com_planner.cpp 
   src/lib/mpc/mpc_planner.cpp 
+  src/lib/mpc/foothold_planner.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>

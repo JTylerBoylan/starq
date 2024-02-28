@@ -3,11 +3,13 @@
 
 #include <memory>
 
+#include "starq/leg_controller.hpp"
 #include "starq/slam/localization.hpp"
 
 #include "starq/mpc/mpc_types.hpp"
 #include "starq/mpc/gait_sequencer.hpp"
 #include "starq/mpc/com_planner.hpp"
+#include "starq/mpc/foothold_planner.hpp"
 
 namespace starq::mpc
 {
@@ -19,8 +21,10 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<MPCPlanner>;
 
         /// @brief Create a new MPCPlanner object
+        /// @param legs The leg controllers
         /// @param localization The localization object
-        MPCPlanner(starq::slam::Localization::Ptr localization);
+        MPCPlanner(std::vector<LegController::Ptr> legs,
+                   starq::slam::Localization::Ptr localization);
 
         /// @brief Destroy the MPCPlanner object
         ~MPCPlanner();
@@ -49,16 +53,15 @@ namespace starq::mpc
         /// @param gait The next gait pattern
         void setNextGait(Gait::Ptr gait);
 
-        /// @brief Get the plan
-        /// @param config The MPC configuration
-        /// @return True if the plan was obtained, false otherwise
-        bool getPlan(MPCConfiguration &config);
+        /// @brief Get the configuration
+        /// @param config The MPC configuration to be filled
+        /// @return True if the configuration was obtained, false otherwise
+        bool getConfiguration(MPCConfiguration &config);
 
     private:
-        starq::slam::Localization::Ptr localization_;
-
         GaitSequencer::Ptr gait_sequencer_;
         CenterOfMassPlanner::Ptr com_planner_;
+        FootholdPlanner::Ptr foothold_planner_;
 
         float mass_;
         Matrix3f inertia_;
@@ -66,7 +69,6 @@ namespace starq::mpc
 
         milliseconds time_step_;
         size_t window_size_;
-
     };
 
 }

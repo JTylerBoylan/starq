@@ -5,16 +5,17 @@
 namespace starq::mpc
 {
 
-    MPCPlanner::MPCPlanner(starq::slam::Localization::Ptr localization)
-        : localization_(localization),
-          gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
-          com_planner_(std::make_shared<CenterOfMassPlanner>()),
-          mass_(1.0),
-          inertia_(Eigen::Matrix3f::Identity()),
-          gravity_(Eigen::Vector3f(0, 0, -9.81)),
-          time_step_(50),
-          window_size_(21)
+    MPCPlanner::MPCPlanner(std::vector<LegController::Ptr> legs,
+                           starq::slam::Localization::Ptr localization)
+        : gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
+          com_planner_(std::make_shared<CenterOfMassPlanner>(localization)),
+          foothold_planner_(std::make_shared<FootholdPlanner>(legs, localization))
     {
+        mass_ = 1.0;
+        inertia_ = Eigen::Matrix3f::Identity();
+        gravity_ = Eigen::Vector3f(0, 0, -9.81);
+        time_step_ = milliseconds(50);
+        window_size_ = 21;
     }
 
     MPCPlanner::~MPCPlanner()
@@ -51,7 +52,7 @@ namespace starq::mpc
         gait_sequencer_->setNextGait(gait);
     }
 
-    bool MPCPlanner::getPlan(MPCConfiguration &config)
+    bool MPCPlanner::getConfiguration(MPCConfiguration &config)
     {
         if (window_size_ == 0)
         {
@@ -69,11 +70,6 @@ namespace starq::mpc
         config.stance_trajectory.resize(config.window_size);
         config.com_trajectory.resize(config.window_size);
         config.foothold_trajectory.resize(config.window_size);
-
-        config.com_trajectory[0].position = localization_->getCurrentPosition();
-        config.com_trajectory[0].orientation = localization_->getCurrentOrientation();
-        config.com_trajectory[0].linear_velocity = localization_->getCurrentLinearVelocity();
-        config.com_trajectory[0].angular_velocity = localization_->getCurrentAngularVelocity();
 
         if (!gait_sequencer_->sync())
         {
@@ -93,7 +89,11 @@ namespace starq::mpc
             return false;
         }
 
-        // TODO: Run foothold configuration
+        if (!foothold_planner_->configure(config))
+        {
+            std::cerr << "Foothold planner could not run configuration" << std::endl;
+            return false;
+        }
 
         return true;
     }

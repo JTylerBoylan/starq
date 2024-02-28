@@ -41,6 +41,14 @@ namespace starq::mpc
         /// @return The duration of the gait pattern
         milliseconds getDuration() const;
 
+        /// @brief Get the stance duration of the gait pattern
+        /// @return The stance duration of the gait pattern
+        milliseconds getStanceDuration() const;
+
+        /// @brief Get the swing duration of the gait pattern
+        /// @return The swing duration of the gait pattern
+        milliseconds getSwingDuration() const;
+
         /// @brief Get the linear velocity of the gait pattern
         /// @return The linear velocity of the gait pattern
         Vector3f getLinearVelocity() const;
@@ -56,6 +64,9 @@ namespace starq::mpc
 
     private:
         milliseconds duration_;
+        double stance_ratio_;
+        double swing_ratio_;
+
         Vector3f linear_velocity_;
         Vector3f angular_velocity_;
         std::map<milliseconds, StanceState> stance_pattern_;

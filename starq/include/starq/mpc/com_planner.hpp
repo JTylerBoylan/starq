@@ -4,6 +4,8 @@
 #include <memory>
 #include "starq/mpc/mpc_types.hpp"
 
+#include "starq/slam/localization.hpp"
+
 namespace starq::mpc
 {
     /// @brief CenterOfMassPlanner class
@@ -13,7 +15,8 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<CenterOfMassPlanner>;
 
         /// @brief Create a new CenterOfMassPlanner object
-        CenterOfMassPlanner();
+        /// @param localization The localization object
+        CenterOfMassPlanner(starq::slam::Localization::Ptr localization);
 
         /// @brief Destroy the CenterOfMassPlanner object
         ~CenterOfMassPlanner();
@@ -24,6 +27,7 @@ namespace starq::mpc
         bool configure(MPCConfiguration &config) const;
 
     private:
+        starq::slam::Localization::Ptr localization_;
     };
 }
 

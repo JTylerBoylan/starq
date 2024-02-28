@@ -30,6 +30,8 @@ namespace starq::mpc
             return false;
         }
 
+        int stance_count = 0;
+
         std::string line;
         while (std::getline(file, line))
         {
@@ -47,11 +49,17 @@ namespace starq::mpc
             bool stance_i;
             while (iss >> stance_i)
             {
+                if (stance.empty() && stance_i)
+                    stance_count++;
+
                 stance.push_back(stance_i);
             }
 
             stance_pattern_[milliseconds(time_ms)] = stance;
         }
+
+        stance_ratio_ = static_cast<float>(stance_count) / static_cast<float>(stance_pattern_.size());
+        swing_ratio_ = 1.0 - stance_ratio_;
 
         return true;
     }
@@ -70,6 +78,16 @@ namespace starq::mpc
     milliseconds Gait::getDuration() const
     {
         return duration_;
+    }
+
+    milliseconds Gait::getStanceDuration() const
+    {
+        return milliseconds(static_cast<int>(std::round(duration_.count() * stance_ratio_)));
+    }
+
+    milliseconds Gait::getSwingDuration() const
+    {
+        return milliseconds(static_cast<int>(std::round(duration_.count() * swing_ratio_)));
     }
 
     Vector3f Gait::getLinearVelocity() const
