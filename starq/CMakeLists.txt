@@ -12,7 +12,7 @@ endif()
 # Options for building with specific libraries
 option(WITH_ROS2 "Build with ROS2 support" ON)
 option(WITH_MUJOCO "Build with MuJoCo support" ON)
-option(WITH_ORLQP "Build with ORLQP support" ON)
+option(WITH_OSQP "Build with OSQP support" ON)
 
 # Find required dependencies for the project
 find_package(Eigen3 REQUIRED)
@@ -42,8 +42,8 @@ if (WITH_MUJOCO)
   find_package(glfw3 3.3 REQUIRED)
 endif()
 
-if (WITH_ORLQP)
-  find_package(orlqp REQUIRED)
+if (WITH_OSQP)
+  find_package(osqp REQUIRED)
 endif()
 
 # Include directories for Eigen and project-specific headers
@@ -98,7 +98,7 @@ if(WITH_MUJOCO)
 endif()
 
 if(WITH_ORLQP)
-  target_link_libraries(starqlib PUBLIC orlqp::orlqp)
+  target_link_libraries(starqlib PUBLIC osqp::osqp)
 endif()
 
 # Install the library and headers

@@ -31,16 +31,6 @@ RUN mkdir ${OSQP_PATH}/build && \
     cmake -G "Unix Makefiles" .. && \
     cmake --build . --target install
 
-# Install ORLQP
-ENV ORLQP_PATH /home/nvidia/orlqp
-ADD https://api.github.com/repos/JTylerBoylan/orlqp/git/refs/heads/main version.json
-RUN git clone https://github.com/JTylerBoylan/orlqp ${ORLQP_PATH}
-RUN mkdir ${ORLQP_PATH}/build && \
-    cd ${ORLQP_PATH}/build && \
-    cmake .. && \
-    cmake --build . --target install
-RUN ldconfig
-
 # Switch to the new non-root user
 USER nvidia
 
