@@ -11,7 +11,7 @@ namespace starq::mujoco
         last_orientation_ = Eigen::Vector3f::Zero();
         last_time_ = 0;
 
-        mujoco->addMotorControlFunction(std::bind(&MuJoCoLocalization::controlMotor, this,
+        mujoco->addMotorControlFunction(std::bind(&MuJoCoLocalization::localizationCallback, this,
                                                   std::placeholders::_1, std::placeholders::_2));
     }
 
@@ -40,7 +40,7 @@ namespace starq::mujoco
         return angular_velocity_;
     }
 
-    void MuJoCoLocalization::controlMotor(const mjModel *model, mjData *data)
+    void MuJoCoLocalization::localizationCallback(const mjModel *model, mjData *data)
     {
         (void)model; // Unused
 

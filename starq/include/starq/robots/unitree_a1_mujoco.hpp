@@ -1,87 +1,65 @@
 #ifndef STARQ_ROBOTS__UNITREE_A1_MUJOCO_HPP_
 #define STARQ_ROBOTS__UNITREE_A1_MUJOCO_HPP_
 
-#include <future>
-
-#include "starq/mujoco/mujoco_controller.hpp"
-#include "starq/mujoco/mujoco_localization.hpp"
+#include "starq/mujoco/mujoco_robot.hpp"
 #include "starq/dynamics/unitree_rrr.hpp"
-#include "starq/leg_controller.hpp"
-#include "starq/leg_command_publisher.hpp"
-#include "starq/trajectory_file_reader.hpp"
-#include "starq/trajectory_publisher.hpp"
-
-#define UNITREE_A1_LENGTH_D 0.08505
-#define UNITREE_A1_LENGTH_LT 0.2
-#define UNITREE_A1_LENGTH_LC 0.2
 
 #define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"
 
 #define UNITREE_A1_NUM_MOTORS 12
 #define UNITREE_A1_NUM_LEGS 4
 
+#define UNITREE_A1_LENGTH_D 0.08505
+#define UNITREE_A1_LENGTH_LT 0.2
+#define UNITREE_A1_LENGTH_LC 0.2
+
+#define UNITREE_A1_MASS 1.0
+#define UNITREE_A1_INERTIA 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+#define UNITREE_A1_GRAVITY 0.0, 0.0, -9.81
+
 namespace starq::robots
 {
     using namespace starq::mujoco;
     using namespace starq::dynamics;
 
-    class UnitreeA1MuJoCoRobot
+    /// @brief Unitree A1 MuJoCo robot class
+    class UnitreeA1MuJoCoRobot : public MuJoCoRobot
     {
     public:
         enum LegId
         {
-            FR = 0,
-            FL = 1,
+            FL = 0,
+            RL = 1,
             RR = 2,
-            RL = 3
+            FR = 3
         };
 
         using Ptr = std::shared_ptr<UnitreeA1MuJoCoRobot>;
 
+        /// @brief Constructor
         UnitreeA1MuJoCoRobot();
 
-        std::vector<MuJoCoController::Ptr> getMotors() const { return motors_; }
-
+        /// @brief Get the left leg dynamics
+        /// @return The left leg dynamics
         Unitree_RRR::Ptr getLeftLegDynamics() const { return unitree_RRR_L_; }
 
+        /// @brief Get the right leg dynamics
+        /// @return The right leg dynamics
         Unitree_RRR::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
 
-        std::vector<LegController::Ptr> getLegs() const { return legs_; }
-
-        slam::Localization::Ptr getLocalization() const { return localization_; }
-
-        LegCommandPublisher::Ptr getLegCommandPublisher() const { return publisher_; }
-
-        TrajectoryFileReader::Ptr getTrajectoryFileReader() const { return trajectory_file_reader_; }
-
-        TrajectoryPublisher::Ptr getTrajectoryPublisher() const { return trajectory_publisher_; }
-
-        void setSceneFile(const std::string &scene_file) { scene_file_ = scene_file; }
-
-        void startSimulation();
-
-        void waitForSimulation();
-
-        bool isSimulationOpen();
-
-        bool setFootPosition(const uint8_t &leg_id, const Eigen::Vector3f &position);
-
-        bool setFootForce(const uint8_t &leg_id, const Eigen::Vector3f &force);
-
     private:
-        MuJoCo::Ptr mujoco_;
 
-        std::vector<MuJoCoController::Ptr> motors_;
+        /// @brief Setup the parameters
+        void setupParams() override;
+
+        /// @brief Setup the motors
+        void setupMotors() override;
+
+        /// @brief Setup the legs
+        void setupLegs() override;
+
         Unitree_RRR::Ptr unitree_RRR_L_;
         Unitree_RRR::Ptr unitree_RRR_R_;
-        std::vector<LegController::Ptr> legs_;
-        slam::Localization::Ptr localization_;
-        LegCommandPublisher::Ptr publisher_;
-        TrajectoryFileReader::Ptr trajectory_file_reader_;
-        TrajectoryPublisher::Ptr trajectory_publisher_;
-
-        std::string scene_file_;
-        std::future<void> simulation_;
     };
 
 }

@@ -56,6 +56,7 @@ add_library(starqlib SHARED
   src/lib/leg_command_publisher.cpp
   src/lib/trajectory_file_reader.cpp 
   src/lib/trajectory_publisher.cpp
+  src/lib/robot.cpp
   src/lib/mpc/gait.cpp 
   src/lib/mpc/gait_sequencer.cpp 
   src/lib/mpc/com_planner.cpp 
@@ -67,6 +68,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_controller.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
+  $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_robot.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/robots/unitree_a1_mujoco.cpp>
 )
 

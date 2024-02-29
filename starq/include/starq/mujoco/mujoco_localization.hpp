@@ -7,6 +7,7 @@
 namespace starq::mujoco
 {
 
+    /// @brief MuJoCo localization class
     class MuJoCoLocalization : public slam::Localization
     {
     public:
@@ -36,9 +37,8 @@ namespace starq::mujoco
         virtual Eigen::Vector3f getCurrentAngularVelocity() override;
 
     private:
-
         /// @brief Get state information
-        void controlMotor(const mjModel *model, mjData *data);
+        void localizationCallback(const mjModel *model, mjData *data);
 
         /// @brief Convert quaternion to euler angles
         void quat2eul(const Eigen::Quaternionf &q, Eigen::Vector3f &eul);
@@ -51,7 +51,6 @@ namespace starq::mujoco
         Eigen::Vector3f last_position_;
         Eigen::Vector3f last_orientation_;
         mjtNum last_time_;
-
     };
 
 }
