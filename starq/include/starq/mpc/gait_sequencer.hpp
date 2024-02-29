@@ -39,15 +39,10 @@ namespace starq::mpc
         /// @return The stance state
         StanceState getStanceState(const milliseconds &time) const;
 
-        /// @brief Get the linear velocity
+        /// @brief Get the gait at a specific time
         /// @param time The time in milliseconds
-        /// @return Linear velocity in m/s
-        Vector3f getLinearVelocity(const milliseconds &time) const;
-
-        /// @brief Get the angular velocity
-        /// @param time The time in milliseconds
-        /// @return Angular velocity in rad/s
-        Vector3f getAngularVelocity(const milliseconds &time) const;
+        /// @return The gait
+        Gait::Ptr getGait(const milliseconds &time) const;
 
     private:
         starq::slam::Localization::Ptr localization_;

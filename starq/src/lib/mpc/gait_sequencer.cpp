@@ -50,8 +50,10 @@ namespace starq::mpc
         {
             time += config.time_step;
             config.stance_trajectory[i] = getStanceState(time);
-            config.com_trajectory[i].linear_velocity = getLinearVelocity(time);
-            config.com_trajectory[i].angular_velocity = getAngularVelocity(time);
+            config.com_trajectory[i].linear_velocity = getGait(time)->getLinearVelocity();
+            config.com_trajectory[i].angular_velocity = getGait(time)->getAngularVelocity();
+            config.timing_trajectory[i].stance_duration = getGait(time)->getStanceDuration();
+            config.timing_trajectory[i].swing_duration = getGait(time)->getSwingDuration();
         }
 
         return true;
@@ -79,39 +81,21 @@ namespace starq::mpc
         }
     }
 
-    Vector3f GaitSequencer::getLinearVelocity(const milliseconds &time) const
+    Gait::Ptr GaitSequencer::getGait(const milliseconds &time) const
     {
         if (current_gait_ == nullptr)
         {
-            return Vector3f::Zero();
+            return nullptr;
         }
 
         const auto end_time = start_time_ + current_gait_->getDuration();
         if (time < end_time)
         {
-            return current_gait_->getLinearVelocity();
+            return current_gait_;
         }
         else
         {
-            return next_gait_->getLinearVelocity();
-        }
-    }
-
-    Vector3f GaitSequencer::getAngularVelocity(const milliseconds &time) const
-    {
-        if (current_gait_ == nullptr)
-        {
-            return Vector3f::Zero();
-        }
-
-        const auto end_time = start_time_ + current_gait_->getDuration();
-        if (time < end_time)
-        {
-            return current_gait_->getAngularVelocity();
-        }
-        else
-        {
-            return next_gait_->getAngularVelocity();
+            return next_gait_;
         }
     }
 

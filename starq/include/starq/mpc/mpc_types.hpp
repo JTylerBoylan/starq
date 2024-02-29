@@ -27,11 +27,19 @@ namespace starq::mpc
     using FootholdState = std::vector<Vector3f>;
     using FootholdTrajectory = std::vector<FootholdState>;
 
+    struct StanceTiming
+    {
+        milliseconds swing_duration;
+        milliseconds stance_duration;
+    };
+    using StanceTimingTrajectory = std::vector<StanceTiming>;
+
     struct MPCConfiguration
     {
         float mass;
         Matrix3f inertia;
         Vector3f gravity;
+        float height;
 
         milliseconds time_step;
         size_t window_size;
@@ -39,6 +47,7 @@ namespace starq::mpc
         CenterOfMassTrajectory com_trajectory;
         StanceTrajectory stance_trajectory;
         FootholdTrajectory foothold_trajectory;
+        StanceTimingTrajectory timing_trajectory;
     };
 
 }

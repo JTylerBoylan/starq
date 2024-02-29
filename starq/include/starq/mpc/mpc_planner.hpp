@@ -3,8 +3,7 @@
 
 #include <memory>
 
-#include "starq/leg_controller.hpp"
-#include "starq/slam/localization.hpp"
+#include "starq/robot.hpp"
 
 #include "starq/mpc/mpc_types.hpp"
 #include "starq/mpc/gait_sequencer.hpp"
@@ -21,25 +20,11 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<MPCPlanner>;
 
         /// @brief Create a new MPCPlanner object
-        /// @param legs The leg controllers
-        /// @param localization The localization object
-        MPCPlanner(std::vector<LegController::Ptr> legs,
-                   starq::slam::Localization::Ptr localization);
+        /// @param robot The robot
+        MPCPlanner(starq::Robot::Ptr robot);
 
         /// @brief Destroy the MPCPlanner object
         ~MPCPlanner();
-
-        /// @brief Set the mass
-        /// @param mass The mass in kg
-        void setMass(const float &mass);
-
-        /// @brief Set the inertia
-        /// @param inertia The inertia matrix in kg*m^2
-        void setInertia(const Matrix3f &inertia);
-
-        /// @brief Set the gravity
-        /// @param gravity The gravity vector in m/s^2
-        void setGravity(const Vector3f &gravity);
 
         /// @brief Set the time step
         /// @param time_step The time step in milliseconds
@@ -59,16 +44,14 @@ namespace starq::mpc
         bool getConfiguration(MPCConfiguration &config);
 
     private:
-        GaitSequencer::Ptr gait_sequencer_;
-        CenterOfMassPlanner::Ptr com_planner_;
-        FootholdPlanner::Ptr foothold_planner_;
-
-        float mass_;
-        Matrix3f inertia_;
-        Vector3f gravity_;
+        starq::Robot::Ptr robot_;
 
         milliseconds time_step_;
         size_t window_size_;
+
+        GaitSequencer::Ptr gait_sequencer_;
+        CenterOfMassPlanner::Ptr com_planner_;
+        FootholdPlanner::Ptr foothold_planner_;
     };
 
 }

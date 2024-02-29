@@ -32,9 +32,11 @@ namespace starq::mpc
             float &theta = config.com_trajectory[i].orientation.z();
             float &x = config.com_trajectory[i].position.x();
             float &y = config.com_trajectory[i].position.y();
+            float &z = config.com_trajectory[i].position.z();
             theta = last_theta + angular_velocity.z() * dt;
             x = last_x + linear_velocity.x() * std::cos(theta) * dt;
             y = last_y + linear_velocity.y() * std::sin(theta) * dt;
+            z = config.height;
         }
         return true;
     }

@@ -9,7 +9,7 @@ using namespace starq::mpc;
 int main()
 {
 
-    robots::UnitreeA1MuJoCoRobot robot;
+    auto robot = std::make_shared<robots::UnitreeA1MuJoCoRobot>();
     printf("UnitreeA1MuJoCoRobot created\n");
 
     Gait::Ptr gait = std::make_shared<Gait>();
@@ -23,7 +23,7 @@ int main()
     printf("Stance duration: %d\n", int(stance_duration.count()));
     printf("Swing duration: %d\n", int(swing_duration.count()));
 
-    MPCPlanner mpc_planner(robot.getLegs(), robot.getLocalization());
+    MPCPlanner mpc_planner(robot);
     printf("MPCPlanner created\n");
 
     mpc_planner.setNextGait(gait);
@@ -31,16 +31,16 @@ int main()
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    robot.startSimulation();
+    robot->startSimulation();
     printf("Simulation started\n");
 
-    while (robot.isSimulationOpen())
+    while (robot->isSimulationOpen())
     {
 
         MPCConfiguration config;
         mpc_planner.getConfiguration(config);
 
-        auto global_time = robot.getLocalization()->getCurrentTime();
+        auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));
 
         printf("t \t stance \t com pos \t\t com ori \n");
@@ -66,11 +66,28 @@ int main()
                    com_state.orientation.z());
         }
         printf("------\n");
+        printf("t \t FL \t\t\t FR \t\t\t RL \t\t\t RR \n");
+        for (size_t i = 0; i < config.window_size; i++)
+        {
+            auto time = config.time_step * i;
+            printf("%d \t ", int(time.count()));
+            
+            for (size_t j = 0; j < config.foothold_trajectory[i].size(); j++)
+            {
+                printf("%.3f %.3f %.3f \t",
+                       config.foothold_trajectory[i][j].x(),
+                       config.foothold_trajectory[i][j].y(),
+                       config.foothold_trajectory[i][j].z());
+            }
+            printf("\n");
+        }
+        printf("------\n");
+        printf("------\n");
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    robot.waitForSimulation();
+    robot->waitForSimulation();
     printf("Simulation closed\n");
 
     printf("Done\n");

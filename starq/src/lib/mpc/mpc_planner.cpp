@@ -5,36 +5,18 @@
 namespace starq::mpc
 {
 
-    MPCPlanner::MPCPlanner(std::vector<LegController::Ptr> legs,
-                           starq::slam::Localization::Ptr localization)
-        : gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
-          com_planner_(std::make_shared<CenterOfMassPlanner>(localization)),
-          foothold_planner_(std::make_shared<FootholdPlanner>(legs, localization))
+    MPCPlanner::MPCPlanner(starq::Robot::Ptr robot)
+        : robot_(robot),
+          gait_sequencer_(std::make_shared<GaitSequencer>(robot->getLocalization())),
+          com_planner_(std::make_shared<CenterOfMassPlanner>(robot->getLocalization())),
+          foothold_planner_(std::make_shared<FootholdPlanner>(robot->getLegs(), robot->getHipLocations(), robot->getLocalization()))
     {
-        mass_ = 1.0;
-        inertia_ = Eigen::Matrix3f::Identity();
-        gravity_ = Eigen::Vector3f(0, 0, -9.81);
         time_step_ = milliseconds(50);
         window_size_ = 21;
     }
 
     MPCPlanner::~MPCPlanner()
     {
-    }
-
-    void MPCPlanner::setMass(const float &mass)
-    {
-        mass_ = mass;
-    }
-
-    void MPCPlanner::setInertia(const Matrix3f &inertia)
-    {
-        inertia_ = inertia;
-    }
-
-    void MPCPlanner::setGravity(const Vector3f &gravity)
-    {
-        gravity_ = gravity;
     }
 
     void MPCPlanner::setTimeStep(const milliseconds &time_step)
@@ -60,9 +42,10 @@ namespace starq::mpc
             return false;
         }
 
-        config.mass = mass_;
-        config.inertia = inertia_;
-        config.gravity = gravity_;
+        config.mass = robot_->getBodyMass();
+        config.inertia = robot_->getBodyInertia();
+        config.gravity = robot_->getGravity();
+        config.height = robot_->getBodyHeight();
 
         config.time_step = time_step_;
         config.window_size = window_size_;
@@ -70,6 +53,7 @@ namespace starq::mpc
         config.stance_trajectory.resize(config.window_size);
         config.com_trajectory.resize(config.window_size);
         config.foothold_trajectory.resize(config.window_size);
+        config.timing_trajectory.resize(config.window_size);
 
         if (!gait_sequencer_->sync())
         {

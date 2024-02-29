@@ -69,6 +69,10 @@ namespace starq
         /// @return The gravity vector [m/s^2] (x, y, z)
         Vector3f getGravity() const { return gravity_; }
 
+        /// @brief Get the body height
+        /// @return The body height [m]
+        float getBodyHeight() const { return height_; }
+
         /// @brief Get the hip locations
         /// @return The hip locations [m] (x, y, z) in the body frame
         std::vector<Vector3f> getHipLocations() const { return hip_locations_; }
@@ -122,6 +126,7 @@ namespace starq
         float mass_;
         Matrix3f inertia_;
         Vector3f gravity_;
+        float height_;
         std::vector<Vector3f> hip_locations_;
         std::vector<MotorController::Ptr> motors_;
         std::vector<LegController::Ptr> legs_;

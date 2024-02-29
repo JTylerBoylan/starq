@@ -16,6 +16,10 @@
 #define UNITREE_A1_MASS 1.0
 #define UNITREE_A1_INERTIA 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 #define UNITREE_A1_GRAVITY 0.0, 0.0, -9.81
+#define UNITREE_A1_HEIGHT 0.25
+
+#define UNITREE_A1_HIP_OFFSET_X 0.25
+#define UNITREE_A1_HIP_OFFSET_Y 0.15
 
 namespace starq::robots
 {

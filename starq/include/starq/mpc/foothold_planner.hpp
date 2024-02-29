@@ -18,6 +18,7 @@ namespace starq::mpc
 
         /// @brief Create a new FootholdPlanner object
         FootholdPlanner(std::vector<LegController::Ptr> legs,
+                        std::vector<Vector3f> hip_locations,
                         starq::slam::Localization::Ptr localization);
 
         /// @brief Destroy the FootholdPlanner object
@@ -30,6 +31,7 @@ namespace starq::mpc
 
     private:
         std::vector<LegController::Ptr> legs_;
+        std::vector<Vector3f> hip_locations_;
         starq::slam::Localization::Ptr localization_;
     };
 
