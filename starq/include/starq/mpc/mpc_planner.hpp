@@ -34,6 +34,26 @@ namespace starq::mpc
         /// @param window_size The window size
         void setWindowSize(const size_t &window_size);
 
+        /// @brief Set the weight for the state
+        /// @param position_weights Weight for the position
+        /// @param orientation_weights Weight for the orientation
+        /// @param linear_velocity_weights Weight for the linear velocity
+        /// @param angular_velocity_weights Weight for the angular velocity
+        void setStateWeights(const Vector3f &position_weights,
+                             const Vector3f &orientation_weights,
+                             const Vector3f &linear_velocity_weights,
+                             const Vector3f &angular_velocity_weights);
+
+        /// @brief Set the weight for the control
+        /// @param force_weights Weight for the force
+        void setControlWeights(const Vector3f &force_weights);
+
+        /// @brief Set the control bounds
+        /// @param force_min Minimum force
+        /// @param force_max Maximum force
+        void setControlBounds(const Vector3f &force_min,
+                              const Vector3f &force_max);
+
         /// @brief Set the next gait pattern
         /// @param gait The next gait pattern
         void setNextGait(Gait::Ptr gait);
@@ -48,6 +68,15 @@ namespace starq::mpc
 
         milliseconds time_step_;
         size_t window_size_;
+
+        Vector3f position_weights_;
+        Vector3f orientation_weights_;
+        Vector3f linear_velocity_weights_;
+        Vector3f angular_velocity_weights_;
+        Vector3f force_weights_;
+
+        Vector3f force_min_;
+        Vector3f force_max_;
 
         GaitSequencer::Ptr gait_sequencer_;
         CenterOfMassPlanner::Ptr com_planner_;

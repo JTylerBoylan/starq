@@ -29,6 +29,29 @@ namespace starq::mpc
         window_size_ = window_size;
     }
 
+    void MPCPlanner::setStateWeights(const Vector3f &position_weights,
+                                     const Vector3f &orientation_weights,
+                                     const Vector3f &linear_velocity_weights,
+                                     const Vector3f &angular_velocity_weights)
+    {
+        position_weights_ = position_weights;
+        orientation_weights_ = orientation_weights;
+        linear_velocity_weights_ = linear_velocity_weights;
+        angular_velocity_weights_ = angular_velocity_weights;
+    }
+
+    void MPCPlanner::setControlWeights(const Vector3f &force_weights)
+    {
+        force_weights_ = force_weights;
+    }
+
+    void MPCPlanner::setControlBounds(const Vector3f &force_min,
+                                      const Vector3f &force_max)
+    {
+        force_min_ = force_min;
+        force_max_ = force_max;
+    }
+
     void MPCPlanner::setNextGait(Gait::Ptr gait)
     {
         gait_sequencer_->setNextGait(gait);
@@ -55,6 +78,15 @@ namespace starq::mpc
 
         config.time_step = time_step_;
         config.window_size = window_size_;
+
+        config.position_weights = position_weights_;
+        config.orientation_weights = orientation_weights_;
+        config.linear_velocity_weights = linear_velocity_weights_;
+        config.angular_velocity_weights = angular_velocity_weights_;
+        config.force_weights = force_weights_;
+
+        config.force_min = force_min_;
+        config.force_max = force_max_;
 
         config.stance_trajectory.resize(config.window_size);
         config.com_trajectory.resize(config.window_size);

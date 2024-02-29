@@ -48,6 +48,15 @@ namespace starq::mpc
         StanceTrajectory stance_trajectory;
         FootholdTrajectory foothold_trajectory;
         StanceTimingTrajectory timing_trajectory;
+
+        Vector3f position_weights;
+        Vector3f orientation_weights;
+        Vector3f linear_velocity_weights;
+        Vector3f angular_velocity_weights;
+        Vector3f force_weights;
+
+        Vector3f force_min;
+        Vector3f force_max;
     };
 
 }
