@@ -9,7 +9,7 @@ namespace starq::mpc
 {
     Gait::Gait()
         : duration_(1000),
-          linear_velocity_(Vector3f(1, 0, 0)),
+          linear_velocity_(Vector3f::Zero()),
           angular_velocity_(Vector3f::Zero())
     {
     }
@@ -59,7 +59,6 @@ namespace starq::mpc
         }
 
         stance_ratio_ = static_cast<float>(stance_count) / static_cast<float>(stance_pattern_.size());
-        swing_ratio_ = 1.0 - stance_ratio_;
 
         return true;
     }
@@ -87,7 +86,7 @@ namespace starq::mpc
 
     milliseconds Gait::getSwingDuration() const
     {
-        return milliseconds(static_cast<int>(std::round(duration_.count() * swing_ratio_)));
+        return getDuration() - getStanceDuration();
     }
 
     Vector3f Gait::getLinearVelocity() const

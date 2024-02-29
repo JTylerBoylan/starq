@@ -16,6 +16,8 @@ int main()
     gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
     printf("Gait loaded\n");
 
+    gait->setVelocity(Vector3f(1.0, 0, 0), Vector3f(0, 0, 0));
+
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
     auto swing_duration = gait->getSwingDuration();

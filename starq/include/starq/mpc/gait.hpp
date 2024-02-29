@@ -65,7 +65,6 @@ namespace starq::mpc
     private:
         milliseconds duration_;
         double stance_ratio_;
-        double swing_ratio_;
 
         Vector3f linear_velocity_;
         Vector3f angular_velocity_;
