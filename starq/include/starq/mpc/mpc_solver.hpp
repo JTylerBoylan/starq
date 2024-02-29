@@ -13,9 +13,7 @@ namespace starq::mpc
 
         MPCSolver(const MPCConfiguration &config);
 
-        //virtual void solve() = 0;
-
-        void print();
+        virtual void solve() = 0;
 
     private:
 

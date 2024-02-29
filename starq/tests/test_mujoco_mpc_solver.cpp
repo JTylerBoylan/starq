@@ -32,6 +32,16 @@ int main()
     mpc_planner.setTimeStep(milliseconds(50));
     mpc_planner.setWindowSize(21);
 
+    mpc_planner.setStateWeights(Vector3f(1.0, 1.0, 1.0),
+                                Vector3f(1.0, 1.0, 1.0),
+                                Vector3f(1.0, 1.0, 1.0),
+                                Vector3f(1.0, 1.0, 1.0));
+
+    mpc_planner.setControlWeights(Vector3f(1.0, 1.0, 1.0));
+
+    mpc_planner.setControlBounds(Vector3f(-100, -100, -100),
+                                 Vector3f(100, 100, 100));
+
     mpc_planner.setNextGait(gait);
     printf("Gait set\n");
 
@@ -46,12 +56,10 @@ int main()
         MPCConfiguration config;
         mpc_planner.getConfiguration(config);
 
-        MPCSolver mpc_solver(config);
+        // MPCSolver mpc_solver(config);
 
         auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));
-
-        mpc_solver.print();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

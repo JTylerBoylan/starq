@@ -126,23 +126,4 @@ namespace starq::mpc
         return S;
     }
 
-    void MPCSolver::print()
-    {
-        std::cout << "MPC Solver" << std::endl;
-        for (size_t k = 0; k < config_.window_size; k++)
-        {
-            std::cout << "k = " << k << std::endl;
-            std::cout << "n_legs = " << n_legs_[k] << std::endl;
-            std::cout << "xref = " << xref_[k].transpose() << std::endl;
-            std::cout << "Q = " << Q_[k] << std::endl;
-            std::cout << "R = " << R_[k] << std::endl;
-            std::cout << "A = " << A_[k] << std::endl;
-            std::cout << "B = " << B_[k] << std::endl;
-            std::cout << "x_min = " << x_min_[k].transpose() << std::endl;
-            std::cout << "x_max = " << x_max_[k].transpose() << std::endl;
-            std::cout << "u_min = " << u_min_[k].transpose() << std::endl;
-            std::cout << "u_max = " << u_max_[k].transpose() << std::endl;
-        }
-    }
-
 }
