@@ -12,6 +12,7 @@ endif()
 # Options for building with specific libraries
 option(WITH_ROS2 "Build with ROS2 support" ON)
 option(WITH_MUJOCO "Build with MuJoCo support" ON)
+option(WITH_ORLQP "Build with ORLQP support" ON)
 
 # Find required dependencies for the project
 find_package(Eigen3 REQUIRED)
@@ -39,6 +40,10 @@ endif()
 if (WITH_MUJOCO)
   find_package(mujoco REQUIRED)
   find_package(glfw3 3.3 REQUIRED)
+endif()
+
+if (WITH_ORLQP)
+  find_package(orlqp REQUIRED)
 endif()
 
 # Include directories for Eigen and project-specific headers
@@ -78,7 +83,8 @@ target_include_directories(starqlib PUBLIC
 )
 
 # Linking dependencies conditionally
-target_link_libraries(starqlib PUBLIC Eigen3::Eigen)
+target_link_libraries(starqlib PUBLIC stdc++ stdc++fs m pthread Eigen3::Eigen)
+
 if(WITH_ROS2)
   target_link_libraries(starqlib PUBLIC rclcpp::rclcpp "${cpp_typesupport_target}")
 
@@ -86,8 +92,13 @@ if(WITH_ROS2)
   ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
   ament_export_dependencies(ament_cmake)
 endif()
+
 if(WITH_MUJOCO)
   target_link_libraries(starqlib PUBLIC glfw mujoco::mujoco)
+endif()
+
+if(WITH_ORLQP)
+  target_link_libraries(starqlib PUBLIC orlqp::orlqp)
 endif()
 
 # Install the library and headers
@@ -103,40 +114,40 @@ install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 # Example executables
 add_executable(example_control examples/example_control.cpp)
 target_include_directories(example_control PUBLIC include)
-target_link_libraries(example_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(example_control PUBLIC starqlib)
 
 add_executable(two_leg_control examples/two_leg_control.cpp)
 target_include_directories(two_leg_control PUBLIC include)
-target_link_libraries(two_leg_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(two_leg_control PUBLIC starqlib)
 
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)
-target_link_libraries(test_can_connection PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_can_connection PUBLIC starqlib)
 
 add_executable(test_odrive_control tests/test_odrive_control.cpp)
 target_include_directories(test_odrive_control PUBLIC include)
-target_link_libraries(test_odrive_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_odrive_control PUBLIC starqlib)
 
 add_executable(test_fivebar2d_position_control tests/test_fivebar2d_position_control.cpp)
 target_include_directories(test_fivebar2d_position_control PUBLIC include)
-target_link_libraries(test_fivebar2d_position_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_fivebar2d_position_control PUBLIC starqlib)
 
 add_executable(test_fivebar2d_force_control tests/test_fivebar2d_force_control.cpp)
 target_include_directories(test_fivebar2d_force_control PUBLIC include)
-target_link_libraries(test_fivebar2d_force_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_fivebar2d_force_control PUBLIC starqlib)
 
 add_executable(test_fivebar2d_dummy tests/test_fivebar2d_dummy.cpp)
 target_include_directories(test_fivebar2d_dummy PUBLIC include)
-target_link_libraries(test_fivebar2d_dummy PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_fivebar2d_dummy PUBLIC starqlib)
 
 add_executable(test_clear_errors tests/test_clear_errors.cpp)
 target_include_directories(test_clear_errors PUBLIC include)
-target_link_libraries(test_clear_errors PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_clear_errors PUBLIC starqlib)
 
 add_executable(test_command_publisher_dummy tests/test_command_publisher_dummy.cpp)
 target_include_directories(test_command_publisher_dummy PUBLIC include)
-target_link_libraries(test_command_publisher_dummy PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(test_command_publisher_dummy PUBLIC starqlib)
 
 if (WITH_ROS2)
   
@@ -152,35 +163,35 @@ if (WITH_MUJOCO)
 
   add_executable(test_mujoco tests/test_mujoco.cpp)
   target_include_directories(test_mujoco PUBLIC include)
-  target_link_libraries(test_mujoco PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco PUBLIC starqlib)
 
   add_executable(test_mujoco_controller tests/test_mujoco_controller.cpp)
   target_include_directories(test_mujoco_controller PUBLIC include)
-  target_link_libraries(test_mujoco_controller PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_controller PUBLIC starqlib)
 
   add_executable(test_mujoco_leg_control tests/test_mujoco_leg_control.cpp)
   target_include_directories(test_mujoco_leg_control PUBLIC include)
-  target_link_libraries(test_mujoco_leg_control PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_leg_control PUBLIC starqlib)
 
   add_executable(test_mujoco_leg_trajectory tests/test_mujoco_leg_trajectory.cpp)
   target_include_directories(test_mujoco_leg_trajectory PUBLIC include)
-  target_link_libraries(test_mujoco_leg_trajectory PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_leg_trajectory PUBLIC starqlib)
 
   add_executable(test_mujoco_leg_forces tests/test_mujoco_leg_forces.cpp)
   target_include_directories(test_mujoco_leg_forces PUBLIC include)
-  target_link_libraries(test_mujoco_leg_forces PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_leg_forces PUBLIC starqlib)
 
   add_executable(test_mujoco_localization tests/test_mujoco_localization.cpp)
   target_include_directories(test_mujoco_localization PUBLIC include)
-  target_link_libraries(test_mujoco_localization PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_localization PUBLIC starqlib)
 
   add_executable(test_unitree_a1_mujoco_robot tests/test_unitree_a1_mujoco_robot.cpp)
   target_include_directories(test_unitree_a1_mujoco_robot PUBLIC include)
-  target_link_libraries(test_unitree_a1_mujoco_robot PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_unitree_a1_mujoco_robot PUBLIC starqlib)
 
   add_executable(test_mujoco_mpc_planner tests/test_mujoco_mpc_planner.cpp)
   target_include_directories(test_mujoco_mpc_planner PUBLIC include)
-  target_link_libraries(test_mujoco_mpc_planner PUBLIC stdc++ stdc++fs m pthread starqlib)
+  target_link_libraries(test_mujoco_mpc_planner PUBLIC starqlib)
 
 endif()
 

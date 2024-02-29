@@ -11,8 +11,8 @@ namespace starq::mpc
           com_planner_(std::make_shared<CenterOfMassPlanner>(robot->getLocalization())),
           foothold_planner_(std::make_shared<FootholdPlanner>(robot->getLegs(), robot->getHipLocations(), robot->getLocalization()))
     {
-        time_step_ = milliseconds(50);
-        window_size_ = 21;
+        time_step_ = milliseconds(0);
+        window_size_ = 0;
     }
 
     MPCPlanner::~MPCPlanner()
@@ -39,6 +39,12 @@ namespace starq::mpc
         if (window_size_ == 0)
         {
             std::cerr << "Window size not set" << std::endl;
+            return false;
+        }
+
+        if (time_step_ == milliseconds(0))
+        {
+            std::cerr << "Time step not set" << std::endl;
             return false;
         }
 

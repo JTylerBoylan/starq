@@ -26,6 +26,9 @@ int main()
     MPCPlanner mpc_planner(robot);
     printf("MPCPlanner created\n");
 
+    mpc_planner.setTimeStep(milliseconds(50));
+    mpc_planner.setWindowSize(21);
+
     mpc_planner.setNextGait(gait);
     printf("Gait set\n");
 
@@ -71,7 +74,7 @@ int main()
         {
             auto time = config.time_step * i;
             printf("%d \t ", int(time.count()));
-            
+
             for (size_t j = 0; j < config.foothold_trajectory[i].size(); j++)
             {
                 printf("%.3f %.3f %.3f \t",
