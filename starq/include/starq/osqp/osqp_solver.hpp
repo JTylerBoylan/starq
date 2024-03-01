@@ -20,6 +20,8 @@ namespace starq::osqp
 
         ~OSQP_MPCSolver();
 
+        bool setup();
+
         bool solve() override;
 
         OSQPSettings *getSettings() const { return osqp_.settings; }
@@ -39,9 +41,9 @@ namespace starq::osqp
         void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
 
-        int num_vars_;
-        int num_constraints_;
-
+        int size_x_;
+        int size_u_;
+        
         SparseMatrix<double> H_;
         VectorXd q_;
         SparseMatrix<double> Ac_;

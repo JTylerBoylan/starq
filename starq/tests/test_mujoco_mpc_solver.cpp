@@ -15,10 +15,10 @@ int main()
     printf("UnitreeA1MuJoCoRobot created\n");
 
     Gait::Ptr gait = std::make_shared<Gait>();
-    gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
+    gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
     printf("Gait loaded\n");
 
-    gait->setVelocity(Vector3f(1.0, 0, 0), Vector3f(0, 0, 0));
+    gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
 
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
@@ -33,15 +33,15 @@ int main()
     mpc_planner.setTimeStep(milliseconds(50));
     mpc_planner.setWindowSize(21);
 
-    mpc_planner.setStateWeights(Vector3f(1.0, 1.0, 1.0),
-                                Vector3f(1.0, 1.0, 1.0),
-                                Vector3f(1.0, 1.0, 1.0),
-                                Vector3f(1.0, 1.0, 1.0));
+    mpc_planner.setStateWeights(Vector3f(10.0, 10.0, 10.0),
+                                Vector3f(0.0, 0.0, 1.0),
+                                Vector3f(1.0, 0.0, 0.0),
+                                Vector3f(0.0, 0.0, 1.0));
 
-    mpc_planner.setControlWeights(Vector3f(1.0, 1.0, 1.0));
+    mpc_planner.setControlWeights(Vector3f(0.0, 0.0, 0.0));
 
-    mpc_planner.setControlBounds(Vector3f(-100, -100, -100),
-                                 Vector3f(100, 100, 100));
+    mpc_planner.setControlBounds(Vector3f(-33.5, -33.5, -33.5),
+                                 Vector3f(33.5, 33.5, 33.5));
 
     mpc_planner.setNextGait(gait);
     printf("Gait set\n");
@@ -58,6 +58,14 @@ int main()
         mpc_planner.getConfiguration(config);
 
         OSQP_MPCSolver mpc_solver(config);
+        mpc_solver.getSettings()->verbose = true;
+        mpc_solver.getSettings()->max_iter = 100000;
+
+        mpc_solver.setup();
+        printf("OSQP_MPCSolver setup\n");
+
+        mpc_solver.solve();
+        printf("OSQP_MPCSolver solved\n");
 
         auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));

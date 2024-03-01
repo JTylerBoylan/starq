@@ -4,6 +4,7 @@
   <option cone="elliptic" impratio="100"/>
 
   <default>
+    <motor ctrlrange="-33.5 33.5" ctrllimited="true"/>
     <default class="a1">
       <geom friction="0.6" margin="0.001"/>
       <joint axis="0 1 0" damping="2" armature="0.01" frictionloss="0.2"/>

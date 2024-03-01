@@ -23,7 +23,6 @@ namespace starq::mpc
 
         const MPCConfiguration config_;
 
-        VectorXf x0_;
         std::vector<int> n_legs_;
         std::vector<VectorXf> xref_;
         std::vector<MatrixXf> Q_;
