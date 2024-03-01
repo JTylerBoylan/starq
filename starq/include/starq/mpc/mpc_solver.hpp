@@ -13,9 +13,9 @@ namespace starq::mpc
 
         MPCSolver(const MPCConfiguration &config);
 
-        virtual void solve() = 0;
+        virtual bool solve() = 0;
 
-    private:
+    protected:
 
         void initialize();
 

@@ -76,6 +76,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_robot.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/robots/unitree_a1_mujoco.cpp>
+  $<$<BOOL:${WITH_OSQP}>:src/lib/osqp/osqp_solver.cpp>
 )
 
 target_include_directories(starqlib PUBLIC 
@@ -98,7 +99,7 @@ if(WITH_MUJOCO)
   target_link_libraries(starqlib PUBLIC glfw mujoco::mujoco)
 endif()
 
-if(WITH_ORLQP)
+if(WITH_OSQP)
   target_link_libraries(starqlib PUBLIC osqp::osqp)
 endif()
 

@@ -2,10 +2,11 @@
 
 #include "starq/robots/unitree_a1_mujoco.hpp"
 #include "starq/mpc/mpc_planner.hpp"
-#include "starq/mpc/mpc_solver.hpp"
+#include "starq/osqp/osqp_solver.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
+using namespace starq::osqp;
 
 int main()
 {
@@ -56,7 +57,7 @@ int main()
         MPCConfiguration config;
         mpc_planner.getConfiguration(config);
 
-        // MPCSolver mpc_solver(config);
+        OSQP_MPCSolver mpc_solver(config);
 
         auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));
