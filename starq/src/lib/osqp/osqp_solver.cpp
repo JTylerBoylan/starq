@@ -53,7 +53,7 @@ namespace starq::osqp
         const int Nn = config_.window_size;
         const int Nx = 13;
         std::vector<Triplet<double>> triplets;
-        for (int i = 0; i < Nn + 1; i++)
+        for (int i = 0; i < Nn; i++)
         {
             const int idx = Nx * i;
             for (int j = 0; j < Nx; j++)
