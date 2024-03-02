@@ -45,11 +45,11 @@ namespace starq::mpc
         force_weights_ = force_weights;
     }
 
-    void MPCPlanner::setControlBounds(const float &fz_min,
-                                      const float &fz_max)
+    void MPCPlanner::setControlBounds(const Vector3f &force_min,
+                                      const Vector3f &force_max)
     {
-        fz_min_ = fz_min;
-        fz_max_ = fz_max;
+        force_min_ = force_min;
+        force_max_ = force_max;
     }
 
     void MPCPlanner::setNextGait(Gait::Ptr gait)
@@ -75,7 +75,6 @@ namespace starq::mpc
         config.inertia = robot_->getBodyInertia();
         config.gravity = robot_->getGravity();
         config.height = robot_->getBodyHeight();
-        config.friction_coeff = robot_->getFootFriction();
 
         config.time_step = time_step_;
         config.window_size = window_size_;
@@ -86,8 +85,8 @@ namespace starq::mpc
         config.angular_velocity_weights = angular_velocity_weights_;
         config.force_weights = force_weights_;
 
-        config.fz_min = fz_min_;
-        config.fz_max = fz_max_;
+        config.force_min = force_min_;
+        config.force_max = force_max_;
 
         config.stance_trajectory.resize(config.window_size);
         config.com_trajectory.resize(config.window_size);

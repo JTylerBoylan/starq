@@ -40,7 +40,6 @@ namespace starq::mpc
         Matrix3f inertia;
         Vector3f gravity;
         float height;
-        float friction_coeff;
 
         milliseconds time_step;
         size_t window_size;
@@ -56,8 +55,8 @@ namespace starq::mpc
         Vector3f angular_velocity_weights;
         Vector3f force_weights;
 
-        float fz_min;
-        float fz_max;
+        Vector3f force_min;
+        Vector3f force_max;
     };
 
 }

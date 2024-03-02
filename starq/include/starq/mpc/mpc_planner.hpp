@@ -49,10 +49,10 @@ namespace starq::mpc
         void setControlWeights(const Vector3f &force_weights);
 
         /// @brief Set the control bounds
-        /// @param fz_min Minimum Z force
-        /// @param fz_max Maximum Z force
-        void setControlBounds(const float &fz_min,
-                              const float &fz_max);
+        /// @param force_min Minimum force
+        /// @param force_max Maximum force
+        void setControlBounds(const Vector3f &force_min,
+                              const Vector3f &force_max);
 
         /// @brief Set the next gait pattern
         /// @param gait The next gait pattern
@@ -75,8 +75,8 @@ namespace starq::mpc
         Vector3f angular_velocity_weights_;
         Vector3f force_weights_;
 
-        float fz_min_;
-        float fz_max_;
+        Vector3f force_min_;
+        Vector3f force_max_;
 
         GaitSequencer::Ptr gait_sequencer_;
         CenterOfMassPlanner::Ptr com_planner_;

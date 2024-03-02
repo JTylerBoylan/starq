@@ -19,7 +19,6 @@ namespace starq::robots
         inertia_ << UNITREE_A1_INERTIA;
         gravity_ << UNITREE_A1_GRAVITY;
         height_ = UNITREE_A1_HEIGHT;
-        foot_friction_ = UNITREE_A1_FOOT_FRICTION;
 
         hip_locations_.resize(UNITREE_A1_NUM_LEGS);
         hip_locations_[LegId::FL] << UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0;

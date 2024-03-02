@@ -73,10 +73,6 @@ namespace starq
         /// @return The body height [m]
         float getBodyHeight() const { return height_; }
 
-        /// @brief Get the foot friction
-        /// @return The foot friction [N/(m/s)]
-        float getFootFriction() const { return foot_friction_; }
-
         /// @brief Get the hip locations
         /// @return The hip locations [m] (x, y, z) in the body frame
         std::vector<Vector3f> getHipLocations() const { return hip_locations_; }
@@ -131,7 +127,6 @@ namespace starq
         Matrix3f inertia_;
         Vector3f gravity_;
         float height_;
-        float foot_friction_;
         std::vector<Vector3f> hip_locations_;
         std::vector<MotorController::Ptr> motors_;
         std::vector<LegController::Ptr> legs_;
