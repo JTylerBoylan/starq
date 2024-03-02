@@ -31,17 +31,17 @@ int main()
     printf("MPCPlanner created\n");
 
     mpc_planner.setTimeStep(milliseconds(50));
-    mpc_planner.setWindowSize(21);
+    mpc_planner.setWindowSize(11);
 
-    mpc_planner.setStateWeights(Vector3f(10.0, 10.0, 10.0),
+    mpc_planner.setStateWeights(Vector3f(0.0, 0.0, 50.0),
                                 Vector3f(0.0, 0.0, 1.0),
                                 Vector3f(1.0, 0.0, 0.0),
                                 Vector3f(0.0, 0.0, 1.0));
 
     mpc_planner.setControlWeights(Vector3f(0.0, 0.0, 0.0));
 
-    mpc_planner.setControlBounds(Vector3f(-33.5, -33.5, -33.5),
-                                 Vector3f(33.5, 33.5, 33.5));
+    mpc_planner.setControlBounds(Vector3f(-1000, -1000, -1000),
+                                 Vector3f(1000, 1000, 1000));
 
     mpc_planner.setNextGait(gait);
     printf("Gait set\n");
@@ -51,27 +51,34 @@ int main()
     robot->startSimulation();
     printf("Simulation started\n");
 
-    while (robot->isSimulationOpen())
+    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.27);
+    for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-
-        MPCConfiguration config;
-        mpc_planner.getConfiguration(config);
-
-        OSQP_MPCSolver mpc_solver(config);
-        mpc_solver.getSettings()->verbose = true;
-        mpc_solver.getSettings()->max_iter = 100000;
-
-        mpc_solver.setup();
-        printf("OSQP_MPCSolver setup\n");
-
-        mpc_solver.solve();
-        printf("OSQP_MPCSolver solved\n");
-
-        auto global_time = robot->getLocalization()->getCurrentTime();
-        printf("Global time: %d\n", int(global_time.count()));
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        robot->setFootPosition(id, foot_position);
     }
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    // while (robot->isSimulationOpen())
+    //{
+
+    MPCConfiguration config;
+    mpc_planner.getConfiguration(config);
+
+    OSQP_MPCSolver mpc_solver(config);
+    mpc_solver.getSettings()->verbose = true;
+    mpc_solver.getSettings()->max_iter = 100000;
+
+    mpc_solver.setup();
+    printf("OSQP_MPCSolver setup\n");
+
+    mpc_solver.solve();
+    printf("OSQP_MPCSolver solved\n");
+
+    auto global_time = robot->getLocalization()->getCurrentTime();
+    printf("Global time: %d\n", int(global_time.count()));
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //}
 
     robot->waitForSimulation();
     printf("Simulation closed\n");

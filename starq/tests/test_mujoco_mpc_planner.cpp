@@ -13,10 +13,10 @@ int main()
     printf("UnitreeA1MuJoCoRobot created\n");
 
     Gait::Ptr gait = std::make_shared<Gait>();
-    gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
+    gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
     printf("Gait loaded\n");
 
-    gait->setVelocity(Vector3f(1.0, 0, 0), Vector3f(0, 0, 0));
+    gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
 
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
@@ -39,6 +39,13 @@ int main()
     robot->startSimulation();
     printf("Simulation started\n");
 
+    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.27);
+    for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
+    {
+        robot->setFootPosition(id, foot_position);
+    }
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
     while (robot->isSimulationOpen())
     {
 
@@ -48,7 +55,7 @@ int main()
         auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));
 
-        printf("t \t stance \t com pos \t\t com ori \n");
+        printf("t \t stance \t com pos \t\t com ori \t\t com vel \t\t com rot \n");
         for (size_t i = 0; i < config.window_size; i++)
         {
             auto time = config.time_step * i;
@@ -62,16 +69,22 @@ int main()
             printf("\t");
 
             CenterOfMassState com_state = config.com_trajectory[i];
-            printf("%.3f %.3f %.3f \t %.3f %.3f %.3f \n",
+            printf("%.3f %.3f %.3f \t %.3f %.3f %.3f \t %.3f %.3f %.3f \t %.3f %.3f %.3f \n",
                    com_state.position.x(),
                    com_state.position.y(),
                    com_state.position.z(),
                    com_state.orientation.x(),
                    com_state.orientation.y(),
-                   com_state.orientation.z());
+                   com_state.orientation.z(),
+                   com_state.linear_velocity.x(),
+                   com_state.linear_velocity.y(),
+                   com_state.linear_velocity.z(),
+                   com_state.angular_velocity.x(),
+                   com_state.angular_velocity.y(),
+                   com_state.angular_velocity.z());
         }
         printf("------\n");
-        printf("t \t FL \t\t\t FR \t\t\t RL \t\t\t RR \n");
+        printf("t \t FL \t\t\t RL \t\t\t RR \t\t\t FR \n");
         for (size_t i = 0; i < config.window_size; i++)
         {
             auto time = config.time_step * i;

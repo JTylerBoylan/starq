@@ -35,17 +35,17 @@ namespace starq::mpc
         for (size_t k = 0; k < nn; k++)
         {
             VectorXf xref = VectorXf::Zero(13);
-            xref.block<3, 1>(0, 0) = config_.com_trajectory[k].position;
-            xref.block<3, 1>(3, 0) = config_.com_trajectory[k].orientation;
-            xref.block<3, 1>(6, 0) = config_.com_trajectory[k].linear_velocity;
-            xref.block<3, 1>(9, 0) = config_.com_trajectory[k].angular_velocity;
+            xref.block<3, 1>(0, 0) = config_.com_trajectory[k].orientation;
+            xref.block<3, 1>(3, 0) = config_.com_trajectory[k].position;
+            xref.block<3, 1>(6, 0) = config_.com_trajectory[k].angular_velocity;
+            xref.block<3, 1>(9, 0) = config_.com_trajectory[k].linear_velocity;
             xref(12) = 1.0;
 
             MatrixXf Q = MatrixXf::Zero(13, 13);
-            Q.block<3, 3>(0, 0) = config_.position_weights.asDiagonal();
-            Q.block<3, 3>(3, 3) = config_.orientation_weights.asDiagonal();
-            Q.block<3, 3>(6, 6) = config_.linear_velocity_weights.asDiagonal();
-            Q.block<3, 3>(9, 9) = config_.angular_velocity_weights.asDiagonal();
+            Q.block<3, 3>(0, 0) = config_.orientation_weights.asDiagonal();
+            Q.block<3, 3>(3, 3) = config_.position_weights.asDiagonal();
+            Q.block<3, 3>(6, 6) = config_.angular_velocity_weights.asDiagonal();
+            Q.block<3, 3>(9, 9) = config_.linear_velocity_weights.asDiagonal();
             Q(12, 12) = 0.0;
 
             VectorXf x_min = VectorXf::Zero(13);
@@ -72,7 +72,7 @@ namespace starq::mpc
             MatrixXf A = MatrixXf::Zero(13, 13);
             A.block<3, 3>(0, 6) = Rz;
             A.block<3, 3>(3, 9) = Matrix3f::Identity();
-            A.block<1, 3>(12, 9) = g.transpose();
+            A.block<3, 1>(9, 12) = g;
 
             int n_legs = 0;
             for (size_t j = 0; j < config_.stance_trajectory[k].size(); j++)
