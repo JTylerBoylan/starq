@@ -31,7 +31,7 @@ int main()
     printf("MPCPlanner created\n");
 
     mpc_planner.setTimeStep(milliseconds(50));
-    mpc_planner.setWindowSize(11);
+    mpc_planner.setWindowSize(3);
 
     mpc_planner.setStateWeights(Vector3f(0.0, 0.0, 50.0),
                                 Vector3f(0.0, 0.0, 1.0),
@@ -40,8 +40,7 @@ int main()
 
     mpc_planner.setControlWeights(Vector3f(0.0, 0.0, 0.0));
 
-    mpc_planner.setControlBounds(Vector3f(-1000, -1000, -1000),
-                                 Vector3f(1000, 1000, 1000));
+    mpc_planner.setControlBounds(10, 750);
 
     mpc_planner.setNextGait(gait);
     printf("Gait set\n");
@@ -66,7 +65,7 @@ int main()
 
     OSQP_MPCSolver mpc_solver(config);
     mpc_solver.getSettings()->verbose = true;
-    mpc_solver.getSettings()->max_iter = 100000;
+    mpc_solver.getSettings()->max_iter = 1000000;
 
     mpc_solver.setup();
     printf("OSQP_MPCSolver setup\n");

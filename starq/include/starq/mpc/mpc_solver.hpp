@@ -23,16 +23,18 @@ namespace starq::mpc
 
         const MPCConfiguration config_;
 
+        int nx_;
+        int nu_;
+
         std::vector<int> n_legs_;
         std::vector<VectorXf> xref_;
         std::vector<MatrixXf> Q_;
         std::vector<MatrixXf> R_;
         std::vector<MatrixXf> A_;
         std::vector<MatrixXf> B_;
-        std::vector<VectorXf> x_min_;
-        std::vector<VectorXf> x_max_;
-        std::vector<VectorXf> u_min_;
-        std::vector<VectorXf> u_max_;
+        std::vector<MatrixXf> C_;
+        std::vector<VectorXf> cl_;
+        std::vector<VectorXf> cu_;
     };
 
 }

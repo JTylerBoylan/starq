@@ -31,6 +31,12 @@ namespace starq::osqp
     private:
 
         void setupQP();
+        void calculateAqp();
+        void calculateBqp();
+        void calculateL();
+        void calculateK();
+        void calculateY();
+
         void calculateQPHessian();
         void calculateQPGradient();
         void calculateQPLinearConstraint();
@@ -41,9 +47,13 @@ namespace starq::osqp
         void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
 
-        int size_x_;
-        int size_u_;
         
+        MatrixXf Aqp_;
+        MatrixXf Bqp_;
+        MatrixXf L_;
+        MatrixXf K_;
+        VectorXf y_;
+
         SparseMatrix<double> H_;
         VectorXd q_;
         SparseMatrix<double> Ac_;

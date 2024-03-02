@@ -6,7 +6,7 @@ namespace starq::osqp
 {
 
     OSQP_MPCSolver::OSQP_MPCSolver(const MPCConfiguration &config)
-        : MPCSolver(config), size_x_(0), size_u_(0)
+        : MPCSolver(config)
     {
         osqp_.settings = new OSQPSettings;
         osqp_set_default_settings(osqp_.settings);
@@ -22,10 +22,6 @@ namespace starq::osqp
 
     bool OSQP_MPCSolver::setup()
     {
-        size_x_ = 13 * config_.window_size;
-        for (auto &n : n_legs_)
-            size_u_ += n * 3;
-
         setupQP();
         setupOSQP();
         return true;
@@ -38,14 +34,11 @@ namespace starq::osqp
 
     void OSQP_MPCSolver::setupQP()
     {
-        const int n = size_x_ + size_u_;
-        const int m = 2 * size_x_ + size_u_;
-
-        H_.resize(n, n);
-        q_.resize(n);
-        Ac_.resize(m, n);
-        lc_.resize(m);
-        uc_.resize(m);
+        calculateAqp();
+        calculateBqp();
+        calculateL();
+        calculateK();
+        calculateY();
 
         calculateQPHessian();
         calculateQPGradient();
@@ -54,163 +47,134 @@ namespace starq::osqp
         calculateQPUpperBound();
     }
 
+    void OSQP_MPCSolver::calculateAqp()
+    {
+        Aqp_ = MatrixXf::Zero(nx_, 13);
+        Aqp_.block<13, 13>(0, 0) = MatrixXf::Identity(13, 13);
+        for (size_t i = 1; i < config_.window_size; i++)
+        {
+            Aqp_.block<13, 13>(i * 13, 0) = A_[i - 1] * Aqp_.block<13, 13>((i - 1) * 13, 0);
+            std::cout << "A" << i - 1 << ": " << A_[i - 1] << std::endl;
+        }
+        std::cout << "Aqp: " << Aqp_ << std::endl;
+        std::cout << "Aqp * x0" << Aqp_ * xref_[0] << std::endl;
+    }
+
+    void OSQP_MPCSolver::calculateBqp()
+    {
+        Bqp_ = MatrixXf::Zero(nx_, nu_);
+        int col_idx = 0;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
+        {
+            const int nf = 3 * n_legs_[i];
+            Bqp_.block((i + 1) * 13, col_idx, 13, nf) = B_[i];
+
+            for (size_t j = i; j < config_.window_size - 2; j++)
+            {
+                Bqp_.block((j + 2) * 13, col_idx, 13, nf) = A_[j + 1] * Bqp_.block((j + 1) * 13, col_idx, 13, nf);
+            }
+
+            col_idx += nf;
+
+            std::cout << "B" << i << ": " << B_[i] << std::endl;
+        }
+        std::cout << "Bqp: " << Bqp_ << std::endl;
+    }
+
+    void OSQP_MPCSolver::calculateL()
+    {
+        L_ = MatrixXf::Zero(nx_, nx_);
+        for (size_t i = 0; i < config_.window_size; i++)
+        {
+            L_.block(i * 13, i * 13, 13, 13) = Q_[i];
+        }
+        std::cout << "L: " << L_ << std::endl;
+    }
+
+    void OSQP_MPCSolver::calculateK()
+    {
+        K_ = MatrixXf::Zero(nu_, nu_);
+        int u_idx = 0;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
+        {
+            const int nf = 3 * n_legs_[i];
+            K_.block(u_idx, u_idx, nf, nf) = R_[i];
+            u_idx += nf;
+        }
+        std::cout << "K: " << K_ << std::endl;
+    }
+
+    void OSQP_MPCSolver::calculateY()
+    {
+        y_ = VectorXf::Zero(nx_);
+        for (size_t i = 0; i < config_.window_size; i++)
+        {
+            y_.block<13, 1>(i * 13, 0) = xref_[i];
+        }
+        std::cout << "y: " << y_ << std::endl;
+    }
+
     void OSQP_MPCSolver::calculateQPHessian()
     {
-        const int Nn = config_.window_size;
-        const int Nx = 13;
-        std::vector<Triplet<double>> triplets;
-
-        for (int i = 0; i < Nn; i++)
-        {
-            const int idx = Nx * i;
-            for (int j = 0; j < Nx; j++)
-                for (int k = 0; k < Nx; k++)
-                {
-                    const double value = Q_[i](j, k);
-                    if (value != 0)
-                        triplets.push_back(Triplet<double>(idx + j, idx + k, value));
-                }
-        }
-
-        int idx = Nx * Nn;
-        for (int i = 0; i < Nn - 1; i++)
-        {
-            const int Nu = 3 * n_legs_[i];
-            for (int j = 0; j < Nu; j++)
-                for (int k = 0; k < Nu; k++)
-                {
-                    const double value = R_[i](j, k);
-                    if (value != 0)
-                        triplets.push_back(Triplet<double>(idx + j, idx + k, value));
-                }
-            idx += Nu;
-        }
-        H_.setFromTriplets(triplets.begin(), triplets.end());
+        MatrixXf H = 2 * (Bqp_.transpose() * L_ * Bqp_ + K_);
+        H = H.triangularView<Eigen::Upper>();
+        H_ = H.sparseView().cast<double>();
+        std::cout << "Hessian: " << H_ << std::endl;
     }
 
     void OSQP_MPCSolver::calculateQPGradient()
     {
-        const int Nn = config_.window_size;
-        const int Nx = 13;
-
-        for (int i = 0; i < Nn; i++)
-        {
-            const int xi = i * Nx;
-            const VectorXd Gx = Q_[i].cast<double>() * -xref_[i].cast<double>();
-            q_.block(xi, 0, Nx, 1) = Gx;
-        }
-
-        int idx = Nx * Nn;
-        for (int i = 0; i < Nn - 1; i++)
-        {
-            const int Nu = 3 * n_legs_[i];
-            const VectorXd Gu = VectorXd::Zero(Nu);
-            q_.block(idx, 0, Nu, 1) = Gu;
-            idx += Nu;
-        }
+        VectorXf q = 2 * Bqp_.transpose() * L_ * (Aqp_ * xref_[0] - y_);
+        q_ = q.cast<double>();
+        std::cout << "Gradient: " << q_ << std::endl;
     }
 
     void OSQP_MPCSolver::calculateQPLinearConstraint()
     {
-        const int n = size_x_ + size_u_;
-        const int Nn = config_.window_size;
-        const int Nx = 13;
-
-        std::vector<Triplet<double>> triplets;
-        for (int i = 0; i < Nx * Nn; i++)
-            triplets.push_back(Triplet<double>(i, i, -1));
-
-        for (int i = 0; i < Nn - 1; i++)
-            for (int j = 0; j < Nx; j++)
-                for (int k = 0; k < Nx; k++)
-                {
-                    const double value = A_[i](j, k);
-                    if (value != 0)
-                        triplets.push_back(Triplet<double>(
-                            Nx * (i + 1) + j,
-                            Nx * i + k,
-                            value));
-                }
-
-        int idx = Nx * Nn;
-        for (int i = 0; i < Nn - 1; i++)
+        MatrixXf Ac = MatrixXf::Zero(2 * nu_, nu_);
+        int idx = 0;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
         {
-            const int Nu = 3 * n_legs_[i];
-            for (int j = 0; j < Nx; j++)
-                for (int k = 0; k < Nu; k++)
-                {
-                    const double value = B_[i](j, k);
-                    if (value != 0)
-                        triplets.push_back(Triplet<double>(
-                            Nx * (i + 1) + j,
-                            idx + k,
-                            value));
-                }
-            idx += Nu;
+            const int nf = 3 * n_legs_[i];
+            Ac.block(2 * idx, idx, 2 * nf, nf) = C_[i];
+            idx += nf;
         }
-
-        for (int i = 0; i < n; i++)
-            triplets.push_back(Triplet<double>(Nn * Nx + i, i, 1));
-
-        Ac_.setFromTriplets(triplets.begin(), triplets.end());
+        Ac_ = Ac.cast<double>().sparseView();
+        std::cout << "Linear constraint: " << Ac_ << std::endl;
     }
 
     void OSQP_MPCSolver::calculateQPLowerBound()
     {
-        const int Nn = config_.window_size;
-        const int Nx = 13;
-        const int Neq = size_x_;
-        const int Nineq = size_x_ + size_u_;
-
-        VectorXd lower_inequality = VectorXd::Zero(Nineq);
-        for (int i = 0; i < Nn; i++)
-            lower_inequality.block(Nx * i, 0, Nx, 1) = x_min_[i].cast<double>();
-
-        int idx = Nx * Nn;
-        for (int i = 0; i < Nn - 1; i++)
+        VectorXf lc = VectorXf::Zero(2 * nu_);
+        int idx = 0;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
         {
-            const int Nu = 3 * n_legs_[i];
-            lower_inequality.block(idx, 0, Nu, 1) = u_min_[i].cast<double>();
-            idx += Nu;
+            const int nf = 3 * n_legs_[i];
+            lc.block(2 * idx, 0, 2 * nf, 1) = cl_[i];
+            idx += nf;
         }
-
-        VectorXd lower_equality = VectorXd::Zero(Neq);
-        lower_equality.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
-
-        lc_.block(0, 0, Neq, 1) = lower_equality;
-        lc_.block(Neq, 0, Nineq, 1) = lower_inequality;
+        lc_ = lc.cast<double>();
+        std::cout << "Lower bound: " << lc_ << std::endl;
     }
 
     void OSQP_MPCSolver::calculateQPUpperBound()
     {
-        const int Nn = config_.window_size;
-        const int Nx = 13;
-        const int Neq = size_x_;
-        const int Nineq = size_x_ + size_u_;
-
-        VectorXd upper_inequality = VectorXd::Zero(Nineq);
-        for (int i = 0; i < Nn; i++)
-            upper_inequality.block(Nx * i, 0, Nx, 1) = x_max_[i].cast<double>();
-
-        int idx = Nx * Nn;
-        for (int i = 0; i < Nn - 1; i++)
+        VectorXf uc = VectorXf::Zero(2 * nu_);
+        int idx = 0;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
         {
-            const int Nu = 3 * n_legs_[i];
-            upper_inequality.block(idx, 0, Nu, 1) = u_max_[i].cast<double>();
-            idx += Nu;
+            const int nf = 3 * n_legs_[i];
+            uc.block(2 * idx, 0, 2 * nf, 1) = cu_[i];
+            idx += nf;
         }
-
-        VectorXd upper_equality = VectorXd::Zero(Neq);
-        upper_equality.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
-
-        uc_.block(0, 0, Neq, 1) = upper_equality;
-        uc_.block(Neq, 0, Nineq, 1) = upper_inequality;
+        uc_ = uc.cast<double>();
+        std::cout << "Upper bound: " << uc_ << std::endl;
     }
 
     void OSQP_MPCSolver::setupOSQP()
     {
-        osqp_.n = size_x_ + size_u_;
-        osqp_.m = 2 * size_x_ + size_u_;
+        osqp_.n = H_.rows();
+        osqp_.m = Ac_.rows();
 
         osqp_.q = q_.data();
         osqp_.l = lc_.data();
