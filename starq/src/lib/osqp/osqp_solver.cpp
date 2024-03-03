@@ -6,7 +6,7 @@ namespace starq::osqp
 {
 
     OSQP_MPCSolver::OSQP_MPCSolver(const MPCConfiguration &config)
-        : MPCSolver(config), size_x_(0), size_u_(0)
+        : MPCSolver(config)
     {
         osqp_.settings = new OSQPSettings;
         osqp_set_default_settings(osqp_.settings);
@@ -22,10 +22,6 @@ namespace starq::osqp
 
     bool OSQP_MPCSolver::setup()
     {
-        size_x_ = 13 * config_.window_size;
-        for (auto &n : n_legs_)
-            size_u_ += n * 3;
-
         setupQP();
         setupOSQP();
         return true;
@@ -51,7 +47,7 @@ namespace starq::osqp
             solution.x_star.push_back(state);
         }
 
-        int offset = size_x_;
+        int offset = nx_;
         for (size_t i = 0; i < config_.window_size - 1; i++)
         {
             FootForceState forces;
@@ -76,8 +72,8 @@ namespace starq::osqp
 
     void OSQP_MPCSolver::setupQP()
     {
-        const int n = size_x_ + size_u_;
-        const int m = 2 * size_x_ + size_u_;
+        const int n = nx_ + nu_;
+        const int m = nx_ + 2 * nu_;
 
         H_.resize(n, n);
         q_.resize(n);
@@ -150,7 +146,6 @@ namespace starq::osqp
 
     void OSQP_MPCSolver::calculateQPLinearConstraint()
     {
-        const int n = size_x_ + size_u_;
         const int Nn = config_.window_size;
         const int Nx = 13;
 
@@ -187,8 +182,22 @@ namespace starq::osqp
             idx += Nu;
         }
 
-        for (int i = 0; i < n; i++)
-            triplets.push_back(Triplet<double>(Nn * Nx + i, i, 1));
+        idx = 0;
+        for (int i = 0; i < Nn - 1; i++)
+        {
+            const int Nu = 3 * n_legs_[i];
+            for (int j = 0; j < 2 * Nu; j++)
+                for (int k = 0; k < Nu; k++)
+                {
+                    const double value = C_[i](j, k);
+                    if (value != 0)
+                        triplets.push_back(Triplet<double>(
+                            nx_ + 2 * idx + j,
+                            nx_ + idx + k,
+                            value));
+                }
+            idx += Nu;
+        }
 
         Ac_.setFromTriplets(triplets.begin(), triplets.end());
     }
@@ -197,58 +206,46 @@ namespace starq::osqp
     {
         const int Nn = config_.window_size;
         const int Nx = 13;
-        const int Neq = size_x_;
-        const int Nineq = size_x_ + size_u_;
+        const int Neq = nx_;
+        const int Nineq = 2 * nu_;
 
-        VectorXd lower_inequality = VectorXd::Zero(Nineq);
-        for (int i = 0; i < Nn; i++)
-            lower_inequality.block(Nx * i, 0, Nx, 1) = x_min_[i].cast<double>();
+        lc_.block(0, 0, Neq, 1) = VectorXd::Zero(Neq);
+        lc_.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
 
-        int idx = Nx * Nn;
+        lc_.block(Neq, 0, Nineq, 1) = VectorXd::Zero(Nineq);
+        int idx = Neq;
         for (int i = 0; i < Nn - 1; i++)
         {
-            const int Nu = 3 * n_legs_[i];
-            lower_inequality.block(idx, 0, Nu, 1) = u_min_[i].cast<double>();
-            idx += Nu;
+            const int Nuc = 6 * n_legs_[i];
+            lc_.block(idx, 0, Nuc, 1) = cl_[i].cast<double>();
+            idx += Nuc;
         }
-
-        VectorXd lower_equality = VectorXd::Zero(Neq);
-        lower_equality.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
-
-        lc_.block(0, 0, Neq, 1) = lower_equality;
-        lc_.block(Neq, 0, Nineq, 1) = lower_inequality;
     }
 
     void OSQP_MPCSolver::calculateQPUpperBound()
     {
         const int Nn = config_.window_size;
         const int Nx = 13;
-        const int Neq = size_x_;
-        const int Nineq = size_x_ + size_u_;
+        const int Neq = nx_;
+        const int Nineq = 2 * nu_;
 
-        VectorXd upper_inequality = VectorXd::Zero(Nineq);
-        for (int i = 0; i < Nn; i++)
-            upper_inequality.block(Nx * i, 0, Nx, 1) = x_max_[i].cast<double>();
+        uc_.block(0, 0, Neq, 1) = VectorXd::Zero(Neq);
+        uc_.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
 
-        int idx = Nx * Nn;
+        uc_.block(Neq, 0, Nineq, 1) = VectorXd::Zero(Nineq);
+        int idx = Neq;
         for (int i = 0; i < Nn - 1; i++)
         {
-            const int Nu = 3 * n_legs_[i];
-            upper_inequality.block(idx, 0, Nu, 1) = u_max_[i].cast<double>();
-            idx += Nu;
+            const int Nuc = 6 * n_legs_[i];
+            uc_.block(idx, 0, Nuc, 1) = cu_[i].cast<double>();
+            idx += Nuc;
         }
-
-        VectorXd upper_equality = VectorXd::Zero(Neq);
-        upper_equality.block(0, 0, Nx, 1) = -xref_[0].cast<double>();
-
-        uc_.block(0, 0, Neq, 1) = upper_equality;
-        uc_.block(Neq, 0, Nineq, 1) = upper_inequality;
     }
 
     void OSQP_MPCSolver::setupOSQP()
     {
-        osqp_.n = size_x_ + size_u_;
-        osqp_.m = 2 * size_x_ + size_u_;
+        osqp_.n = nx_ + nu_;
+        osqp_.m = nx_ + 2 * nu_;
 
         osqp_.q = q_.data();
         osqp_.l = lc_.data();

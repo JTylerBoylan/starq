@@ -41,6 +41,10 @@ namespace starq::mpc
         Vector3f gravity;
         float height;
 
+        float friction_coeff;
+        float fz_min;
+        float fz_max;
+
         milliseconds time_step;
         size_t window_size;
 
@@ -55,8 +59,6 @@ namespace starq::mpc
         Vector3f angular_velocity_weights;
         Vector3f force_weights;
 
-        Vector3f force_min;
-        Vector3f force_max;
     };
 
     using FootForceState = std::vector<std::pair<bool, Vector3f>>;

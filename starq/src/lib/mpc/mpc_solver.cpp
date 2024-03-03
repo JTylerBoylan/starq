@@ -9,22 +9,15 @@ namespace starq::mpc
         : config_(config)
     {
         const int nn = config_.window_size;
-
         n_legs_.resize(nn - 1);
-
         xref_.resize(nn);
-
         Q_.resize(nn);
         R_.resize(nn - 1);
-
         A_.resize(nn - 1);
         B_.resize(nn - 1);
-
-        x_min_.resize(nn);
-        x_max_.resize(nn);
-
-        u_min_.resize(nn - 1);
-        u_max_.resize(nn - 1);
+        C_.resize(nn - 1);
+        cl_.resize(nn - 1);
+        cu_.resize(nn - 1);
 
         initialize();
     }
@@ -32,6 +25,10 @@ namespace starq::mpc
     void MPCSolver::initialize()
     {
         const size_t nn = config_.window_size;
+
+        nx_ = 13 * nn;
+        nu_ = 0;
+
         for (size_t k = 0; k < nn; k++)
         {
             VectorXf xref = VectorXf::Zero(13);
@@ -48,21 +45,10 @@ namespace starq::mpc
             Q.block<3, 3>(9, 9) = config_.linear_velocity_weights.asDiagonal();
             Q(12, 12) = 0.0;
 
-            VectorXf x_min = VectorXf::Zero(13);
-            VectorXf x_max = VectorXf::Zero(13);
-            for (int i = 0; i < 12; i++)
-            {
-                x_min(i) = -std::numeric_limits<float>::infinity();
-                x_max(i) = std::numeric_limits<float>::infinity();
-            }
-            x_min(12) = 1.0;
-            x_max(12) = 1.0;
-
             xref_[k] = xref;
             Q_[k] = Q;
-            x_min_[k] = x_min;
-            x_max_[k] = x_max;
         }
+
         for (size_t k = 0; k < nn - 1; k++)
         {
             const float phi = config_.com_trajectory[k].orientation.z();
@@ -81,6 +67,7 @@ namespace starq::mpc
                 if (config_.stance_trajectory[k][j])
                 {
                     n_legs++;
+                    nu_ += 3;
                 }
             }
 
@@ -88,7 +75,24 @@ namespace starq::mpc
             const Matrix3f I = Rz * config_.inertia * Rz.transpose();
             const Matrix3f inv_I = I.inverse();
 
+            const float mu = config_.friction_coeff;
+            MatrixXf C_l(6, 3);
+            C_l << 0, 0, -1,
+                0, 0, 1,
+                -1, 0, -mu,
+                1, 0, -mu,
+                0, -1, -mu,
+                0, 1, -mu;
+
+            const float inf = std::numeric_limits<float>::infinity();
+            VectorXf cl_l(6), cu_l(6);
+            cl_l << -inf, -inf, -inf, -inf, -inf, -inf;
+            cu_l << -config_.fz_min, config_.fz_max, 0, 0, 0, 0;
+
             MatrixXf B = MatrixXf::Zero(13, 3 * n_legs);
+            MatrixXf C = MatrixXf::Zero(6 * n_legs, 3 * n_legs);
+            VectorXf cl = VectorXf::Zero(6 * n_legs);
+            VectorXf cu = VectorXf::Zero(6 * n_legs);
             int l = 0;
             for (size_t j = 0; j < config_.stance_trajectory[k].size(); j++)
             {
@@ -100,6 +104,9 @@ namespace starq::mpc
                     const Matrix3f inv_I_skew_r = inv_I * skew_r;
                     B.block<3, 3>(6, 3 * l) = inv_I_skew_r;
                     B.block<3, 3>(9, 3 * l) = inv_m * Matrix3f::Identity();
+                    C.block<6, 3>(6 * l, 3 * l) = C_l;
+                    cl.block<6, 1>(6 * l, 0) = cl_l;
+                    cu.block<6, 1>(6 * l, 0) = cu_l;
                     l++;
                 }
             }
@@ -111,20 +118,13 @@ namespace starq::mpc
                 R.block<3, 3>(3 * j, 3 * j) = config_.force_weights.asDiagonal();
             }
 
-            VectorXf u_min = VectorXf::Zero(3 * n_legs);
-            VectorXf u_max = VectorXf::Zero(3 * n_legs);
-            for (int j = 0; j < n_legs; j++)
-            {
-                u_min.block<3, 1>(3 * j, 0) = config_.force_min;
-                u_max.block<3, 1>(3 * j, 0) = config_.force_max;
-            }
-
             n_legs_[k] = n_legs;
             R_[k] = R;
             A_[k] = A;
             B_[k] = B;
-            u_min_[k] = u_min;
-            u_max_[k] = u_max;
+            C_[k] = C;
+            cu_[k] = cu;
+            cl_[k] = cl;
         }
     }
 

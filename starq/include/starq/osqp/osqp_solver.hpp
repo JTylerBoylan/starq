@@ -28,10 +28,6 @@ namespace starq::osqp
 
         OSQPSolver *getSolver() const { return osqp_.solver; }
 
-        int sizeX() const { return size_x_; }
-
-        int sizeU() const { return size_u_; }
-
     private:
 
         void setupQP();
@@ -44,9 +40,6 @@ namespace starq::osqp
         void setupOSQP();
         void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
-
-        int size_x_;
-        int size_u_;
         
         SparseMatrix<double> H_;
         VectorXd q_;
