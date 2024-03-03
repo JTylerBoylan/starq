@@ -65,7 +65,7 @@ namespace starq::mpc
                     const milliseconds stance_duration = config.timing_trajectory[i].stance_duration;
 
                     Vector3f leg_position_world = hip_position_i + 0.5f * body_velocity * stance_duration.count() * 1E-3f;
-                    leg_position_world.z() = com_position_i.z() - config.height;
+                    leg_position_world.z() = 0.0;
 
                     config.foothold_trajectory[i][j] = leg_position_world;
                 }

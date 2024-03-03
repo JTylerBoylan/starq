@@ -73,6 +73,7 @@ namespace starq::mpc
             A.block<3, 3>(0, 6) = Rz;
             A.block<3, 3>(3, 9) = Matrix3f::Identity();
             A.block<3, 1>(9, 12) = g;
+            A = A * config_.time_step.count() * 1E-3 + MatrixXf::Identity(13, 13);
 
             int n_legs = 0;
             for (size_t j = 0; j < config_.stance_trajectory[k].size(); j++)
@@ -102,6 +103,7 @@ namespace starq::mpc
                     l++;
                 }
             }
+            B = B * config_.time_step.count() * 1E-3;
 
             MatrixXf R = MatrixXf::Zero(3 * n_legs, 3 * n_legs);
             for (int j = 0; j < n_legs; j++)

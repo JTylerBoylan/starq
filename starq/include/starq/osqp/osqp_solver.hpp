@@ -28,6 +28,10 @@ namespace starq::osqp
 
         OSQPSolver *getSolver() const { return osqp_.solver; }
 
+        int sizeX() const { return size_x_; }
+
+        int sizeU() const { return size_u_; }
+
     private:
 
         void setupQP();
