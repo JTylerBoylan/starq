@@ -59,6 +59,20 @@ namespace starq::mpc
         Vector3f force_max;
     };
 
+    using FootForceState = std::vector<std::pair<bool, Vector3f>>;
+    using FootForceTrajectory = std::vector<FootForceState>;
+
+    struct MPCSolution
+    {
+        int exit_flag;
+        microseconds run_time;
+        microseconds setup_time;
+        microseconds solve_time;
+
+        CenterOfMassTrajectory x_star;
+        FootForceTrajectory u_star;
+    };
+
 }
 
 #endif

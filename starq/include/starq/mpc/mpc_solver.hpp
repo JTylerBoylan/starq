@@ -13,7 +13,7 @@ namespace starq::mpc
 
         MPCSolver(const MPCConfiguration &config);
 
-        virtual bool solve() = 0;
+        virtual MPCSolution solve() = 0;
 
     protected:
 

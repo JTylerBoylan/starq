@@ -60,21 +60,23 @@ int main()
 
     while (robot->isSimulationOpen())
     {
+        auto global_time = robot->getLocalization()->getCurrentTime();
+        printf("Global time: %d\n", int(global_time.count()));
 
         MPCConfiguration config;
         mpc_planner.getConfiguration(config);
 
         OSQP_MPCSolver mpc_solver(config);
         mpc_solver.getSettings()->verbose = true;
-        mpc_solver.getSettings()->max_iter = 100000;
+        mpc_solver.getSettings()->max_iter = 10000;
+        mpc_solver.getSettings()->polishing = true;
+        mpc_solver.getSettings()->warm_starting = true;
 
         mpc_solver.setup();
         printf("OSQP_MPCSolver setup\n");
 
-        mpc_solver.solve();
+        auto solution = mpc_solver.solve();
         printf("OSQP_MPCSolver solved\n");
-
-        auto x = mpc_solver.getSolver()->solution->x;
 
         const Vector3f current_com_orientation = robot->getLocalization()->getCurrentOrientation();
         Matrix3f current_com_rotation;
@@ -82,47 +84,49 @@ int main()
                                AngleAxisf(current_com_orientation.y(), Vector3f::UnitY()) *
                                AngleAxisf(current_com_orientation.z(), Vector3f::UnitZ());
 
-        int offset = mpc_solver.sizeX();
         for (size_t i = 0; i < config.window_size; i++)
         {
             printf("------\n");
             printf("Node[%lu]\n", i);
 
-            Vector3f orientation(x[13 * i], x[13 * i + 1], x[13 * i + 2]);
-            Vector3f position(x[13 * i + 3], x[13 * i + 4], x[13 * i + 5]);
-            Vector3f angular_velocity(x[13 * i + 6], x[13 * i + 7], x[13 * i + 8]);
-            Vector3f linear_velocity(x[13 * i + 9], x[13 * i + 10], x[13 * i + 11]);
+            const Vector3f position = solution.x_star[i].position;
+            const Vector3f orientation = solution.x_star[i].orientation;
+            const Vector3f linear_velocity = solution.x_star[i].linear_velocity;
+            const Vector3f angular_velocity = solution.x_star[i].angular_velocity;
 
             printf("Position: %f %f %f\n", position.x(), position.y(), position.z());
             printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
             printf("Linear velocity: %f %f %f\n", linear_velocity.x(), linear_velocity.y(), linear_velocity.z());
             printf("Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
 
-            for (size_t j = 0; j < config.stance_trajectory[i].size(); j++)
+            for (auto force_state : solution.u_star)
             {
-                if (config.stance_trajectory[i][j])
+                for (size_t j = 0; j < force_state.size(); j++)
                 {
-                    Vector3f foot_force(x[offset], x[offset + 1], x[offset + 2]);
-                    printf("Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
-                    offset += 3;
+                    if (force_state[j].first)
+                    {
+                        Vector3f foot_force = force_state[j].second;
+                        printf("Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
+                    }
                 }
             }
         }
 
-        offset = mpc_solver.sizeX();
-        for (size_t j = 0; j < config.stance_trajectory[0].size(); j++)
+        printf("------\n");
+        auto position = robot->getLocalization()->getCurrentPosition();
+        printf("Current Position: %f %f %f\n", position.x(), position.y(), position.z());
+
+        for (size_t j = 0; j < solution.u_star[0].size(); j++)
         {
-            if (config.stance_trajectory[0][j])
+            if (solution.u_star[0][j].first)
             {
-                Vector3f foot_force(x[offset], x[offset + 1], x[offset + 2]);
+                Vector3f foot_force = solution.u_star[0][j].second;
                 robot->setFootForce(j, -foot_force);
                 printf("Applied Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
-                offset += 3;
             }
         }
 
-        auto global_time = robot->getLocalization()->getCurrentTime();
-        printf("Global time: %d\n", int(global_time.count()));
+
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

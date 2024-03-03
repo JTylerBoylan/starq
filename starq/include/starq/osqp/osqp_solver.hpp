@@ -22,7 +22,7 @@ namespace starq::osqp
 
         bool setup();
 
-        bool solve() override;
+        MPCSolution solve() override;
 
         OSQPSettings *getSettings() const { return osqp_.settings; }
 

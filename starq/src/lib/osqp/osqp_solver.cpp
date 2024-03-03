@@ -31,9 +31,47 @@ namespace starq::osqp
         return true;
     }
 
-    bool OSQP_MPCSolver::solve()
+    MPCSolution OSQP_MPCSolver::solve()
     {
-        return osqp_solve(osqp_.solver) == 0;
+        MPCSolution solution;
+        solution.exit_flag = osqp_solve(osqp_.solver);
+        solution.run_time = microseconds(static_cast<int>(osqp_.solver->info->run_time * 1e6));
+        solution.setup_time = microseconds(static_cast<int>(osqp_.solver->info->setup_time * 1e6));
+        solution.solve_time = microseconds(static_cast<int>(osqp_.solver->info->solve_time * 1e6));
+
+        auto x = osqp_.solver->solution->x;
+        for (size_t i = 0; i < config_.window_size; i++)
+        {
+            const int ox = 13 * i;
+            Vector3f orientation(x[ox], x[ox + 1], x[ox + 2]);
+            Vector3f position(x[ox + 3], x[ox + 4], x[ox + 5]);
+            Vector3f angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
+            Vector3f linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
+            CenterOfMassState state = {position, orientation, linear_velocity, angular_velocity};
+            solution.x_star.push_back(state);
+        }
+
+        int offset = size_x_;
+        for (size_t i = 0; i < config_.window_size - 1; i++)
+        {
+            FootForceState forces;
+            for (int j = 0; j < n_legs_[i]; j++)
+            {
+                if (config_.stance_trajectory[i][j])
+                {
+                    Vector3f force(x[offset], x[offset + 1], x[offset + 2]);
+                    forces.push_back(std::make_pair(true, force));
+                    offset += 3;
+                }
+                else
+                {
+                    forces.push_back(std::make_pair(false, Vector3f::Zero()));
+                }
+            }
+            solution.u_star.push_back(forces);
+        }
+
+        return solution;
     }
 
     void OSQP_MPCSolver::setupQP()
