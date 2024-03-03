@@ -24,7 +24,7 @@ int main()
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
         // Force control
-        const auto foot_force = Eigen::Vector3f(-100, 100, -250);
+        const auto foot_force = Eigen::Vector3f(-100, 0, -250);
         for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
         {
             robot.setFootForce(id, foot_force);

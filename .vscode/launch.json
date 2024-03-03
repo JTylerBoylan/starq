@@ -7,7 +7,7 @@
         "name": "(gdb) Launch MuJoCo",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/nvidia/starq_ws/build/starq/test_mujoco_mpc_solver",
+        "program": "/home/nvidia/starq_ws/build/starq/test_unitree_a1_mujoco_robot",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
