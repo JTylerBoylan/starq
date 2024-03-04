@@ -6,7 +6,6 @@ namespace starq
 {
     void Robot::setup()
     {
-        setupParams();
         setupMotors();
         setupLegs();
         setupLocalization();

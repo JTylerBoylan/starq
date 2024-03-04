@@ -3,6 +3,7 @@
 
 #include "starq/mujoco/mujoco_robot.hpp"
 #include "starq/dynamics/unitree_rrr.hpp"
+#include "starq/dynamics/unitree_a1_robot.hpp"
 
 #define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"
 
@@ -12,15 +13,6 @@
 #define UNITREE_A1_LENGTH_D 0.08505
 #define UNITREE_A1_LENGTH_LT 0.2
 #define UNITREE_A1_LENGTH_LC 0.2
-
-#define UNITREE_A1_MASS 12.5
-#define UNITREE_A1_INERTIA 0.016, 0, 0, 0, 0.038, 0, 0, 0, 0.046
-#define UNITREE_A1_GRAVITY 0.0, 0.0, -9.81
-#define UNITREE_A1_HEIGHT 0.27
-#define UNITREE_A1_FOOT_FRICTION 0.8
-
-#define UNITREE_A1_HIP_OFFSET_X 0.183
-#define UNITREE_A1_HIP_OFFSET_Y 0.047
 
 namespace starq::robots
 {
@@ -53,9 +45,6 @@ namespace starq::robots
         Unitree_RRR::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
 
     private:
-
-        /// @brief Setup the parameters
-        void setupParams() override;
 
         /// @brief Setup the motors
         void setupMotors() override;

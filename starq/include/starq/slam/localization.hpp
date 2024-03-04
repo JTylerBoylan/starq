@@ -35,6 +35,17 @@ namespace starq::slam
         /// @return Angular velocity vector [rad/s] (roll, pitch, yaw) in the world frame.
         virtual Vector3f getCurrentAngularVelocity() = 0;
 
+        /// @brief Convert orientation vector to rotation matrix.
+        /// @return The rotation matrix.
+        inline Matrix3f toRotationMatrix(const Vector3f &orientation)
+        {
+            Matrix3f rotation;
+            rotation = AngleAxisf(orientation.x(), Vector3f::UnitX()) *
+                       AngleAxisf(orientation.y(), Vector3f::UnitY()) *
+                       AngleAxisf(orientation.z(), Vector3f::UnitZ());
+            return rotation;
+        }
+
     private:
     };
 }

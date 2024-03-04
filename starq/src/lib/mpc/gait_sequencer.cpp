@@ -41,19 +41,19 @@ namespace starq::mpc
         return true;
     }
 
-    bool GaitSequencer::configure(MPCConfiguration &config) const
+    bool GaitSequencer::configure(const size_t N, const milliseconds dt,
+                                  StanceTrajectory &stance_traj,
+                                  GaitSequence &gait_seq) const
     {
-        auto time = localization_->getCurrentTime();
-        config.stance_trajectory[0] = getStanceState(time);
-        
-        for (size_t i = 1; i < config.window_size; i++)
+        stance_traj.resize(N);
+        gait_seq.resize(N);
+
+        const auto start_time = localization_->getCurrentTime();
+        for (size_t i = 0; i < N; i++)
         {
-            time += config.time_step;
-            config.stance_trajectory[i] = getStanceState(time);
-            config.com_trajectory[i].linear_velocity = getGait(time)->getLinearVelocity();
-            config.com_trajectory[i].angular_velocity = getGait(time)->getAngularVelocity();
-            config.timing_trajectory[i].stance_duration = getGait(time)->getStanceDuration();
-            config.timing_trajectory[i].swing_duration = getGait(time)->getSwingDuration();
+            auto time = start_time + i * dt;
+            stance_traj[i] = getStanceState(time);
+            gait_seq[i] = getGait(time);
         }
 
         return true;

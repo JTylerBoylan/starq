@@ -3,8 +3,10 @@
 namespace starq::mpc
 {
 
-    CenterOfMassPlanner::CenterOfMassPlanner(starq::slam::Localization::Ptr localization)
-        : localization_(localization)
+    CenterOfMassPlanner::CenterOfMassPlanner(starq::slam::Localization::Ptr localization,
+                                             starq::RobotDynamics::Ptr robot_dynamics)
+        : localization_(localization),
+          robot_dynamics_(robot_dynamics)
     {
     }
 
@@ -12,31 +14,34 @@ namespace starq::mpc
     {
     }
 
-    bool CenterOfMassPlanner::configure(MPCConfiguration &config) const
+    bool CenterOfMassPlanner::configure(const size_t N, const milliseconds dt,
+                                        const GaitSequence &gait_seq, ReferenceTrajectory &ref_traj) const
     {
-        config.com_trajectory[0].position = localization_->getCurrentPosition();
-        config.com_trajectory[0].orientation = localization_->getCurrentOrientation();
-        config.com_trajectory[0].linear_velocity = localization_->getCurrentLinearVelocity();
-        config.com_trajectory[0].angular_velocity = localization_->getCurrentAngularVelocity();
+        ref_traj.resize(N);
 
-        const float dt = config.time_step.count() / 1000.0;
-        for (size_t i = 1; i < config.window_size; i++)
+        ref_traj[0].position = localization_->getCurrentPosition();
+        ref_traj[0].orientation = localization_->getCurrentOrientation();
+        ref_traj[0].linear_velocity = localization_->getCurrentLinearVelocity();
+        ref_traj[0].angular_velocity = localization_->getCurrentAngularVelocity();
+
+        const float dT = dt.count() / 1000.0;
+        for (size_t i = 1; i < N; i++)
         {
-            const Vector3f linear_velocity = config.com_trajectory[i - 1].linear_velocity;
-            const Vector3f angular_velocity = config.com_trajectory[i - 1].angular_velocity;
+            const Vector3f linear_velocity = gait_seq[i - 1]->getLinearVelocity();
+            const Vector3f angular_velocity = gait_seq[i - 1]->getAngularVelocity();
 
-            const float last_theta = config.com_trajectory[i - 1].orientation.z();
-            const float last_x = config.com_trajectory[i - 1].position.x();
-            const float last_y = config.com_trajectory[i - 1].position.y();
+            const float last_theta = ref_traj[i - 1].orientation.z();
+            const float last_x = ref_traj[i - 1].position.x();
+            const float last_y = ref_traj[i - 1].position.y();
 
-            float &theta = config.com_trajectory[i].orientation.z();
-            float &x = config.com_trajectory[i].position.x();
-            float &y = config.com_trajectory[i].position.y();
-            float &z = config.com_trajectory[i].position.z();
-            theta = last_theta + angular_velocity.z() * dt;
-            x = last_x + linear_velocity.x() * std::cos(theta) * dt;
-            y = last_y + linear_velocity.y() * std::sin(theta) * dt;
-            z = config.height;
+            float &theta = ref_traj[i].orientation.z();
+            float &x = ref_traj[i].position.x();
+            float &y = ref_traj[i].position.y();
+            float &z = ref_traj[i].position.z();
+            theta = last_theta + angular_velocity.z() * dT;
+            x = last_x + linear_velocity.x() * std::cos(theta) * dT;
+            y = last_y + linear_velocity.y() * std::sin(theta) * dT;
+            z = robot_dynamics_->getBodyHeight();
         }
         return true;
     }

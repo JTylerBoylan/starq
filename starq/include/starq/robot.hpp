@@ -7,6 +7,7 @@
 #include "starq/trajectory_file_reader.hpp"
 #include "starq/trajectory_publisher.hpp"
 #include "starq/slam/localization.hpp"
+#include "starq/robot_dynamics.hpp"
 
 namespace starq
 {
@@ -57,30 +58,6 @@ namespace starq
         /// @return True if successful
         bool runTrajectory(const std::vector<LegCommand::Ptr> &trajectory);
 
-        /// @brief Get the body mass
-        /// @return The body mass [kg]
-        float getBodyMass() const { return mass_; }
-
-        /// @brief Get the body inertia
-        /// @return The body inertia [kg m^2] (Ixx, Iyy, Izz)
-        Matrix3f getBodyInertia() const { return inertia_; }
-
-        /// @brief Get the gravity vector
-        /// @return The gravity vector [m/s^2] (x, y, z)
-        Vector3f getGravity() const { return gravity_; }
-
-        /// @brief Get the body height
-        /// @return The body height [m]
-        float getBodyHeight() const { return height_; }
-
-        /// @brief Get the foot friction
-        /// @return The foot friction [N/(m/s)]
-        float getFootFriction() const { return foot_friction_; }
-
-        /// @brief Get the hip locations
-        /// @return The hip locations [m] (x, y, z) in the body frame
-        std::vector<Vector3f> getHipLocations() const { return hip_locations_; }
-
         /// @brief Get the motor controllers
         /// @return The motor controllers
         std::vector<MotorController::Ptr> getMotors() const { return motors_; }
@@ -92,6 +69,10 @@ namespace starq
         /// @brief Get the localization
         /// @return The localization
         slam::Localization::Ptr getLocalization() const { return localization_; }
+
+        /// @brief Get the robot dynamics
+        /// @return The robot dynamics
+        RobotDynamics::Ptr getRobotDynamics() const { return robot_dynamics_; }
 
         /// @brief Get the leg command publisher
         /// @return The leg command publisher
@@ -106,8 +87,6 @@ namespace starq
         TrajectoryPublisher::Ptr getTrajectoryPublisher() const { return trajectory_publisher_; }
 
     protected:
-        /// @brief Setup the robot parameters (mass, inertia, gravity, hip locations)
-        virtual void setupParams() = 0;
 
         /// @brief Setup the motor controllers
         virtual void setupMotors() = 0;
@@ -127,15 +106,10 @@ namespace starq
         /// @brief Setup the trajectory publisher
         virtual void setupTrajectoryPublisher();
 
-        float mass_;
-        Matrix3f inertia_;
-        Vector3f gravity_;
-        float height_;
-        float foot_friction_;
-        std::vector<Vector3f> hip_locations_;
         std::vector<MotorController::Ptr> motors_;
         std::vector<LegController::Ptr> legs_;
         slam::Localization::Ptr localization_;
+        RobotDynamics::Ptr robot_dynamics_;
 
         LegCommandPublisher::Ptr publisher_;
         TrajectoryFileReader::Ptr trajectory_file_reader_;

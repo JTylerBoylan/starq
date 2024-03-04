@@ -4,10 +4,10 @@ namespace starq::mpc
 {
 
     FootholdPlanner::FootholdPlanner(std::vector<LegController::Ptr> legs,
-                                     std::vector<Vector3f> hip_locations,
+                                     starq::RobotDynamics::Ptr robot_dynamics,
                                      starq::slam::Localization::Ptr localization)
         : legs_(legs),
-          hip_locations_(hip_locations),
+          robot_dynamics_(robot_dynamics),
           localization_(localization)
     {
     }
@@ -16,62 +16,64 @@ namespace starq::mpc
     {
     }
 
-    bool FootholdPlanner::configure(MPCConfiguration &config) const
+    bool FootholdPlanner::configure(const size_t N,
+                                    const StanceTrajectory &stance_traj, const GaitSequence &gait_seq,
+                                    const ReferenceTrajectory &ref_traj, FootholdTrajectory &foothold_traj) const
     {
-        const Vector3f current_com_position = localization_->getCurrentPosition();
-        const Vector3f current_com_orientation = localization_->getCurrentOrientation();
-        Matrix3f current_com_rotation;
-        current_com_rotation = AngleAxisf(current_com_orientation.x(), Vector3f::UnitX()) *
-                               AngleAxisf(current_com_orientation.y(), Vector3f::UnitY()) *
-                               AngleAxisf(current_com_orientation.z(), Vector3f::UnitZ());
+        foothold_traj.resize(N);
 
-        config.foothold_trajectory[0].resize(legs_.size());
-        for (size_t j = 0; j < legs_.size(); j++)
+        const Vector3f current_position = localization_->getCurrentPosition();
+        const Vector3f current_orientation = localization_->getCurrentOrientation();
+        const Matrix3f current_rotation = localization_->toRotationMatrix(current_orientation);
+
+        const auto hip_locations = robot_dynamics_->getHipLocations();
+
+        const size_t num_legs = legs_.size();
+        foothold_traj[0].resize(num_legs);
+        for (size_t j = 0; j < num_legs; j++)
         {
             VectorXf leg_position_hip;
             legs_[j]->getFootPositionEstimate(leg_position_hip);
-            const Vector3f leg_position_body = hip_locations_[j] + leg_position_hip;
-            const Vector3f leg_position_world = current_com_position + current_com_rotation * leg_position_body;
+            const Vector3f leg_position_body = hip_locations[j] + leg_position_hip;
+            const Vector3f leg_position_world = current_position + current_rotation * leg_position_body;
 
-            if (config.stance_trajectory[0][j])
-                config.foothold_trajectory[0][j] = leg_position_world;
+            if (stance_traj[0][j])
+                foothold_traj[0][j] = leg_position_world;
             else
-                config.foothold_trajectory[0][j] = current_com_position;
+                foothold_traj[0][j] = current_position;
         }
 
-        for (size_t i = 1; i < config.window_size; i++)
+        for (size_t i = 1; i < N; i++)
         {
-            const Vector3f com_position_i = config.com_trajectory[i].position;
-            const Vector3f com_orientation_i = config.com_trajectory[i].orientation;
-            Matrix3f com_rotation_i;
-            com_rotation_i = AngleAxisf(com_orientation_i.x(), Vector3f::UnitX()) *
-                             AngleAxisf(com_orientation_i.y(), Vector3f::UnitY()) *
-                             AngleAxisf(com_orientation_i.z(), Vector3f::UnitZ());
+            const Vector3f position_i = ref_traj[i].position;
+            const Vector3f orientation_i = ref_traj[i].orientation;
+            const Matrix3f rotation_i = localization_->toRotationMatrix(orientation_i);
 
-            config.foothold_trajectory[i].resize(legs_.size());
-            for (size_t j = 0; j < legs_.size(); j++)
+            const size_t num_legs_i = stance_traj[i].size();
+            foothold_traj[i].resize(num_legs_i);
+            for (size_t j = 0; j < num_legs_i; j++)
             {
-                const bool curr_stance = config.stance_trajectory[i][j];
-                const bool last_stance = config.stance_trajectory[i - 1][j];
+                const bool curr_stance = stance_traj[i][j];
+                const bool last_stance = stance_traj[i - 1][j];
 
                 if (curr_stance && last_stance)
                 {
-                    config.foothold_trajectory[i][j] = config.foothold_trajectory[i - 1][j];
+                    foothold_traj[i][j] = foothold_traj[i - 1][j];
                 }
                 else if (curr_stance && !last_stance)
                 {
-                    const Vector3f hip_position_i = com_position_i + com_rotation_i * hip_locations_[j];
-                    const Vector3f body_velocity = com_rotation_i * config.com_trajectory[i].linear_velocity;
-                    const milliseconds stance_duration = config.timing_trajectory[i].stance_duration;
+                    const Vector3f hip_position_i = position_i + rotation_i * hip_locations[j];
+                    const Vector3f body_velocity = rotation_i * ref_traj[i].linear_velocity;
+                    const milliseconds stance_duration = gait_seq[i]->getStanceDuration();
 
                     Vector3f leg_position_world = hip_position_i + 0.5f * body_velocity * stance_duration.count() * 1E-3f;
                     leg_position_world.z() = 0.0;
 
-                    config.foothold_trajectory[i][j] = leg_position_world;
+                    foothold_traj[i][j] = leg_position_world;
                 }
                 else
                 {
-                    config.foothold_trajectory[i][j] = com_position_i;
+                    foothold_traj[i][j] = position_i;
                 }
             }
         }

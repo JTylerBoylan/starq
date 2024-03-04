@@ -1,8 +1,7 @@
 #include <stdio.h>
 
 #include "starq/robots/unitree_a1_mujoco.hpp"
-#include "starq/mpc/mpc_planner.hpp"
-#include "starq/osqp/osqp_solver.hpp"
+#include "starq/osqp/osqp.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
@@ -27,23 +26,33 @@ int main()
     printf("Stance duration: %d\n", int(stance_duration.count()));
     printf("Swing duration: %d\n", int(swing_duration.count()));
 
-    MPCPlanner mpc_planner(robot);
+    MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
+                                                                          robot->getRobotDynamics(),
+                                                                          robot->getLocalization());
     printf("MPCPlanner created\n");
 
-    mpc_planner.setTimeStep(milliseconds(50));
-    mpc_planner.setWindowSize(21);
+    mpc_config->setTimeStep(milliseconds(50));
+    mpc_config->setWindowSize(21);
 
-    mpc_planner.setStateWeights(Vector3f(10.0, 10.0, 50.0),
+    mpc_config->setStateWeights(Vector3f(10.0, 10.0, 50.0),
                                 Vector3f(1.0, 1.0, 1.0),
                                 Vector3f(1.0, 1.0, 1.0),
                                 Vector3f(1.0, 1.0, 1.0));
 
-    mpc_planner.setControlWeights(Vector3f(1E-6, 1E-6, 1E-6));
+    mpc_config->setControlWeights(Vector3f(1E-6, 1E-6, 1E-6));
 
-    mpc_planner.setControlBounds(10, 250);
-
-    mpc_planner.setNextGait(gait);
+    mpc_config->setNextGait(gait);
     printf("Gait set\n");
+
+    MPCProblem::Ptr mpc_problem = std::make_shared<MPCProblem>(mpc_config);
+
+    QPProblem::Ptr qp_problem = std::make_shared<QPProblem>(mpc_problem);
+
+    OSQP::Ptr osqp = std::make_shared<OSQP>(qp_problem);
+    osqp->getSettings()->verbose = true;
+    osqp->getSettings()->max_iter = 100000;
+    osqp->getSettings()->polishing = true;
+    osqp->getSettings()->warm_starting = true;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
@@ -59,20 +68,13 @@ int main()
 
     while (robot->isSimulationOpen())
     {
-        MPCConfiguration config;
-        mpc_planner.getConfiguration(config);
+        osqp->update();
+        printf("OSQP updated\n");
 
-        OSQP_MPCSolver mpc_solver(config);
-        mpc_solver.getSettings()->verbose = true;
-        mpc_solver.getSettings()->max_iter = 100000;
-        mpc_solver.getSettings()->polishing = true;
-        mpc_solver.getSettings()->warm_starting = true;
+        osqp->solve();
+        printf("OSQP solved\n");
 
-        mpc_solver.setup();
-        printf("OSQP_MPCSolver setup\n");
-
-        auto solution = mpc_solver.solve();
-        printf("OSQP_MPCSolver solved\n");
+        auto solution = osqp->getSolution();
 
         const Vector3f current_com_orientation = robot->getLocalization()->getCurrentOrientation();
         Matrix3f current_com_rotation;

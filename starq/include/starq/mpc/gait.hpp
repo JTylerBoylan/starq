@@ -70,6 +70,8 @@ namespace starq::mpc
         Vector3f angular_velocity_;
         std::map<milliseconds, StanceState> stance_pattern_;
     };
+
+    using GaitSequence = std::vector<Gait::Ptr>;
 }
 
 #endif

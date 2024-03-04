@@ -66,8 +66,10 @@ add_library(starqlib SHARED
   src/lib/mpc/gait_sequencer.cpp 
   src/lib/mpc/com_planner.cpp 
   src/lib/mpc/foothold_planner.cpp
-  src/lib/mpc/mpc_planner.cpp 
-  src/lib/mpc/mpc_solver.cpp
+  src/lib/mpc/mpc_configuration.cpp 
+  src/lib/mpc/mpc_problem.cpp
+  src/lib/mpc/qp_problem.cpp
+  src/lib/dynamics/unitree_a1_robot.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>
@@ -76,7 +78,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_robot.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/robots/unitree_a1_mujoco.cpp>
-  $<$<BOOL:${WITH_OSQP}>:src/lib/osqp/osqp_solver.cpp>
+  $<$<BOOL:${WITH_OSQP}>:src/lib/osqp/osqp.cpp>
 )
 
 target_include_directories(starqlib PUBLIC 

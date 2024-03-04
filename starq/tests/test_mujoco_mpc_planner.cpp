@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 #include "starq/robots/unitree_a1_mujoco.hpp"
-#include "starq/mpc/mpc_planner.hpp"
+#include "starq/dynamics/unitree_a1_robot.hpp"
+#include "starq/mpc/mpc_configuration.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
@@ -13,7 +14,7 @@ int main()
     printf("UnitreeA1MuJoCoRobot created\n");
 
     Gait::Ptr gait = std::make_shared<Gait>();
-    gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
+    gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
     printf("Gait loaded\n");
 
     gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
@@ -25,13 +26,13 @@ int main()
     printf("Stance duration: %d\n", int(stance_duration.count()));
     printf("Swing duration: %d\n", int(swing_duration.count()));
 
-    MPCPlanner mpc_planner(robot);
+    MPCConfiguration mpc_configuration(robot->getLegs(), robot->getRobotDynamics(), robot->getLocalization());
     printf("MPCPlanner created\n");
 
-    mpc_planner.setTimeStep(milliseconds(50));
-    mpc_planner.setWindowSize(21);
+    mpc_configuration.setTimeStep(milliseconds(50));
+    mpc_configuration.setWindowSize(21);
 
-    mpc_planner.setNextGait(gait);
+    mpc_configuration.setNextGait(gait);
     printf("Gait set\n");
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -49,26 +50,25 @@ int main()
     while (robot->isSimulationOpen())
     {
 
-        MPCConfiguration config;
-        mpc_planner.getConfiguration(config);
+        mpc_configuration.update();
 
         auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n", int(global_time.count()));
 
         printf("t \t stance \t com pos \t\t com ori \t\t com vel \t\t com rot \n");
-        for (size_t i = 0; i < config.window_size; i++)
+        for (size_t i = 0; i < mpc_configuration.getWindowSize(); i++)
         {
-            auto time = config.time_step * i;
-            printf("%d \t ", int(time.count()));
+            auto time = mpc_configuration.getTimeStep() * i;
+            printf("%.2f \t ", time);
 
-            StanceState stance_state = config.stance_trajectory[i];
+            StanceState stance_state = mpc_configuration.getStanceState(i);
             for (size_t j = 0; j < stance_state.size(); j++)
             {
                 printf("%d ", int(stance_state[j]));
             }
             printf("\t");
 
-            CenterOfMassState com_state = config.com_trajectory[i];
+            ReferenceState com_state = mpc_configuration.getReferenceState(i);
             printf("%.3f %.3f %.3f \t %.3f %.3f %.3f \t %.3f %.3f %.3f \t %.3f %.3f %.3f \n",
                    com_state.position.x(),
                    com_state.position.y(),
@@ -85,17 +85,17 @@ int main()
         }
         printf("------\n");
         printf("t \t FL \t\t\t RL \t\t\t RR \t\t\t FR \n");
-        for (size_t i = 0; i < config.window_size; i++)
+        for (size_t i = 0; i < mpc_configuration.getWindowSize(); i++)
         {
-            auto time = config.time_step * i;
-            printf("%d \t ", int(time.count()));
+            auto time = mpc_configuration.getTimeStep() * i;
+            printf("%.2f \t ", time);
 
-            for (size_t j = 0; j < config.foothold_trajectory[i].size(); j++)
+            for (size_t j = 0; j < mpc_configuration.getFootholdState(i).size(); j++)
             {
                 printf("%.3f %.3f %.3f \t",
-                       config.foothold_trajectory[i][j].x(),
-                       config.foothold_trajectory[i][j].y(),
-                       config.foothold_trajectory[i][j].z());
+                       mpc_configuration.getFootholdState(i)[j].x(),
+                       mpc_configuration.getFootholdState(i)[j].y(),
+                       mpc_configuration.getFootholdState(i)[j].z());
             }
             printf("\n");
         }

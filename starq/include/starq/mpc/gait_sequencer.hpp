@@ -30,9 +30,7 @@ namespace starq::mpc
         bool sync();
 
         /// @brief Configure the MPC
-        /// @param config The MPC configuration
-        /// @return True if the MPC was configured, false otherwise
-        bool configure(MPCConfiguration &config) const;
+        bool configure(const size_t N, const milliseconds dt, StanceTrajectory &stance_traj, GaitSequence &gait_seq) const;
 
         /// @brief Get the stance state
         /// @param time The time in milliseconds
