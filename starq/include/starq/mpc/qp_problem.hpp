@@ -20,19 +20,23 @@ namespace starq::mpc
 
         void update();
 
-        virtual size_t getN() const;
+        size_t getNx() const;
 
-        virtual size_t getM() const;
+        size_t getNu() const;
 
-        virtual SparseMatrix<double>& getH();
+        size_t getN() const;
 
-        virtual VectorXd& getG();
+        size_t getM() const;
 
-        virtual SparseMatrix<double>& getAc();
+        SparseMatrix<double> &getH();
 
-        virtual VectorXd& getLc();
+        VectorXd &getG();
 
-        virtual VectorXd& getUc();
+        SparseMatrix<double> &getAc();
+
+        VectorXd &getLc();
+
+        VectorXd &getUc();
 
     protected:
         const MPCProblem::Ptr mpc_problem_;
@@ -40,11 +44,20 @@ namespace starq::mpc
         size_t n_;
         size_t m_;
 
+        size_t nx_;
+        size_t nu_;
+
         SparseMatrix<double> H_;
         VectorXd g_;
         SparseMatrix<double> Ac_;
         VectorXd lc_;
         VectorXd uc_;
+
+        void computeH();
+        void computeG();
+        void computeAc();
+        void computeLc();
+        void computeUc();
     };
 
 }

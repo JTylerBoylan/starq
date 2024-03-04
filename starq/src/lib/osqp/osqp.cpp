@@ -64,7 +64,7 @@ namespace starq::osqp
             solution.x_star.push_back(state);
         }
 
-        int offset = qp_problem_->getMPCProblem()->getNx();
+        int offset = qp_problem_->getNx();
         for (size_t i = 0; i < window_size - 1; i++)
         {
             starq::mpc::FootForceState forces;
@@ -91,6 +91,15 @@ namespace starq::osqp
     void OSQP::convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                        OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp)
     {
+        if (M != nullptr)
+            delete M;
+        if (Mx != nullptr)
+            delete[] Mx;
+        if (Mi != nullptr)
+            delete[] Mi;
+        if (Mp != nullptr)
+            delete[] Mp;
+
         M = new OSQPCscMatrix;
         Mnnz = matrix.nonZeros();
         Mx = new OSQPFloat[Mnnz];

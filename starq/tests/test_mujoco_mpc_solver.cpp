@@ -49,8 +49,8 @@ int main()
     QPProblem::Ptr qp_problem = std::make_shared<QPProblem>(mpc_problem);
 
     OSQP::Ptr osqp = std::make_shared<OSQP>(qp_problem);
-    osqp->getSettings()->verbose = true;
-    osqp->getSettings()->max_iter = 100000;
+    osqp->getSettings()->verbose = false;
+    osqp->getSettings()->max_iter = 2000;
     osqp->getSettings()->polishing = true;
     osqp->getSettings()->warm_starting = true;
 
@@ -66,6 +66,8 @@ int main()
     }
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
+    size_t c = 0;
+    auto cstart = std::chrono::high_resolution_clock::now();
     while (robot->isSimulationOpen())
     {
         osqp->update();
@@ -153,7 +155,15 @@ int main()
         printf("------\n");
         printf("\n\n");
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        c++;
+        if (c % 1000 == 0)
+        {
+            auto cend = std::chrono::high_resolution_clock::now();
+            auto ctime = std::chrono::duration_cast<std::chrono::milliseconds>(cend - cstart);
+            printf("Frequency: %lu Hz\n", (1000 * c) / ctime.count());
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     robot->waitForSimulation();

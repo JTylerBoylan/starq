@@ -19,31 +19,42 @@ namespace starq::mpc
 
         MPCConfiguration::Ptr getConfig() const;
 
-        size_t getNx() const;
+        VectorXf &getXref(const size_t &k);
 
-        size_t getNu() const;
+        MatrixXf &getQ(const size_t &k);
 
-        VectorXf getXref(const size_t &k) const;
+        MatrixXf &getR(const size_t &k);
 
-        MatrixXf getQ(const size_t &k) const;
+        MatrixXf &getA(const size_t &k);
 
-        MatrixXf getR(const size_t &k) const;
+        MatrixXf &getB(const size_t &k);
 
-        MatrixXf getA(const size_t &k) const;
+        MatrixXf &getC(const size_t &k);
 
-        MatrixXf getB(const size_t &k) const;
+        VectorXf &getLower(const size_t &k);
 
-        MatrixXf getC(const size_t &k) const;
-
-        VectorXf getLower(const size_t &k) const;
-
-        VectorXf getUpper(const size_t &k) const;
+        VectorXf &getUpper(const size_t &k);
 
     private:
         const MPCConfiguration::Ptr config_;
 
-        size_t nx_;
-        size_t nu_;
+        std::vector<VectorXf> xref_;
+        std::vector<MatrixXf> Q_;
+        std::vector<MatrixXf> R_;
+        std::vector<MatrixXf> A_;
+        std::vector<MatrixXf> B_;
+        std::vector<MatrixXf> C_;
+        std::vector<VectorXf> lower_;
+        std::vector<VectorXf> upper_;
+
+        void computeXref();
+        void computeQ();
+        void computeR();
+        void computeA();
+        void computeB();
+        void computeC();
+        void computeLower();
+        void computeUpper();
 
         Matrix3f getSkewSymmetricMatrix(const Vector3f &v) const;
     };

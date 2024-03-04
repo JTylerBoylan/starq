@@ -19,6 +19,16 @@ namespace starq::mpc
         return mpc_problem_;
     }
 
+    size_t QPProblem::getNx() const
+    {
+        return nx_;
+    }
+
+    size_t QPProblem::getNu() const
+    {
+        return nu_;
+    }
+
     size_t QPProblem::getN() const
     {
         return n_;
@@ -33,11 +43,50 @@ namespace starq::mpc
     {
         mpc_problem_->update();
 
-        n_ = mpc_problem_->getNx() + mpc_problem_->getNu();
-        m_ = mpc_problem_->getNx() + 2 * mpc_problem_->getNu();
+        const size_t Nn = mpc_problem_->getConfig()->getWindowSize();
+        nx_ = 13 * Nn;
+        nu_ = 0;
+        for (size_t k = 0; k < Nn - 1; k++)
+        {
+            nu_ += 3 * mpc_problem_->getConfig()->getNumberOfLegs(k);
+        }
+
+        n_ = nx_ + nu_;
+        m_ = nx_ + 2 * nu_;
+
+        computeH();
+        computeG();
+        computeAc();
+        computeLc();
+        computeUc();
     }
 
-    SparseMatrix<double>& QPProblem::getH()
+    SparseMatrix<double> &QPProblem::getH()
+    {
+        return H_;
+    }
+
+    VectorXd &QPProblem::getG()
+    {
+        return g_;
+    }
+
+    SparseMatrix<double> &QPProblem::getAc()
+    {
+        return Ac_;
+    }
+
+    VectorXd &QPProblem::getLc()
+    {
+        return lc_;
+    }
+
+    VectorXd &QPProblem::getUc()
+    {
+        return uc_;
+    }
+
+    void QPProblem::computeH()
     {
         H_.resize(n_, n_);
 
@@ -74,10 +123,9 @@ namespace starq::mpc
         }
 
         H_.setFromTriplets(triplets.begin(), triplets.end());
-        return H_;
     }
 
-    VectorXd& QPProblem::getG()
+    void QPProblem::computeG()
     {
         g_.resize(n_);
 
@@ -99,11 +147,9 @@ namespace starq::mpc
             g_.block(idx, 0, Nu, 1) = Gu;
             idx += Nu;
         }
-
-        return g_;
     }
 
-    SparseMatrix<double>& QPProblem::getAc()
+    void QPProblem::computeAc()
     {
         Ac_.resize(m_, n_);
 
@@ -166,17 +212,16 @@ namespace starq::mpc
         }
 
         Ac_.setFromTriplets(triplets.begin(), triplets.end());
-        return Ac_;
     }
 
-    VectorXd& QPProblem::getLc()
+    void QPProblem::computeLc()
     {
         lc_.resize(m_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
         const int Nx = 13;
-        const int Neq = mpc_problem_->getNx();
-        const int Nineq = 2 * mpc_problem_->getNu();
+        const int Neq = nx_;
+        const int Nineq = 2 * nu_;
 
         lc_.block(0, 0, Neq, 1) = VectorXd::Zero(Neq);
         lc_.block(0, 0, Nx, 1) = -mpc_problem_->getXref(0).cast<double>();
@@ -189,18 +234,16 @@ namespace starq::mpc
             lc_.block(idx, 0, Nuc, 1) = mpc_problem_->getLower(i).cast<double>();
             idx += Nuc;
         }
-
-        return lc_;
     }
 
-    VectorXd& QPProblem::getUc()
+    void QPProblem::computeUc()
     {
         uc_.resize(m_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
         const int Nx = 13;
-        const int Neq = mpc_problem_->getNx();
-        const int Nineq = 2 * mpc_problem_->getNu();
+        const int Neq = nx_;
+        const int Nineq = 2 * nu_;
 
         uc_.block(0, 0, Neq, 1) = VectorXd::Zero(Neq);
         uc_.block(0, 0, Nx, 1) = -mpc_problem_->getXref(0).cast<double>();
@@ -213,8 +256,6 @@ namespace starq::mpc
             uc_.block(idx, 0, Nuc, 1) = mpc_problem_->getUpper(i).cast<double>();
             idx += Nuc;
         }
-
-        return uc_;
     }
 
 }
