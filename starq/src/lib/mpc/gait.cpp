@@ -9,6 +9,9 @@ namespace starq::mpc
 {
     Gait::Gait()
         : duration_(1000),
+          control_mode_(GAIT_VELOCITY_CONTROL),
+          position_(Vector3f::Zero()),
+          orientation_(Vector3f::Zero()),
           linear_velocity_(Vector3f::Zero()),
           angular_velocity_(Vector3f::Zero())
     {
@@ -20,8 +23,6 @@ namespace starq::mpc
 
     bool Gait::load(const std::string &file_path)
     {
-        stance_pattern_.clear();
-
         std::ifstream file(file_path);
 
         if (!file.is_open())
@@ -30,12 +31,14 @@ namespace starq::mpc
             return false;
         }
 
-        int stance_count = 0;
-
         std::string line;
+        std::istringstream iss;
+
+        int stance_count = 0;
+        stance_pattern_.clear();
         while (std::getline(file, line))
         {
-            std::istringstream iss(line);
+            iss = std::istringstream(line);
 
             if (line[0] == '-')
                 break;
@@ -63,8 +66,64 @@ namespace starq::mpc
 
         stance_ratio_ = static_cast<float>(stance_count) / static_cast<float>(stance_pattern_.size());
 
+        std::string control_mode_str;
         std::getline(file, line);
-        std::istringstream iss(line);
+        iss = std::istringstream(line);
+        if (!(iss >> control_mode_str))
+        {
+            std::cerr << "Error reading control mode " << line << std::endl;
+            return false;
+        }
+
+        if (control_mode_str == "POSITION")
+        {
+            control_mode_ = GAIT_POSITION_CONTROL;
+        }
+        else if (control_mode_str == "VELOCITY")
+        {
+            control_mode_ = GAIT_VELOCITY_CONTROL;
+        }
+        else
+        {
+            std::cerr << "Error reading control mode " << control_mode_str << std::endl;
+            return false;
+        }
+
+        if (control_mode_ == GAIT_POSITION_CONTROL)
+        {
+            std::getline(file, line);
+            iss = std::istringstream(line);
+            if (!(iss >>
+                  max_linear_velocity_.x() >>
+                  max_linear_velocity_.y() >>
+                  max_linear_velocity_.z()))
+            {
+                std::cerr << "Error reading max linear velocity " << line << std::endl;
+                return false;
+            }
+
+            std::getline(file, line);
+            iss = std::istringstream(line);
+            if (!(iss >>
+                  max_angular_velocity_.x() >>
+                  max_angular_velocity_.y() >>
+                  max_angular_velocity_.z()))
+            {
+                std::cerr << "Error reading max angular velocity " << line << std::endl;
+                return false;
+            }
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (line[0] != '-')
+        {
+            std::cerr << "Expected a section break here: " << line << std::endl;
+            return false;
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
         if (!(iss >>
               reference_weights_.position.x() >>
               reference_weights_.position.y() >>
@@ -126,6 +185,23 @@ namespace starq::mpc
         duration_ = milliseconds(static_cast<int>(1000.0 / frequency));
     }
 
+    void Gait::setControlMode(const GaitControlMode &control_mode)
+    {
+        control_mode_ = control_mode;
+    }
+
+    void Gait::setPose(const Vector3f &position, const Vector3f &orientation)
+    {
+        position_ = position;
+        orientation_ = orientation;
+    }
+
+    void Gait::setMaxVelocity(const Vector3f &max_linear_velocity, const Vector3f &max_angular_velocity)
+    {
+        max_linear_velocity_ = max_linear_velocity;
+        max_angular_velocity_ = max_angular_velocity;
+    }
+
     void Gait::setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity)
     {
         linear_velocity_ = linear_velocity;
@@ -151,6 +227,31 @@ namespace starq::mpc
     milliseconds Gait::getSwingDuration() const
     {
         return getDuration() - getStanceDuration();
+    }
+
+    GaitControlMode Gait::getControlMode() const
+    {
+        return control_mode_;
+    }
+
+    Vector3f Gait::getPosition() const
+    {
+        return position_;
+    }
+
+    Vector3f Gait::getOrientation() const
+    {
+        return orientation_;
+    }
+
+    Vector3f Gait::getMaxLinearVelocity() const
+    {
+        return max_linear_velocity_;
+    }
+
+    Vector3f Gait::getMaxAngularVelocity() const
+    {
+        return max_angular_velocity_;
     }
 
     Vector3f Gait::getLinearVelocity() const

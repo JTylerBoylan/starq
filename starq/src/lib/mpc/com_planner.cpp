@@ -27,21 +27,56 @@ namespace starq::mpc
         const float dT = dt.count() / 1000.0;
         for (size_t i = 1; i < N; i++)
         {
-            const Vector3f linear_velocity = gait_seq[i - 1]->getLinearVelocity();
-            const Vector3f angular_velocity = gait_seq[i - 1]->getAngularVelocity();
 
-            const float last_theta = ref_traj[i - 1].orientation.z();
-            const float last_x = ref_traj[i - 1].position.x();
-            const float last_y = ref_traj[i - 1].position.y();
+            Vector3f linear_velocity;
+            Vector3f angular_velocity;
+            switch (gait_seq[i - 1]->getControlMode())
+            {
+            case GAIT_POSITION_CONTROL:
+            {
+                const Vector3f delta_p = gait_seq[i]->getPosition() - ref_traj[i - 1].position;
+                const Vector3f max_v = gait_seq[i - 1]->getMaxLinearVelocity();
+                const Vector3f max_delta_p = max_v * dT;
+                for (int j = 0; j < 3; j++)
+                {
+                    if (std::abs(delta_p[j]) > max_delta_p[j])
+                    {
+                        linear_velocity[j] = delta_p[j] > 0 ? max_v[j] : -max_v[j];
+                    }
+                    else
+                    {
+                        linear_velocity[j] = delta_p[j] / dT;
+                    }
+                }
+                const Vector3f delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
+                const Vector3f max_w = gait_seq[i - 1]->getMaxAngularVelocity();
+                const Vector3f max_delta_o = max_w * dT;
+                for (int j = 0; j < 3; j++)
+                {
+                    if (std::abs(delta_o[j]) > max_delta_o[j])
+                    {
+                        angular_velocity[j] = delta_o[j] > 0 ? max_w[j] : -max_w[j];
+                    }
+                    else
+                    {
+                        angular_velocity[j] = delta_o[j] / dT;
+                    }
+                }
+                break;
+            }
+            case GAIT_VELOCITY_CONTROL:
+            {
+                const Matrix3f rotation = localization_->toRotationMatrix(ref_traj[i - 1].orientation);
+                linear_velocity = rotation * gait_seq[i - 1]->getLinearVelocity();
+                angular_velocity = rotation * gait_seq[i - 1]->getAngularVelocity();
+                break;
+            }
+            }
 
-            float &theta = ref_traj[i].orientation.z();
-            float &x = ref_traj[i].position.x();
-            float &y = ref_traj[i].position.y();
-            float &z = ref_traj[i].position.z();
-            theta = last_theta + angular_velocity.z() * dT;
-            x = last_x + linear_velocity.x() * std::cos(theta) * dT;
-            y = last_y + linear_velocity.y() * std::sin(theta) * dT;
-            z = robot_dynamics_->getBodyHeight();
+            ref_traj[i].position = ref_traj[i - 1].position + linear_velocity * dT;
+            ref_traj[i].orientation = ref_traj[i - 1].orientation + angular_velocity * dT;
+            ref_traj[i].linear_velocity = linear_velocity;
+            ref_traj[i].angular_velocity = angular_velocity;
         }
         return true;
     }

@@ -17,7 +17,10 @@ int main()
     gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
     printf("Gait loaded\n");
 
-    gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
+    // gait ->setControlMode(GAIT_VELOCITY_CONTROL);
+    // gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
+
+    gait->setPose(Vector3f(0, 0, UNITREE_A1_HEIGHT), Vector3f(0, 0, 0));
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
     auto swing_duration = gait->getSwingDuration();
@@ -56,6 +59,14 @@ int main()
     printf("Starting MPC loop\n");
     while (robot->isSimulationOpen())
     {
+        auto global_time = robot->getLocalization()->getCurrentTime();
+
+        float offset_x = 0.025 * std::cos(2 * 1E-3 * global_time.count());
+        float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
+
+        gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_HEIGHT + offset_z), Vector3f(0, 0, 0));
+
         if (!osqp->update(mpc_config))
             break;
 
@@ -93,7 +104,6 @@ int main()
         // }
 
         printf("------\n");
-        auto global_time = robot->getLocalization()->getCurrentTime();
         printf("Global time: %d\n\n", int(global_time.count()));
         auto position = robot->getLocalization()->getCurrentPosition();
         auto orientation = robot->getLocalization()->getCurrentOrientation();

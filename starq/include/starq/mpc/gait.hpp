@@ -12,6 +12,13 @@
 
 namespace starq::mpc
 {
+
+    enum GaitControlMode
+    {
+        GAIT_POSITION_CONTROL = 0,
+        GAIT_VELOCITY_CONTROL = 1
+    };
+
     /// @brief Gait class
     class Gait
     {
@@ -33,6 +40,20 @@ namespace starq::mpc
         /// @param frequency The frequency of the gait pattern
         void setFrequency(const double &frequency);
 
+        /// @brief Set the control mode of the gait pattern
+        /// @param control_mode The control mode of the gait pattern
+        void setControlMode(const GaitControlMode &control_mode);
+
+        /// @brief Set the pose of the gait pattern
+        /// @param position The position of the gait pattern
+        /// @param orientation The orientation of the gait pattern
+        void setPose(const Vector3f &position, const Vector3f &orientation);
+
+        /// @brief Set the max velocity of the gait pattern for position control
+        /// @param max_linear_velocity The max linear velocity of the gait pattern
+        /// @param max_angular_velocity The max angular velocity of the gait pattern
+        void setMaxVelocity(const Vector3f &max_linear_velocity, const Vector3f &max_angular_velocity);
+
         /// @brief Set the velocity of the gait pattern
         /// @param linear_velocity The linear velocity of the gait pattern
         void setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity);
@@ -53,6 +74,26 @@ namespace starq::mpc
         /// @brief Get the swing duration of the gait pattern
         /// @return The swing duration of the gait pattern
         milliseconds getSwingDuration() const;
+
+        /// @brief Get the control mode of the gait pattern
+        /// @return The control mode of the gait pattern
+        GaitControlMode getControlMode() const;
+
+        /// @brief Get the reference position
+        /// @return The reference position
+        Vector3f getPosition() const;
+
+        /// @brief Get the reference orientation
+        /// @return The reference orientation
+        Vector3f getOrientation() const;
+
+        /// @brief Get the max linear velocity of the gait pattern
+        /// @return The max linear velocity of the gait pattern
+        Vector3f getMaxLinearVelocity() const;
+
+        /// @brief Get the max angular velocity of the gait pattern
+        /// @return The max angular velocity of the gait pattern
+        Vector3f getMaxAngularVelocity() const;
 
         /// @brief Get the linear velocity of the gait pattern
         /// @return The linear velocity of the gait pattern
@@ -79,6 +120,11 @@ namespace starq::mpc
         milliseconds duration_;
         double stance_ratio_;
 
+        GaitControlMode control_mode_;
+        Vector3f position_;
+        Vector3f orientation_;
+        Vector3f max_linear_velocity_;
+        Vector3f max_angular_velocity_;
         Vector3f linear_velocity_;
         Vector3f angular_velocity_;
         std::map<milliseconds, StanceState> stance_pattern_;

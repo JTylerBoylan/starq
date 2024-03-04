@@ -21,7 +21,20 @@
 
 # Sections separated by dashed line (Amount doesn't matter)
 ---
-# SECOND SECTION: MPC Weights
+
+# SECOND SECTION: Control Mode
+# Can either be POSITION or VELOCITY
+# If POSITION, the next two lines are the maximum linear and angular velocities
+# If VELOCITY, there should be no additional lines
+
+# Example:
+POSITION
+1.0 1.0 1.0  # Max linear velocity [m/s]
+1.0 1.0 1.0  # Max angular velocity [rad/s]
+
+---
+
+# THIRD SECTION: MPC Weights
 # Row 1: Position weights (x, y, z)
 # Row 2: Orientaion weights (roll, pitch, yaw)
 # Row 3: Linear velocity weights
