@@ -34,15 +34,17 @@ namespace starq::osqp
         convertEigenSparseToCSC(qp_problem_->getH(), P_, Pnnz_, Px_, Pi_, Pp_);
         convertEigenSparseToCSC(qp_problem_->getAc(), A_, Annz_, Ax_, Ai_, Ap_);
 
-        if (osqp_cleanup(solver_) != 0)
+        OSQPInt flag = osqp_cleanup(solver_);
+        if (flag != 0)
         {
-            std::cerr << "Error cleaning up OSQP solver" << std::endl;
+            std::cerr << "Error cleaning up OSQP solver (Error: " << flag << ")" << std::endl;
             return false;
         }
 
-        if (osqp_setup(&solver_, P_, q_, A_, l_, u_, m_, n_, settings_) != 0)
+        flag = osqp_setup(&solver_, P_, q_, A_, l_, u_, m_, n_, settings_);
+        if (flag != 0)
         {
-            std::cerr << "Error setting up OSQP solver" << std::endl;
+            std::cerr << "Error setting up OSQP solver (Error: " << flag << ")" << std::endl;
             return false;
         }
         
@@ -51,9 +53,10 @@ namespace starq::osqp
 
     bool OSQP::solve()
     {
-        if (!osqp_solve(solver_))
+        OSQPInt flag = osqp_solve(solver_);
+        if (flag != 0)
         {
-            std::cerr << "Error solving OSQP problem" << std::endl;
+            std::cerr << "Error solving OSQP problem (Error: " << flag << ")" << std::endl;
             return false;
         }
         return true;

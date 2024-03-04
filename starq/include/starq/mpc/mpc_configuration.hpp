@@ -44,20 +44,6 @@ namespace starq::mpc
         /// @param gait The gait
         void setNextGait(const Gait::Ptr &gait);
 
-        /// @brief Set the weight for the state
-        /// @param position_weights Weight for the position
-        /// @param orientation_weights Weight for the orientation
-        /// @param linear_velocity_weights Weight for the linear velocity
-        /// @param angular_velocity_weights Weight for the angular velocity
-        void setStateWeights(const Vector3f &position_weights,
-                             const Vector3f &orientation_weights,
-                             const Vector3f &linear_velocity_weights,
-                             const Vector3f &angular_velocity_weights);
-
-        /// @brief Set the weight for the control
-        /// @param force_weights Weight for the force
-        void setControlWeights(const Vector3f &force_weights);
-
         /// @brief Update the MPC configuration
         /// @return True if the MPC configuration was updated, false otherwise
         bool update();
@@ -95,13 +81,15 @@ namespace starq::mpc
         /// @return The number of legs
         size_t getNumberOfLegs(const int node) const;
 
-        /// @brief Get the reference weights
+        /// @brief Get the reference weights at a specific node
+        /// @param node The node
         /// @return The reference weights
-        ReferenceWeights getReferenceWeights() const;
+        ReferenceWeights getReferenceWeights(const int node) const;
 
-        /// @brief Get the force weights
+        /// @brief Get the force weights at a specific node
+        /// @param node The node
         /// @return The force weights
-        ForceWeights getForceWeights() const;
+        ForceWeights getForceWeights(const int node) const;
 
         /// @brief Get the gravity
         /// @return The gravity
@@ -138,9 +126,6 @@ namespace starq::mpc
 
         milliseconds time_step_;
         size_t window_size_;
-
-        ReferenceWeights reference_weights_;
-        ForceWeights force_weights_;
 
         StanceTrajectory stance_trajectory_;
         GaitSequence gait_sequence_;

@@ -30,7 +30,7 @@ namespace starq::mpc
         virtual MPCSolution getSolution() const = 0;
 
     protected:
-        QPProblem::Ptr qp_problem_;
+        const QPProblem::Ptr qp_problem_;
     };
 
 }

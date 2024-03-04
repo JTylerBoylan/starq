@@ -34,13 +34,6 @@ int main()
     mpc_config->setTimeStep(milliseconds(50));
     mpc_config->setWindowSize(21);
 
-    mpc_config->setStateWeights(Vector3f(10.0, 10.0, 50.0),
-                                Vector3f(1.0, 1.0, 1.0),
-                                Vector3f(1.0, 1.0, 1.0),
-                                Vector3f(1.0, 1.0, 1.0));
-
-    mpc_config->setControlWeights(Vector3f(1E-6, 1E-6, 1E-6));
-
     mpc_config->setNextGait(gait);
     printf("Gait set\n");
 
@@ -53,8 +46,6 @@ int main()
     osqp->getSettings()->max_iter = 2000;
     osqp->getSettings()->polishing = true;
     osqp->getSettings()->warm_starting = true;
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     robot->startSimulation();
     printf("Simulation started\n");
@@ -70,11 +61,11 @@ int main()
     auto cstart = std::chrono::high_resolution_clock::now();
     while (robot->isSimulationOpen())
     {
-        osqp->update();
-        printf("OSQP updated\n");
+        if (osqp->update())
+            printf("OSQP updated\n");
 
-        osqp->solve();
-        printf("OSQP solved\n");
+        if (osqp->solve())
+            printf("OSQP solved\n");
 
         auto solution = osqp->getSolution();
 
@@ -156,7 +147,7 @@ int main()
         printf("\n\n");
 
         c++;
-        if (c % 1000 == 0)
+        if (c % 100 == 0)
         {
             auto cend = std::chrono::high_resolution_clock::now();
             auto ctime = std::chrono::duration_cast<std::chrono::milliseconds>(cend - cstart);

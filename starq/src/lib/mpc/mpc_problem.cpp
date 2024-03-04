@@ -97,7 +97,7 @@ namespace starq::mpc
         Q_.resize(Nn);
         for (size_t k = 0; k < Nn; k++)
         {
-            const ReferenceWeights &weights = config_->getReferenceWeights();
+            const ReferenceWeights &weights = config_->getReferenceWeights(k);
             MatrixXf Q = MatrixXf::Zero(13, 13);
             Q.block<3, 3>(0, 0) = weights.orientation.asDiagonal();
             Q.block<3, 3>(3, 3) = weights.position.asDiagonal();
@@ -115,7 +115,7 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn - 1; k++)
         {
             const size_t n_legs = config_->getNumberOfLegs(k);
-            const ForceWeights &weights = config_->getForceWeights();
+            const ForceWeights &weights = config_->getForceWeights(k);
             MatrixXf R = MatrixXf::Zero(3 * n_legs, 3 * n_legs);
             for (size_t j = 0; j < n_legs; j++)
             {

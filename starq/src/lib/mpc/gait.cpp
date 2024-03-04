@@ -37,6 +37,9 @@ namespace starq::mpc
         {
             std::istringstream iss(line);
 
+            if (line[0] == '-')
+                break;
+
             time_t time_ms;
             StanceState stance;
 
@@ -60,6 +63,61 @@ namespace starq::mpc
 
         stance_ratio_ = static_cast<float>(stance_count) / static_cast<float>(stance_pattern_.size());
 
+        std::getline(file, line);
+        std::istringstream iss(line);
+        if (!(iss >>
+              reference_weights_.position.x() >>
+              reference_weights_.position.y() >>
+              reference_weights_.position.z()))
+        {
+            std::cerr << "Error reading position weights " << line << std::endl;
+            return false;
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+              reference_weights_.orientation.x() >>
+              reference_weights_.orientation.y() >>
+              reference_weights_.orientation.z()))
+        {
+            std::cerr << "Error reading orientation weights " << line << std::endl;
+            return false;
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+              reference_weights_.linear_velocity.x() >>
+              reference_weights_.linear_velocity.y() >>
+              reference_weights_.linear_velocity.z()))
+        {
+            std::cerr << "Error reading velocity weights " << line << std::endl;
+            return false;
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+              reference_weights_.angular_velocity.x() >>
+              reference_weights_.angular_velocity.y() >>
+              reference_weights_.angular_velocity.z()))
+        {
+            std::cerr << "Error reading angular velocity weights " << line << std::endl;
+            return false;
+        }
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+              force_weights_.x() >>
+              force_weights_.y() >>
+              force_weights_.z()))
+        {
+            std::cerr << "Error reading position force weights " << line << std::endl;
+            return false;
+        }
+
         return true;
     }
 
@@ -72,6 +130,12 @@ namespace starq::mpc
     {
         linear_velocity_ = linear_velocity;
         angular_velocity_ = angular_velocity;
+    }
+
+    void Gait::setWeights(const ReferenceWeights &reference_weights, const ForceWeights &force_weights)
+    {
+        reference_weights_ = reference_weights;
+        force_weights_ = force_weights;
     }
 
     milliseconds Gait::getDuration() const
@@ -116,5 +180,15 @@ namespace starq::mpc
         }
 
         return stance->second;
+    }
+
+    ReferenceWeights Gait::getReferenceWeights() const
+    {
+        return reference_weights_;
+    }
+
+    ForceWeights Gait::getForceWeights() const
+    {
+        return force_weights_;
     }
 }

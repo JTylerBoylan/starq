@@ -44,8 +44,6 @@ namespace starq::osqp
         void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
 
-        mpc::QPProblem::Ptr qp_problem_;
-
         OSQPInt n_, m_;
 
         OSQPSolver *solver_ = nullptr;

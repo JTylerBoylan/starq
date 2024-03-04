@@ -38,22 +38,6 @@ namespace starq::mpc
         gait_sequencer_->setNextGait(gait);
     }
 
-    void MPCConfiguration::setStateWeights(const Vector3f &position_weights,
-                                           const Vector3f &orientation_weights,
-                                           const Vector3f &linear_velocity_weights,
-                                           const Vector3f &angular_velocity_weights)
-    {
-        reference_weights_.position = position_weights;
-        reference_weights_.orientation = orientation_weights;
-        reference_weights_.linear_velocity = linear_velocity_weights;
-        reference_weights_.angular_velocity = angular_velocity_weights;
-    }
-
-    void MPCConfiguration::setControlWeights(const Vector3f &force_weights)
-    {
-        force_weights_ = force_weights;
-    }
-
     bool MPCConfiguration::update()
     {
         if (!gait_sequencer_->sync())
@@ -128,14 +112,14 @@ namespace starq::mpc
         return n_legs_[node];
     }
 
-    ReferenceWeights MPCConfiguration::getReferenceWeights() const
+    ReferenceWeights MPCConfiguration::getReferenceWeights(const int node) const
     {
-        return reference_weights_;
+        return gait_sequence_[node]->getReferenceWeights();
     }
 
-    ForceWeights MPCConfiguration::getForceWeights() const
+    ForceWeights MPCConfiguration::getForceWeights(const int node) const
     {
-        return force_weights_;
+        return gait_sequence_[node]->getForceWeights();
     }
 
     Vector3f MPCConfiguration::getGravity() const

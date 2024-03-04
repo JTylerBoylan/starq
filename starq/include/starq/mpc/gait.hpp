@@ -37,6 +37,11 @@ namespace starq::mpc
         /// @param linear_velocity The linear velocity of the gait pattern
         void setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity);
 
+        /// @brief Set the weights of the gait pattern
+        /// @param reference_weights The reference weights of the gait pattern
+        /// @param force_weights The force weights of the gait pattern
+        void setWeights(const ReferenceWeights &reference_weights, const ForceWeights &force_weights);
+
         /// @brief Get the duration of the gait pattern
         /// @return The duration of the gait pattern
         milliseconds getDuration() const;
@@ -62,6 +67,14 @@ namespace starq::mpc
         /// @return The stance state of the gait pattern at the given time
         StanceState getStanceState(const milliseconds &time) const;
 
+        /// @brief Get the reference weights of the gait
+        /// @return The reference weights of the gait
+        ReferenceWeights getReferenceWeights() const;
+
+        /// @brief Get the force weights of the gait
+        /// @return The force weights of the gait
+        ForceWeights getForceWeights() const;
+
     private:
         milliseconds duration_;
         double stance_ratio_;
@@ -69,6 +82,8 @@ namespace starq::mpc
         Vector3f linear_velocity_;
         Vector3f angular_velocity_;
         std::map<milliseconds, StanceState> stance_pattern_;
+        ReferenceWeights reference_weights_;
+        ForceWeights force_weights_;
     };
 
     using GaitSequence = std::vector<Gait::Ptr>;
