@@ -1,0 +1,36 @@
+# FORMAT FOR GAIT FILE
+
+# IMPORTANT: Do not include empty lines or comments (#) in the actual file
+
+# FIRST SECTION: Gait Sequence
+# Should range between 0-1000 milliseconds
+# Should always include time 0 and 1000 as bounds
+# Timing/frequency is adjusted by the velocity function
+# Column 1: Time of stance in milliseconds
+# Column 2: Stance for Leg 1 (FL)
+# Column 3: Stance for Leg 2 (RL)
+# Column 4: Stance for Leg 3 (RR)
+# Column 5: Stance for Leg 4 (FR)
+
+# EXAMPLE: Walking Gait
+0000 1 1 1 1  # Full Support  (0 ms)
+0450 1 0 1 0  # FL-RR Support (450 ms)
+5000 1 1 1 1  # Full Support  (50 ms)
+0950 0 1 0 1  # FR-RL Support (450 ms)
+1000 1 1 1 1  # Full Support  (50 ms)
+
+# Sections separated by dashed line (Amount doesn't matter)
+---
+# SECOND SECTION: MPC Weights
+# Row 1: Position weights (x, y, z)
+# Row 2: Orientaion weights (roll, pitch, yaw)
+# Row 3: Linear velocity weights
+# Row 4: Angular velocity weights
+# Row 5: Force weights (fx, fy, fz)
+
+# Example:
+0.0 0.0 50.0     # Maintain Z height (Strong)
+0.0 0.0 10.0     # Maintain yaw
+10.0 10.0 10.0   # Maintain lin. velocity
+10.0 10.0 10.0   # Maintain ang. velocity
+1e-6 1e-6 1e-6   # Dampen control (Weak)
