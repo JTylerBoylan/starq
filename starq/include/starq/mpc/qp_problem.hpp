@@ -20,9 +20,9 @@ namespace starq::mpc
 
         void update();
 
-        size_t getN() const;
+        virtual size_t getN() const;
 
-        size_t getM() const;
+        virtual size_t getM() const;
 
         virtual SparseMatrix<double>& getH();
 

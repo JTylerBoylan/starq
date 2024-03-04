@@ -69,6 +69,7 @@ add_library(starqlib SHARED
   src/lib/mpc/mpc_configuration.cpp 
   src/lib/mpc/mpc_problem.cpp
   src/lib/mpc/qp_problem.cpp
+  src/lib/mpc/qp_problem_condensed.cpp
   src/lib/dynamics/unitree_a1_robot.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
