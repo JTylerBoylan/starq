@@ -13,13 +13,15 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<QPSolver>;
 
         /// @brief Create a new QPSolver object
-        /// @param qp_problem The QP problem
-        QPSolver(const QPProblem::Ptr qp_problem)
-            : qp_problem_(qp_problem) {}
+        QPSolver()
+            : qp_problem_(std::make_shared<QPProblem>())
+        {
+        }
 
         /// @brief Update the QP solver
+        /// @param config The MPC configuration
         /// @return If the update was successful
-        virtual bool update() = 0;
+        virtual bool update(MPCConfiguration::Ptr config) = 0;
 
         /// @brief Solve the QP problem
         /// @return If the problem was solved successfully
@@ -30,7 +32,7 @@ namespace starq::mpc
         virtual MPCSolution getSolution() const = 0;
 
     protected:
-        const QPProblem::Ptr qp_problem_;
+        QPProblem::Ptr qp_problem_;
     };
 
 }

@@ -18,7 +18,6 @@ int main()
     printf("Gait loaded\n");
 
     gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
-
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
     auto swing_duration = gait->getSwingDuration();
@@ -29,23 +28,17 @@ int main()
     MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
                                                                           robot->getRobotDynamics(),
                                                                           robot->getLocalization());
-    printf("MPCPlanner created\n");
-
     mpc_config->setTimeStep(milliseconds(50));
     mpc_config->setWindowSize(21);
-
     mpc_config->setNextGait(gait);
-    printf("Gait set\n");
+    printf("MPCConfiguration created\n");
 
-    MPCProblem::Ptr mpc_problem = std::make_shared<MPCProblem>(mpc_config);
-
-    QPProblem::Ptr qp_problem = std::make_shared<QPProblem>(mpc_problem);
-
-    OSQP::Ptr osqp = std::make_shared<OSQP>(qp_problem);
+    OSQP::Ptr osqp = std::make_shared<OSQP>();
     osqp->getSettings()->verbose = false;
     osqp->getSettings()->max_iter = 2000;
     osqp->getSettings()->polishing = true;
     osqp->getSettings()->warm_starting = true;
+    printf("OSQP created\n");
 
     robot->startSimulation();
     printf("Simulation started\n");
@@ -55,25 +48,21 @@ int main()
     {
         robot->setFootPosition(id, foot_position);
     }
+    printf("Holding foot position for 5 seconds...\n");
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     size_t c = 0;
     auto cstart = std::chrono::high_resolution_clock::now();
+    printf("Starting MPC loop\n");
     while (robot->isSimulationOpen())
     {
-        if (osqp->update())
-            printf("OSQP updated\n");
+        if (!osqp->update(mpc_config))
+            break;
 
-        if (osqp->solve())
-            printf("OSQP solved\n");
+        if (!osqp->solve())
+            break;
 
         auto solution = osqp->getSolution();
-
-        const Vector3f current_com_orientation = robot->getLocalization()->getCurrentOrientation();
-        Matrix3f current_com_rotation;
-        current_com_rotation = AngleAxisf(current_com_orientation.x(), Vector3f::UnitX()) *
-                               AngleAxisf(current_com_orientation.y(), Vector3f::UnitY()) *
-                               AngleAxisf(current_com_orientation.z(), Vector3f::UnitZ());
 
         // for (size_t i = 0; i < config.window_size; i++)
         // {
@@ -116,6 +105,9 @@ int main()
         printf("Current Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
         printf("\n");
 
+        const Vector3f current_orientation = robot->getLocalization()->getCurrentOrientation();
+        const Matrix3f current_rotation = robot->getLocalization()->toRotationMatrix(current_orientation);
+
         for (size_t j = 0; j < solution.u_star[0].size(); j++)
         {
             if (solution.u_star[0][j].first)
@@ -137,22 +129,21 @@ int main()
                     break;
                 }
 
-                Vector3f foot_force = -solution.u_star[0][j].second;
-                robot->setFootForce(j, foot_force);
-                printf("%s Force: %f %f %f\n", leg_name.c_str(), foot_force.x(), foot_force.y(), foot_force.z());
+                Vector3f foot_force_world = -solution.u_star[0][j].second;
+                Vector3f foot_force_body = current_rotation.transpose() * foot_force_world;
+                robot->setFootForce(j, foot_force_body);
+                printf("%s Force: %f %f %f\n", leg_name.c_str(), foot_force_body.x(), foot_force_body.y(), foot_force_body.z());
             }
         }
+        printf("\n");
+
+        c++;
+        auto cend = std::chrono::high_resolution_clock::now();
+        auto ctime = std::chrono::duration_cast<std::chrono::milliseconds>(cend - cstart);
+        printf("Frequency: %lu Hz\n", (1000 * c) / ctime.count());
 
         printf("------\n");
         printf("\n\n");
-
-        c++;
-        if (c % 100 == 0)
-        {
-            auto cend = std::chrono::high_resolution_clock::now();
-            auto ctime = std::chrono::duration_cast<std::chrono::milliseconds>(cend - cstart);
-            printf("Frequency: %lu Hz\n", (1000 * c) / ctime.count());
-        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }

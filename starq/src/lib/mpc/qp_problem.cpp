@@ -5,8 +5,12 @@
 namespace starq::mpc
 {
 
-    QPProblem::QPProblem(const MPCProblem::Ptr mpc_problem)
-        : mpc_problem_(mpc_problem)
+    QPProblem::QPProblem()
+        : mpc_problem_(std::make_shared<MPCProblem>()),
+          nx_(0),
+          nu_(0),
+          n_(0),
+          m_(0)
     {
     }
 
@@ -39,9 +43,13 @@ namespace starq::mpc
         return m_;
     }
 
-    void QPProblem::update()
+    bool QPProblem::update(MPCConfiguration::Ptr config)
     {
-        mpc_problem_->update();
+        if (!mpc_problem_->update(config))
+        {
+            std::cerr << "Failed to update the MPC problem" << std::endl;
+            return false;
+        }
 
         const size_t Nn = mpc_problem_->getConfig()->getWindowSize();
         nx_ = 13 * Nn;
@@ -59,6 +67,8 @@ namespace starq::mpc
         computeAc();
         computeLc();
         computeUc();
+
+        return true;
     }
 
     SparseMatrix<double> &QPProblem::getH()

@@ -14,8 +14,7 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<QPProblem>;
 
         /// @brief Create a new QPProblem object
-        /// @param mpc_problem MPC problem
-        QPProblem(const MPCProblem::Ptr mpc_problem);
+        QPProblem();
 
         /// @brief Destroy the QPProblem object
         ~QPProblem();
@@ -25,7 +24,9 @@ namespace starq::mpc
         MPCProblem::Ptr getMPCProblem() const;
 
         /// @brief Update the QP problem
-        void update();
+        /// @param config The MPC configuration
+        /// @return If the update was successful
+        bool update(MPCConfiguration::Ptr config);
 
         /// @brief Get the number of states
         /// @return The number of states
@@ -64,13 +65,12 @@ namespace starq::mpc
         VectorXd &getUc();
 
     protected:
-        const MPCProblem::Ptr mpc_problem_;
-
-        size_t n_;
-        size_t m_;
+        MPCProblem::Ptr mpc_problem_;
 
         size_t nx_;
         size_t nu_;
+        size_t n_;
+        size_t m_;
 
         SparseMatrix<double> H_;
         VectorXd g_;

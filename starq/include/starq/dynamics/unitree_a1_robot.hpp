@@ -3,7 +3,7 @@
 
 #include "starq/robot_dynamics.hpp"
 
-#define UNITREE_A1_MASS 12.5
+#define UNITREE_A1_MASS 11.75
 #define UNITREE_A1_INERTIA 0.016, 0, 0, 0, 0.038, 0, 0, 0, 0.046
 #define UNITREE_A1_GRAVITY 0.0, 0.0, -9.81
 #define UNITREE_A1_HEIGHT 0.27

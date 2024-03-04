@@ -13,14 +13,15 @@ namespace starq::mpc
         using Ptr = std::shared_ptr<MPCProblem>;
 
         /// @brief Create a new MPCProblem object
-        /// @param config The MPC configuration
-        MPCProblem(const MPCConfiguration::Ptr config);
+        MPCProblem();
 
         /// @brief Destroy the MPCProblem object
         ~MPCProblem();
 
         /// @brief Update the MPC problem
-        void update();
+        /// @param config The MPC configuration
+        /// @return If the update was successful
+        bool update(MPCConfiguration::Ptr config);
 
         /// @brief Get the MPC configuration
         MPCConfiguration::Ptr getConfig() const;
@@ -66,7 +67,7 @@ namespace starq::mpc
         VectorXf &getUpper(const size_t &k);
 
     private:
-        const MPCConfiguration::Ptr config_;
+        MPCConfiguration::Ptr config_;
 
         std::vector<VectorXf> xref_;
         std::vector<MatrixXf> Q_;

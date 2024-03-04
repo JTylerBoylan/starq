@@ -5,8 +5,8 @@
 namespace starq::osqp
 {
 
-    OSQP::OSQP(const mpc::QPProblem::Ptr qp_problem)
-        : mpc::QPSolver(qp_problem)
+    OSQP::OSQP()
+        : mpc::QPSolver()
     {
         settings_ = new OSQPSettings;
         osqp_set_default_settings(settings_);
@@ -20,9 +20,13 @@ namespace starq::osqp
         delete settings_;
     }
 
-    bool OSQP::update()
+    bool OSQP::update(mpc::MPCConfiguration::Ptr config)
     {
-        qp_problem_->update();
+        if (!qp_problem_->update(config))
+        {
+            std::cerr << "Failed to update the QP problem" << std::endl;
+            return false;
+        }
 
         n_ = qp_problem_->getN();
         m_ = qp_problem_->getM();
@@ -47,7 +51,7 @@ namespace starq::osqp
             std::cerr << "Error setting up OSQP solver (Error: " << flag << ")" << std::endl;
             return false;
         }
-        
+
         return true;
     }
 

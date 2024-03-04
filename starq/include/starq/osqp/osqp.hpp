@@ -15,14 +15,15 @@ namespace starq::osqp
         using Ptr = std::shared_ptr<OSQP>;
 
         /// @brief Create a new OSQP object
-        OSQP(const mpc::QPProblem::Ptr qp_problem);
+        OSQP();
 
         /// @brief Destroy the OSQP object
         ~OSQP();
 
         /// @brief Update the QP solver
+        /// @param config The MPC configuration
         /// @return If the update was successful
-        bool update() override;
+        bool update(mpc::MPCConfiguration::Ptr config) override;
 
         /// @brief Solve the QP problem
         /// @return If the problem was solved successfully

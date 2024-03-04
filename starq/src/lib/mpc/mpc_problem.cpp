@@ -5,8 +5,7 @@
 namespace starq::mpc
 {
 
-    MPCProblem::MPCProblem(const MPCConfiguration::Ptr config)
-        : config_(config)
+    MPCProblem::MPCProblem()
     {
     }
 
@@ -19,9 +18,15 @@ namespace starq::mpc
         return config_;
     }
 
-    void MPCProblem::update()
+    bool MPCProblem::update(MPCConfiguration::Ptr config)
     {
-        config_->update();
+        config_ = config;
+
+        if (!config_->update())
+        {
+            std::cerr << "Failed to update the MPC configuration" << std::endl;
+            return false;
+        }
 
         computeXref();
         computeQ();
@@ -31,6 +36,8 @@ namespace starq::mpc
         computeC();
         computeLower();
         computeUpper();
+
+        return true;
     }
 
     VectorXf &MPCProblem::getXref(const size_t &k)
