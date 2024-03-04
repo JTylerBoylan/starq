@@ -6,7 +6,7 @@ namespace starq::osqp
 {
 
     OSQP::OSQP(const mpc::QPProblem::Ptr qp_problem)
-        : qp_problem_(qp_problem)
+        : mpc::QPSolver(qp_problem)
     {
         settings_ = new OSQPSettings;
         osqp_set_default_settings(settings_);
@@ -20,7 +20,7 @@ namespace starq::osqp
         delete settings_;
     }
 
-    void OSQP::update()
+    bool OSQP::update()
     {
         qp_problem_->update();
 
@@ -34,13 +34,29 @@ namespace starq::osqp
         convertEigenSparseToCSC(qp_problem_->getH(), P_, Pnnz_, Px_, Pi_, Pp_);
         convertEigenSparseToCSC(qp_problem_->getAc(), A_, Annz_, Ax_, Ai_, Ap_);
 
-        osqp_cleanup(solver_);
-        osqp_setup(&solver_, P_, q_, A_, l_, u_, m_, n_, settings_);
+        if (osqp_cleanup(solver_) != 0)
+        {
+            std::cerr << "Error cleaning up OSQP solver" << std::endl;
+            return false;
+        }
+
+        if (osqp_setup(&solver_, P_, q_, A_, l_, u_, m_, n_, settings_) != 0)
+        {
+            std::cerr << "Error setting up OSQP solver" << std::endl;
+            return false;
+        }
+        
+        return true;
     }
 
-    void OSQP::solve()
+    bool OSQP::solve()
     {
-        osqp_solve(solver_);
+        if (!osqp_solve(solver_))
+        {
+            std::cerr << "Error solving OSQP problem" << std::endl;
+            return false;
+        }
+        return true;
     }
 
     starq::mpc::MPCSolution OSQP::getSolution() const

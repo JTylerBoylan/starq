@@ -30,6 +30,10 @@ namespace starq::mpc
         bool sync();
 
         /// @brief Configure the MPC
+        /// @param N The mpc horizon
+        /// @param dt The mpc time step
+        /// @param stance_traj The stance trajectory
+        /// @param gait_seq The gait sequence
         bool configure(const size_t N, const milliseconds dt, StanceTrajectory &stance_traj, GaitSequence &gait_seq) const;
 
         /// @brief Get the stance state

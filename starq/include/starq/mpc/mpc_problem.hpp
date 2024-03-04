@@ -6,33 +6,63 @@
 namespace starq::mpc
 {
 
+    /// @brief MPCProblem class
     class MPCProblem
     {
     public:
         using Ptr = std::shared_ptr<MPCProblem>;
 
+        /// @brief Create a new MPCProblem object
+        /// @param config The MPC configuration
         MPCProblem(const MPCConfiguration::Ptr config);
 
+        /// @brief Destroy the MPCProblem object
         ~MPCProblem();
 
+        /// @brief Update the MPC problem
         void update();
 
+        /// @brief Get the MPC configuration
         MPCConfiguration::Ptr getConfig() const;
 
+        /// @brief Get the reference state at node k
+        /// @param k The node index
+        /// @return The reference state vector
         VectorXf &getXref(const size_t &k);
 
+        /// @brief Get the Q matrix at node k
+        /// @param k The node index
+        /// @return The Q matrix
         MatrixXf &getQ(const size_t &k);
 
+        /// @brief Get the R matrix at node k
+        /// @param k The node index
+        /// @return The R matrix
         MatrixXf &getR(const size_t &k);
 
+        /// @brief Get the A matrix at node k
+        /// @param k The node index
+        /// @return The A matrix
         MatrixXf &getA(const size_t &k);
 
+        /// @brief Get the B matrix at node k
+        /// @param k The node index
+        /// @return The B matrix
         MatrixXf &getB(const size_t &k);
 
+        /// @brief Get the C matrix at node k
+        /// @param k The node index
+        /// @return The C matrix
         MatrixXf &getC(const size_t &k);
 
+        /// @brief Get the lower bound vector at node k
+        /// @param k The node index
+        /// @return The lower bound vector
         VectorXf &getLower(const size_t &k);
 
+        /// @brief Get the upper bound vector at node k
+        /// @param k The node index
+        /// @return The upper bound vector
         VectorXf &getUpper(const size_t &k);
 
     private:

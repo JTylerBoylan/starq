@@ -26,6 +26,12 @@ namespace starq::mpc
         ~FootholdPlanner();
 
         /// @brief Configure the MPC
+        /// @param N The mpc horizon
+        /// @param stance_traj The stance trajectory
+        /// @param gait_seq The gait sequence
+        /// @param ref_traj The reference trajectory
+        /// @param foothold_traj The foothold trajectory
+        /// @return True if the MPC is configured successfully, false otherwise
         bool configure(const size_t N,
                        const StanceTrajectory &stance_traj, const GaitSequence &gait_seq,
                        const ReferenceTrajectory &ref_traj, FootholdTrajectory &foothold_traj) const;

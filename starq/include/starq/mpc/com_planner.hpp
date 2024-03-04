@@ -24,6 +24,11 @@ namespace starq::mpc
         ~CenterOfMassPlanner();
 
         /// @brief Configure the MPC
+        /// @param N The mpc horizon
+        /// @param dt The mpc time step
+        /// @param gait_seq The gait sequence
+        /// @param ref_traj The reference trajectory
+        /// @return True if the MPC is configured successfully, false otherwise
         bool configure(const size_t N, const milliseconds dt,
                        const GaitSequence &gait_seq, ReferenceTrajectory &ref_traj) const;
 
