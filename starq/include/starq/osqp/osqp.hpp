@@ -1,7 +1,7 @@
 #ifndef STARQ_OSQP__OSQP_HPP_
 #define STARQ_OSQP__OSQP_HPP_
 
-#include "starq/mpc/qp_solver.hpp"
+#include "starq/mpc/mpc_solver.hpp"
 
 #include "osqp/osqp.h"
 
@@ -9,7 +9,7 @@ namespace starq::osqp
 {
 
     /// @brief OSQP class
-    class OSQP : public mpc::QPSolver
+    class OSQP : public mpc::MPCSolver
     {
     public:
         using Ptr = std::shared_ptr<OSQP>;
@@ -33,6 +33,10 @@ namespace starq::osqp
         /// @return The solution
         starq::mpc::MPCSolution getSolution() const override;
 
+        /// @brief Get the first force state of the solution
+        /// @return The first force state
+        starq::mpc::FootForceState getFirstForceState() const override;
+
         /// @brief Get the OSQP settings
         /// @return The OSQP settings
         OSQPSettings *getSettings() const { return settings_; }
@@ -44,6 +48,9 @@ namespace starq::osqp
     private:
         void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
+
+
+        mpc::QPProblem::Ptr qp_problem_ = nullptr;
 
         OSQPInt n_, m_;
 

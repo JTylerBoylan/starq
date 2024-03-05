@@ -48,6 +48,10 @@ namespace starq
         /// @brief Destroy the Leg Command Publisher object
         ~LegCommandPublisher();
 
+        /// @brief Get the leg controllers.
+        /// @return Leg controllers.
+        LegList getLegControllers() const { return leg_controllers_; }
+
         /// @brief Send a leg command to the leg controller.
         /// @param leg_command Leg command to send.
         void sendCommand(LegCommand::Ptr leg_command);
@@ -67,7 +71,7 @@ namespace starq
         /// @brief Run the leg command publisher. (threaded)
         void run() override;
 
-        std::vector<LegController::Ptr> leg_controllers_;
+        LegList leg_controllers_;
         std::unordered_map<uint8_t, LegCommand::Ptr> leg_command_map_;
 
         bool stop_on_fail_;

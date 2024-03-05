@@ -6,7 +6,8 @@ namespace starq::osqp
 {
 
     OSQP::OSQP()
-        : mpc::QPSolver()
+        : mpc::MPCSolver(),
+          qp_problem_(std::make_shared<mpc::QPProblem>())
     {
         settings_ = new OSQPSettings;
         osqp_set_default_settings(settings_);
@@ -109,6 +110,30 @@ namespace starq::osqp
         }
 
         return solution;
+    }
+
+    starq::mpc::FootForceState OSQP::getFirstForceState() const
+    {
+        starq::mpc::FootForceState forces;
+
+        const auto x = solver_->solution->x;
+        const auto config = qp_problem_->getMPCProblem()->getConfig();
+        const auto n_legs = config->getNumberOfLegs(0);
+        int offset = qp_problem_->getNx();
+        for (size_t j = 0; j < n_legs; j++)
+        {
+            if (config->getStanceState(0)[j])
+            {
+                Vector3f force(x[offset], x[offset + 1], x[offset + 2]);
+                forces.push_back(std::make_pair(true, force));
+                offset += 3;
+            }
+            else
+            {
+                forces.push_back(std::make_pair(false, Vector3f::Zero()));
+            }
+        }
+        return forces;
     }
 
     void OSQP::convertEigenSparseToCSC(const SparseMatrix<double> &matrix,

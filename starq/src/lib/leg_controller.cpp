@@ -5,7 +5,7 @@ namespace starq
 {
 
     LegController::LegController(const starq::LegDynamics::Ptr dynamics,
-                                 const std::vector<MotorController::Ptr> motor_controllers)
+                                 const MotorList motor_controllers)
         : dynamics_(dynamics),
           motor_controllers_(motor_controllers)
     {
