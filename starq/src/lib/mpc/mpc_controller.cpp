@@ -8,18 +8,20 @@ namespace starq::mpc
     MPCController::MPCController(const MPCConfiguration::Ptr config,
                                  const MPCSolver::Ptr solver,
                                  const slam::Localization::Ptr localization,
-                                 const RobotDynamics::Ptr robot_dynamics,
                                  const LegCommandPublisher::Ptr leg_command_publisher,
                                  const TrajectoryPublisher::Ptr trajectory_publisher)
         : config_(config),
           solver_(solver),
           localization_(localization),
-          robot_dynamics_(robot_dynamics),
           leg_command_publisher_(leg_command_publisher),
           trajectory_publisher_(trajectory_publisher),
           stop_on_fail_(false),
-          sleep_duration_us_(1000)
+          sleep_duration_us_(1000),
+          step_height_(0.15f),
+          swing_resolution_(100)
     {
+        last_force_state_.resize(leg_command_publisher_->getLegControllers().size(),
+                                 std::make_pair(true, Vector3f::Zero()));
     }
 
     MPCController::~MPCController()
@@ -78,24 +80,39 @@ namespace starq::mpc
     {
         const milliseconds swing_duration = config_->getGait(0)->getSwingDuration();
         const milliseconds stance_duration = config_->getGait(0)->getStanceDuration();
+        const Vector3f velocity = config_->getReferenceState(1).linear_velocity;
 
-        const Vector3f position_world = localization_->getCurrentPosition();
-        const Vector3f orientation_world = localization_->getCurrentOrientation();
-        const Matrix3f rotation_world = localization_->toRotationMatrix(orientation_world);
-        const Vector3f velocity_world = config_->getReferenceState(0).linear_velocity;
+        VectorXf start_position;
+        leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position);
+        Vector3f end_position = 0.5f * velocity * stance_duration.count() * 1E-3f;
+        end_position.z() = start_position.z();
 
-        const Vector3f hip_position_body = robot_dynamics_->getHipLocations()[leg_id];
-        const Vector3f hip_position_world = position_world + rotation_world * hip_position_body;
+        const Vector3f delta = end_position - start_position.head(3);
+        const float radius = 0.5f * delta.norm();
 
-        VectorXf start_position_hip;
-        leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position_hip);
-        const Vector3f start_position_world = hip_position_world + rotation_world * start_position_hip;
-        Vector3f end_position_world = hip_position_world + velocity_world * stance_duration.count() * 1E-3f;
-        end_position_world.z() = 0.0;
+        const float angle = std::atan2(delta.y(), delta.x());
+        Matrix3f rotation;
+        rotation = AngleAxisf(angle, Vector3f::UnitZ());
 
-        
+        std::vector<LegCommand::Ptr> trajectory;
+        for (size_t i = 0; i <= swing_resolution_; i++)
+        {
+            const float ratio = static_cast<float>(i) / static_cast<float>(swing_resolution_);
+            const float s = M_PI * ratio;
+            const float px = radius * (1 - std::cos(s));
+            const float pz = step_height_ * std::sin(s);
+            const Vector3f arc_position = Vector3f(px, 0.0f, pz);
+            const Vector3f position = rotation * arc_position + start_position.head(3);
 
+            LegCommand::Ptr command = std::make_shared<LegCommand>();
+            command->control_mode = ControlMode::POSITION;
+            command->leg_id = leg_id;
+            command->delay = microseconds(time_t(swing_duration.count() * 1E3 * ratio));
+            command->target_position = position;
+            trajectory.push_back(command);
+        }
 
+        trajectory_publisher_->runTrajectory(trajectory);
     }
 
 }

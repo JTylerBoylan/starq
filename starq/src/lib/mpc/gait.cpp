@@ -35,6 +35,7 @@ namespace starq::mpc
         std::istringstream iss;
 
         int stance_count = 0;
+        time_t time_last = 0;
         stance_pattern_.clear();
         while (std::getline(file, line))
         {
@@ -56,15 +57,16 @@ namespace starq::mpc
             while (iss >> stance_i)
             {
                 if (stance.empty() && stance_i)
-                    stance_count++;
+                    stance_count += time_ms - time_last;
 
                 stance.push_back(stance_i);
             }
 
             stance_pattern_[milliseconds(time_ms)] = stance;
+            time_last = time_ms;
         }
 
-        stance_ratio_ = static_cast<float>(stance_count) / static_cast<float>(stance_pattern_.size());
+        stance_ratio_ = static_cast<float>(stance_count) / 1E3f;
 
         std::string control_mode_str;
         std::getline(file, line);

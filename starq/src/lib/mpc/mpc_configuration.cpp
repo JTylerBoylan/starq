@@ -65,13 +65,14 @@ namespace starq::mpc
             return false;
         }
 
+        n_legs_.resize(window_size_);
         for (size_t k = 0; k < window_size_; k++)
         {
             int c = 0;
             for (bool s : stance_trajectory_[k])
                 if (s)
                     c++;
-            n_legs_.push_back(c);
+            n_legs_[k] = c;
         }
 
         return true;

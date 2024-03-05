@@ -23,7 +23,6 @@ namespace starq::mpc
         MPCController(const MPCConfiguration::Ptr config,
                       const MPCSolver::Ptr solver,
                       const slam::Localization::Ptr localization,
-                      const RobotDynamics::Ptr robot_dynamics,
                       const LegCommandPublisher::Ptr leg_command_publisher,
                       const TrajectoryPublisher::Ptr trajectory_publisher);
 
@@ -38,6 +37,14 @@ namespace starq::mpc
         /// @param sleep_duration_us Sleep duration in microseconds.
         void setSleepDuration(const microseconds sleep_duration_us) { sleep_duration_us_ = sleep_duration_us; }
 
+        /// @brief Set the step height.
+        /// @param step_height Step height.
+        void setStepHeight(const float step_height) { step_height_ = step_height; }
+
+        /// @brief Set the swing resolution.
+        /// @param swing_resolution Swing resolution.
+        void setSwingResolution(const size_t swing_resolution) { swing_resolution_ = swing_resolution; }
+
     private:
         void run() override;
 
@@ -48,12 +55,13 @@ namespace starq::mpc
         MPCConfiguration::Ptr config_;
         MPCSolver::Ptr solver_;
         slam::Localization::Ptr localization_;
-        RobotDynamics::Ptr robot_dynamics_;
         LegCommandPublisher::Ptr leg_command_publisher_;
         TrajectoryPublisher::Ptr trajectory_publisher_;
 
         bool stop_on_fail_;
         microseconds sleep_duration_us_;
+        float step_height_;
+        size_t swing_resolution_;
 
         FootForceState last_force_state_;
     };

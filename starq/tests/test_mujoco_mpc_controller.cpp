@@ -1,0 +1,74 @@
+#include <stdio.h>
+
+#include "starq/robots/unitree_a1_mujoco.hpp"
+#include "starq/osqp/osqp.hpp"
+#include "starq/mpc/mpc_controller.hpp"
+
+using namespace starq;
+using namespace starq::mpc;
+using namespace starq::osqp;
+
+int main(void)
+{
+
+    auto robot = std::make_shared<robots::UnitreeA1MuJoCoRobot>();
+    printf("UnitreeA1MuJoCoRobot created\n");
+
+    Gait::Ptr gait = std::make_shared<Gait>();
+    gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
+    gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
+    // gait->setPose(Vector3f(0, 0, UNITREE_A1_HEIGHT), Vector3f(0, 0, 0));
+    printf("Gait loaded\n");
+
+    MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
+                                                                          robot->getRobotDynamics(),
+                                                                          robot->getLocalization());
+    mpc_config->setTimeStep(milliseconds(50));
+    mpc_config->setWindowSize(21);
+    mpc_config->setNextGait(gait);
+    printf("MPCConfiguration created\n");
+
+    OSQP::Ptr osqp = std::make_shared<OSQP>();
+    osqp->getSettings()->verbose = false;
+    osqp->getSettings()->max_iter = 2000;
+    osqp->getSettings()->polishing = true;
+    osqp->getSettings()->warm_starting = true;
+    printf("OSQP created\n");
+
+    MPCController::Ptr mpc_controller = std::make_shared<MPCController>(mpc_config,
+                                                                        osqp,
+                                                                        robot->getLocalization(),
+                                                                        robot->getLegCommandPublisher(),
+                                                                        robot->getTrajectoryPublisher());
+
+    robot->startSimulation();
+    printf("Simulation started\n");
+
+    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -UNITREE_A1_HEIGHT);
+    for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
+    {
+        robot->setFootPosition(id, foot_position);
+    }
+    printf("Holding foot position for 5 seconds...\n");
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    mpc_controller->start();
+    printf("MPCController started\n");
+
+    // while (robot->isSimulationOpen())
+    // {
+    //     auto global_time = robot->getLocalization()->getCurrentTime();
+
+    //     float offset_x = 0.025 * std::cos(2 * 1E-3 * global_time.count());
+    //     float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
+    //     float offset_z = 0;
+
+    //     gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_HEIGHT + offset_z), Vector3f(0, 0, 0));
+    // }
+
+    robot->waitForSimulation();
+    printf("Simulation closed\n");
+
+    printf("Done\n");
+    return 0;
+}

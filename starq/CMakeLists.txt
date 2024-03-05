@@ -69,6 +69,7 @@ add_library(starqlib SHARED
   src/lib/mpc/mpc_configuration.cpp 
   src/lib/mpc/mpc_problem.cpp
   src/lib/mpc/qp_problem.cpp
+  src/lib/mpc/mpc_controller.cpp
   src/lib/dynamics/unitree_a1_robot.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
@@ -200,6 +201,10 @@ if (WITH_MUJOCO)
   add_executable(test_mujoco_mpc_solver tests/test_mujoco_mpc_solver.cpp)
   target_include_directories(test_mujoco_mpc_solver PUBLIC include)
   target_link_libraries(test_mujoco_mpc_solver PUBLIC starqlib)
+
+  add_executable(test_mujoco_mpc_controller tests/test_mujoco_mpc_controller.cpp)
+  target_include_directories(test_mujoco_mpc_controller PUBLIC include)
+  target_link_libraries(test_mujoco_mpc_controller PUBLIC starqlib)
 
 endif()
 
