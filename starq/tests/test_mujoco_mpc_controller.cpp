@@ -50,7 +50,7 @@ int main(void)
         robot->setFootPosition(id, foot_position);
     }
     printf("Holding foot position for 5 seconds...\n");
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::this_thread::sleep_for(std::chrono::seconds(20));
 
     mpc_controller->start();
     printf("MPCController started\n");
