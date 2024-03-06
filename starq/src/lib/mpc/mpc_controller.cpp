@@ -16,7 +16,7 @@ namespace starq::mpc
           robot_dynamics_(config->getRobotDynamics()),
           stop_on_fail_(false),
           sleep_duration_us_(1000),
-          step_height_(0.15f),
+          step_height_(0.075f),
           swing_resolution_(100)
     {
         last_force_state_.resize(legs_.size(),
@@ -99,9 +99,6 @@ namespace starq::mpc
         Matrix3f rotation;
         rotation = AngleAxisf(angle, Vector3f::UnitZ());
 
-        std::cout << "Start position: " << start_position.head(3).transpose() << std::endl;
-        std::cout << "Swing trajectory for leg " << static_cast<int>(leg_id) << std::endl;
-
         std::vector<LegCommand::Ptr> trajectory;
         for (size_t i = 0; i <= swing_resolution_; i++)
         {
@@ -118,8 +115,6 @@ namespace starq::mpc
             command->delay = milliseconds(time_t(swing_duration.count() * ratio));
             command->target_position = position;
             trajectory.push_back(command);
-
-            std::cout << "  " << position.transpose() << std::endl;
         }
 
         trajectory_publishers_[leg_id]->runTrajectory(trajectory);

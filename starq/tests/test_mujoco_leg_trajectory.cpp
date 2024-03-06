@@ -46,20 +46,20 @@ int main()
     unitree_RRR_R->flipYAxis();
     printf("Dynamics created\n");
 
-    LegController::Ptr leg_FRA = std::make_shared<LegController>(unitree_RRR_R,
+    LegController::Ptr leg_FR = std::make_shared<LegController>(unitree_RRR_R,
                                                                  MotorList{motor_FRA, motor_FRB, motor_FRC});
-    LegController::Ptr leg_FLA = std::make_shared<LegController>(unitree_RRR_L,
+    LegController::Ptr leg_FL = std::make_shared<LegController>(unitree_RRR_L,
                                                                  MotorList{motor_FLA, motor_FLB, motor_FLC});
-    LegController::Ptr leg_RRA = std::make_shared<LegController>(unitree_RRR_R,
+    LegController::Ptr leg_RR = std::make_shared<LegController>(unitree_RRR_R,
                                                                  MotorList{motor_RRA, motor_RRB, motor_RRC});
-    LegController::Ptr leg_RLA = std::make_shared<LegController>(unitree_RRR_L,
+    LegController::Ptr leg_RL = std::make_shared<LegController>(unitree_RRR_L,
                                                                  MotorList{motor_RLA, motor_RLB, motor_RLC});
     printf("Legs created\n");
 
-    leg_FRA->setControlMode(ControlMode::POSITION);
-    leg_FLA->setControlMode(ControlMode::POSITION);
-    leg_RRA->setControlMode(ControlMode::POSITION);
-    leg_RLA->setControlMode(ControlMode::POSITION);
+    leg_FR->setControlMode(ControlMode::POSITION);
+    leg_FL->setControlMode(ControlMode::POSITION);
+    leg_RR->setControlMode(ControlMode::POSITION);
+    leg_RL->setControlMode(ControlMode::POSITION);
     printf("Control mode set\n");
 
     TrajectoryFileReader::Ptr trajectory_file_reader = std::make_shared<TrajectoryFileReader>();
@@ -73,7 +73,7 @@ int main()
     auto localization = std::make_shared<MuJoCoLocalization>(mujoco);
 
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
-        LegList{leg_FRA, leg_FLA, leg_RRA, leg_RLA},
+        LegList{leg_FL, leg_RL, leg_RR, leg_FR},
         localization);
     printf("Leg command publisher created\n");
 
@@ -84,17 +84,17 @@ int main()
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
     printf("Simulation started\n");
 
-    leg_FRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_FLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RRA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RLA->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     while (mujoco->isOpen())
     {
         trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
-        while (localization->getCurrentTime() < trajectory_file_reader->getTrajectory().back()->release_time)
+        while (trajectory_publisher->isRunning())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }

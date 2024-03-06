@@ -44,7 +44,7 @@ namespace starq::dynamics
             return false;
 
         const float x = foot_position(0);
-        const float y = foot_position(1);
+        const float y = a_axis_ * foot_position(1);
         const float z = foot_position(2);
 
         // Get q1 from Y-Z plane

@@ -60,9 +60,9 @@ int main()
     leg_RR->setControlMode(ControlMode::POSITION);
     leg_RL->setControlMode(ControlMode::POSITION);
 
-    leg_FR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(10));

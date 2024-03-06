@@ -4,9 +4,9 @@ close all
 %%
 
 % Params
-stride_frequency = 0.25; % Hz
+stride_frequency = 2.0; % Hz
 stride_length = 0.050; % mm
-publish_frequency = 100; % Hz
+publish_frequency = 200; % Hz
 
 N = publish_frequency / stride_frequency;
 t = linspace(0, 1/stride_frequency, N);
@@ -59,12 +59,17 @@ for leg = 0:3
     control_mode = 3*ones(sz);
     input_mode = 1*ones(sz);
 
+    flip = [1 1 1];
+    if (leg > 1)
+        flip = [1 -1 1];
+    end
+
     pos_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
     vel_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
     force_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
 
     output = [output;
-              t', leg_id', control_mode', input_mode', pos_traj', vel_traj', force_traj']
+              t', leg_id', control_mode', input_mode', flip .* pos_traj', vel_traj', force_traj']
 
 end
 

@@ -40,10 +40,9 @@ int main()
     robot->startSimulation();
     printf("Simulation started\n");
 
-    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.27);
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-        robot->setFootPosition(id, foot_position);
+        robot->setFootPosition(id, robot->getRobotDynamics()->getDefaultFootLocations()[id]);
     }
     std::this_thread::sleep_for(std::chrono::seconds(5));
 

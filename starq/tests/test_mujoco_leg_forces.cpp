@@ -55,7 +55,7 @@ int main()
     printf("Legs created\n");
 
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
-        LegList{leg_FR, leg_FL, leg_RR, leg_RL});
+        LegList{leg_FL, leg_RL, leg_RR, leg_FR});
     printf("Leg command publisher created\n");
 
     std::future<void> sim = std::async(std::launch::async, [&]
@@ -67,9 +67,9 @@ int main()
     leg_RR->setControlMode(ControlMode::POSITION);
     leg_RL->setControlMode(ControlMode::POSITION);
 
-    leg_FR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RR->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(3));

@@ -15,8 +15,8 @@ namespace starq::dynamics
                           Vector3f(UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0)};
         default_foot_locations_ = {Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
                                    Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
-                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
-                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
+                                   Vector3f(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3f(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
         force_z_min_ = 10;
         force_z_max_ = 250;
     }
