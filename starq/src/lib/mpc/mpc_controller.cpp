@@ -46,7 +46,6 @@ namespace starq::mpc
                 continue;
             }
             
-
             if (!solver_->update(config_))
             {
                 if (stop_on_fail_)
@@ -65,8 +64,10 @@ namespace starq::mpc
 
             FootForceState force_state = solver_->getFirstForceState();
 
+            std::cout << "Force state: ";
             for (size_t j = 0; j < force_state.size(); j++)
             {
+                std::cout << force_state[j].first << " ";
                 if (force_state[j].first)
                 {
                     sendFootForce(j, -force_state[j].second);
@@ -76,6 +77,7 @@ namespace starq::mpc
                     sendSwingTrajectory(j);
                 }
             }
+            std::cout << std::endl;
 
             last_force_state_ = force_state;
         }

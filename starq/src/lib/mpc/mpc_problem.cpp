@@ -138,12 +138,12 @@ namespace starq::mpc
         A_.resize(Nn - 1);
         for (size_t k = 0; k < Nn - 1; k++)
         {
-            const float phi = config_->getReferenceState(k).orientation.z();
-            const Matrix3f Rz = AngleAxisf(phi, Vector3f::UnitZ()).toRotationMatrix();
+            const Vector3f orientation = config_->getReferenceState(k).orientation;
+            const Matrix3f R = config_->getLocalization()->toRotationMatrix(orientation);
             const Vector3f g = config_->getGravity();
 
             MatrixXf A = MatrixXf::Zero(13, 13);
-            A.block<3, 3>(0, 6) = Rz;
+            A.block<3, 3>(0, 6) = R;
             A.block<3, 3>(3, 9) = Matrix3f::Identity();
             A.block<3, 1>(9, 12) = g;
             A = A * config_->getTimeStep() + MatrixXf::Identity(13, 13);
@@ -158,9 +158,9 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn - 1; k++)
         {
             const float inv_m = 1.0 / config_->getMass();
-            const float phi = config_->getReferenceState(k).orientation.z();
-            const Matrix3f Rz = AngleAxisf(phi, Vector3f::UnitZ()).toRotationMatrix();
-            const Matrix3f I = Rz * config_->getInertia() * Rz.transpose();
+            const Vector3f orientation = config_->getReferenceState(k).orientation;
+            const Matrix3f R = config_->getLocalization()->toRotationMatrix(orientation);
+            const Matrix3f I = R * config_->getInertia() * R.transpose();
             const Matrix3f inv_I = I.inverse();
 
             const size_t n_legs = config_->getNumberOfLegs(k);

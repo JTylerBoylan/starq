@@ -16,7 +16,9 @@ int main(void)
 
     Gait::Ptr walk_gait = std::make_shared<Gait>();
     walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
-    walk_gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
+    walk_gait->setControlMode(GaitControlMode::GAIT_POSITION_CONTROL);
+    walk_gait->setPose(Vector3f(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3f(0, 0, 0));
+    // walk_gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
     walk_gait->setFrequency(2.0);
     printf("Walk Gait loaded\n");
 

@@ -91,29 +91,26 @@ namespace starq::mpc
             return false;
         }
 
-        if (control_mode_ == GAIT_POSITION_CONTROL)
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+                max_linear_velocity_.x() >>
+                max_linear_velocity_.y() >>
+                max_linear_velocity_.z()))
         {
-            std::getline(file, line);
-            iss = std::istringstream(line);
-            if (!(iss >>
-                  max_linear_velocity_.x() >>
-                  max_linear_velocity_.y() >>
-                  max_linear_velocity_.z()))
-            {
-                std::cerr << "Error reading max linear velocity " << line << std::endl;
-                return false;
-            }
+            std::cerr << "Error reading max linear velocity " << line << std::endl;
+            return false;
+        }
 
-            std::getline(file, line);
-            iss = std::istringstream(line);
-            if (!(iss >>
-                  max_angular_velocity_.x() >>
-                  max_angular_velocity_.y() >>
-                  max_angular_velocity_.z()))
-            {
-                std::cerr << "Error reading max angular velocity " << line << std::endl;
-                return false;
-            }
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        if (!(iss >>
+                max_angular_velocity_.x() >>
+                max_angular_velocity_.y() >>
+                max_angular_velocity_.z()))
+        {
+            std::cerr << "Error reading max angular velocity " << line << std::endl;
+            return false;
         }
 
         std::getline(file, line);

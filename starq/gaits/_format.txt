@@ -24,8 +24,8 @@
 
 # SECOND SECTION: Control Mode
 # Can either be POSITION or VELOCITY
-# If POSITION, the next two lines are the maximum linear and angular velocities
-# If VELOCITY, there should be no additional lines
+# The next two lines are the maximum linear and angular velocities
+#  for the P control
 
 # Example:
 POSITION

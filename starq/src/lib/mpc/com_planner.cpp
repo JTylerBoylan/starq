@@ -1,5 +1,7 @@
 #include "starq/mpc/com_planner.hpp"
 
+#include <iostream>
+
 namespace starq::mpc
 {
 
@@ -23,6 +25,11 @@ namespace starq::mpc
         ref_traj[0].orientation = localization_->getCurrentOrientation();
         ref_traj[0].linear_velocity = localization_->getCurrentLinearVelocity();
         ref_traj[0].angular_velocity = localization_->getCurrentAngularVelocity();
+
+        // std::cout << "ref_traj[" << 0 << "].position: " << ref_traj[0].position.transpose() << std::endl;
+        // std::cout << "ref_traj[" << 0 << "].orientation: " << ref_traj[0].orientation.transpose() << std::endl;
+        // std::cout << "ref_traj[" << 0 << "].linear_velocity: " << ref_traj[0].linear_velocity.transpose() << std::endl;
+        // std::cout << "ref_traj[" << 0 << "].angular_velocity: " << ref_traj[0].angular_velocity.transpose() << std::endl;
 
         const float dT = dt.count() / 1000.0;
         for (size_t i = 1; i < N; i++)
@@ -105,6 +112,11 @@ namespace starq::mpc
             ref_traj[i].orientation = ref_traj[i - 1].orientation + angular_velocity * dT;
             ref_traj[i].linear_velocity = linear_velocity;
             ref_traj[i].angular_velocity = angular_velocity;
+
+            // std::cout << "ref_traj[" << i << "].position: " << ref_traj[i].position.transpose() << std::endl;
+            // std::cout << "ref_traj[" << i << "].orientation: " << ref_traj[i].orientation.transpose() << std::endl;
+            // std::cout << "ref_traj[" << i << "].linear_velocity: " << ref_traj[i].linear_velocity.transpose() << std::endl;
+            // std::cout << "ref_traj[" << i << "].angular_velocity: " << ref_traj[i].angular_velocity.transpose() << std::endl;
         }
         return true;
     }

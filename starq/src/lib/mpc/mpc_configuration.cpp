@@ -52,7 +52,7 @@ namespace starq::mpc
     void MPCConfiguration::setNextGait(const Gait::Ptr &gait)
     {
         gait_sequencer_->setNextGait(gait);
-        is_ready_ = update();
+        is_ready_ = true;
     }
 
     bool MPCConfiguration::isReady() const
