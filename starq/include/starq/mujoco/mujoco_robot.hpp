@@ -39,6 +39,9 @@ namespace starq::mujoco
         /// @brief Setup the localization
         void setupLocalization() override;
 
+        /// @brief Setup the leg command publisher
+        void setupLegCommandPublisher() override;
+
         MuJoCo::Ptr mujoco_;
 
         std::string scene_file_;

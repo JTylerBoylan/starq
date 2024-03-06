@@ -75,7 +75,7 @@ int main()
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     LegCommand leg_command;
-    leg_command.delay = std::chrono::microseconds(0);
+    leg_command.delay = std::chrono::milliseconds(0);
     leg_command.control_mode = ControlMode::TORQUE;
     leg_command.target_force = Eigen::Vector3f(0, 0, -100);
 

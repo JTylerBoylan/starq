@@ -35,22 +35,18 @@ int main(void)
     osqp->getSettings()->warm_starting = true;
     printf("OSQP created\n");
 
-    MPCController::Ptr mpc_controller = std::make_shared<MPCController>(mpc_config,
-                                                                        osqp,
-                                                                        robot->getLocalization(),
-                                                                        robot->getLegCommandPublisher(),
-                                                                        robot->getTrajectoryPublisher());
+    MPCController::Ptr mpc_controller = std::make_shared<MPCController>(mpc_config, osqp,
+                                                                        robot->getLegCommandPublisher());
 
     robot->startSimulation();
     printf("Simulation started\n");
 
-    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -UNITREE_A1_HEIGHT);
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-        robot->setFootPosition(id, foot_position);
+        robot->setFootPosition(id, robot->getRobotDynamics()->getDefaultFootLocations()[id]);
     }
     printf("Holding foot position for 5 seconds...\n");
-    std::this_thread::sleep_for(std::chrono::seconds(20));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     mpc_controller->start();
     printf("MPCController started\n");

@@ -69,11 +69,23 @@ int main()
 
     VectorXf foot_position;
     leg_FR->getFootPositionEstimate(foot_position);
-    printf("Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
+    printf("FR Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
+    leg_FL->getFootPositionEstimate(foot_position);
+    printf("FL Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
+    leg_RR->getFootPositionEstimate(foot_position);
+    printf("RR Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
+    leg_RL->getFootPositionEstimate(foot_position);
+    printf("RL Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
 
     VectorXf foot_force;
     leg_FR->getFootForceEstimate(foot_force);
-    printf("Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
+    printf("FR Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
+    leg_FL->getFootForceEstimate(foot_force);
+    printf("FL Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
+    leg_RR->getFootForceEstimate(foot_force);
+    printf("RR Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
+    leg_RL->getFootForceEstimate(foot_force);
+    printf("RL Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
 
     sim.wait();
     printf("Done\n");

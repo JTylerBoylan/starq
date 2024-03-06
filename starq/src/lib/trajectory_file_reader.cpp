@@ -53,7 +53,7 @@ namespace starq
                 return false;
             }
 
-            command->delay = std::chrono::microseconds(delay_time);
+            command->delay = std::chrono::milliseconds(delay_time);
             command->leg_id = leg_id;
 
             trajectory_.push_back(command);
@@ -99,7 +99,7 @@ namespace starq
                 return false;
             }
 
-            command->delay = std::chrono::microseconds(delay_time);
+            command->delay = std::chrono::milliseconds(delay_time);
             command->leg_id = leg_id;
 
             trajectory_.push_back(command);

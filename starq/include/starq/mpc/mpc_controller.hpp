@@ -22,9 +22,7 @@ namespace starq::mpc
         /// @brief Create a new MPC controller
         MPCController(const MPCConfiguration::Ptr config,
                       const MPCSolver::Ptr solver,
-                      const slam::Localization::Ptr localization,
-                      const LegCommandPublisher::Ptr leg_command_publisher,
-                      const TrajectoryPublisher::Ptr trajectory_publisher);
+                      const LegCommandPublisher::Ptr leg_command_publisher);
 
         /// @brief Destroy the MPC controller
         ~MPCController();
@@ -54,9 +52,12 @@ namespace starq::mpc
 
         MPCConfiguration::Ptr config_;
         MPCSolver::Ptr solver_;
-        slam::Localization::Ptr localization_;
         LegCommandPublisher::Ptr leg_command_publisher_;
-        TrajectoryPublisher::Ptr trajectory_publisher_;
+        std::vector<LegController::Ptr> legs_;
+        slam::Localization::Ptr localization_;
+        RobotDynamics::Ptr robot_dynamics_;
+
+        std::vector<TrajectoryPublisher::Ptr> trajectory_publishers_;
 
         bool stop_on_fail_;
         microseconds sleep_duration_us_;

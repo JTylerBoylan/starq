@@ -6,11 +6,16 @@
 #define UNITREE_A1_MASS 11.75
 #define UNITREE_A1_INERTIA 0.016, 0, 0, 0, 0.038, 0, 0, 0, 0.046
 #define UNITREE_A1_GRAVITY 0.0, 0.0, -9.81
-#define UNITREE_A1_HEIGHT 0.27
 #define UNITREE_A1_FOOT_FRICTION 0.8
 
 #define UNITREE_A1_HIP_OFFSET_X 0.183
 #define UNITREE_A1_HIP_OFFSET_Y 0.047
+
+#define UNITREE_A1_LENGTH_D 0.08505
+#define UNITREE_A1_LENGTH_LT 0.2
+#define UNITREE_A1_LENGTH_LC 0.2
+
+#define UNITREE_A1_STAND_HEIGHT 0.27
 
 namespace starq::dynamics
 {
@@ -39,10 +44,6 @@ namespace starq::dynamics
         /// @return The gravity vector
         Vector3f getGravity() const override;
 
-        /// @brief Get the body height
-        /// @return The body height
-        float getBodyHeight() const override;
-
         /// @brief Get the foot friction
         /// @return The foot friction
         float getFootFriction() const override;
@@ -50,6 +51,10 @@ namespace starq::dynamics
         /// @brief Get the hip locations
         /// @return The hip locations
         std::vector<Vector3f> getHipLocations() const override;
+
+        /// @brief Get the default foot locations
+        /// @return The default foot locations
+        std::vector<Vector3f> getDefaultFootLocations() const override;
 
         /// @brief Get the minimum force in the z direction
         /// @return The minimum force in the z direction
@@ -63,9 +68,9 @@ namespace starq::dynamics
         float body_mass_;
         Matrix3f body_inertia_;
         Vector3f gravity_;
-        float body_height_;
         float foot_friction_;
         std::vector<Vector3f> hip_locations_;
+        std::vector<Vector3f> default_foot_locations_;
         float force_z_min_;
         float force_z_max_;
     };

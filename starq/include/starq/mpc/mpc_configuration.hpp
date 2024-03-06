@@ -32,6 +32,18 @@ namespace starq::mpc
         /// @brief Destroy the MPCConfiguration object
         ~MPCConfiguration();
 
+        /// @brief Get the leg controllers
+        /// @return The leg controllers
+        std::vector<LegController::Ptr> getLegControllers() const;
+
+        /// @brief Get the robot dynamics
+        /// @return The robot dynamics
+        RobotDynamics::Ptr getRobotDynamics() const;
+
+        /// @brief Get the localization
+        /// @return The localization
+        slam::Localization::Ptr getLocalization() const;
+
         /// @brief Set the time step
         /// @param time_step The time step in milliseconds
         void setTimeStep(const milliseconds &time_step);

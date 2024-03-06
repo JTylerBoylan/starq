@@ -23,6 +23,21 @@ namespace starq::mpc
     {
     }
 
+    std::vector<LegController::Ptr> MPCConfiguration::getLegControllers() const
+    {
+        return leg_controllers_;
+    }
+
+    RobotDynamics::Ptr MPCConfiguration::getRobotDynamics() const
+    {
+        return robot_dynamics_;
+    }
+
+    slam::Localization::Ptr MPCConfiguration::getLocalization() const
+    {
+        return localization_;
+    }
+
     void MPCConfiguration::setTimeStep(const milliseconds &time_step)
     {
         time_step_ = time_step;

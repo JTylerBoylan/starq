@@ -5,6 +5,7 @@
 #include "starq/dynamics/unitree_rrr.hpp"
 #include "starq/leg_controller.hpp"
 
+#include "starq/mujoco/mujoco_localization.hpp"
 #include "starq/trajectory_file_reader.hpp"
 #include "starq/trajectory_publisher.hpp"
 
@@ -69,8 +70,11 @@ int main()
     }
     printf("Trajectory loaded\n");
 
+    auto localization = std::make_shared<MuJoCoLocalization>(mujoco);
+
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
-        LegList{leg_FRA, leg_FLA, leg_RRA, leg_RLA});
+        LegList{leg_FRA, leg_FLA, leg_RRA, leg_RLA},
+        localization);
     printf("Leg command publisher created\n");
 
     TrajectoryPublisher::Ptr trajectory_publisher = std::make_shared<TrajectoryPublisher>(leg_command_publisher);
@@ -90,7 +94,10 @@ int main()
     while (mujoco->isOpen())
     {
         trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
-        std::this_thread::sleep_for(std::chrono::microseconds(4005000));
+        while (localization->getCurrentTime() < trajectory_file_reader->getTrajectory().back()->release_time)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 
     sim.wait();

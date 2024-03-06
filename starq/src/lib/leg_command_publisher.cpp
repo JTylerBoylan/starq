@@ -5,8 +5,10 @@
 namespace starq
 {
 
-    LegCommandPublisher::LegCommandPublisher(const LegList leg_controllers)
+    LegCommandPublisher::LegCommandPublisher(const LegList leg_controllers,
+                                             const slam::Localization::Ptr localization)
         : leg_controllers_(leg_controllers),
+          localization_(localization),
           stop_on_fail_(true),
           sleep_duration_us_(5000)
     {

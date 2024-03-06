@@ -17,21 +17,21 @@ namespace starq
 
     bool TrajectoryPublisher::runTrajectory(const std::vector<starq::LegCommand::Ptr> &trajectory)
     {
-        
+
         if (isRunning())
         {
             std::cerr << "Trajectory publisher is already running" << std::endl;
             return false;
         }
 
+        for (auto &leg_command : trajectory)
+        {
+            leg_command->stamp(leg_command_publisher_->getLocalization()->getCurrentTime());
+        }
+
         trajectory_queue_ = std::priority_queue<starq::LegCommand::Ptr,
                                                 std::vector<starq::LegCommand::Ptr>,
                                                 TrajectoryComparator>(trajectory.begin(), trajectory.end());
-
-        for (auto &leg_command : trajectory)
-        {
-            leg_command->stamp();
-        }
 
         start();
 
@@ -52,13 +52,9 @@ namespace starq
 
             auto next = getNext();
 
-            time_point_t release_time = next->release_time;
-            time_point_t now = std::chrono::high_resolution_clock::now();
-
-            auto duration = release_time - now;
-            if (duration.count() > 0)
+            while (next->release_time > leg_command_publisher_->getLocalization()->getCurrentTime())
             {
-                std::this_thread::sleep_for(duration);
+                std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
             }
 
             leg_command_publisher_->sendCommand(next);

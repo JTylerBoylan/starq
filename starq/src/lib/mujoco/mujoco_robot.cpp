@@ -19,7 +19,7 @@ namespace starq::mujoco
     {
         simulation_ = std::async(std::launch::async, [this]()
                                  { mujoco_->open(scene_file_); });
-        
+
         while (!mujoco_->isOpen())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -42,6 +42,11 @@ namespace starq::mujoco
     void MuJoCoRobot::setupLocalization()
     {
         localization_ = std::make_shared<MuJoCoLocalization>(mujoco_);
+    }
+
+    void MuJoCoRobot::setupLegCommandPublisher()
+    {
+        publisher_ = std::make_shared<LegCommandPublisher>(legs_, localization_);
     }
 
 }

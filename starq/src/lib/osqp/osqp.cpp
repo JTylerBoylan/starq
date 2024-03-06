@@ -118,7 +118,7 @@ namespace starq::osqp
 
         const auto x = solver_->solution->x;
         const auto config = qp_problem_->getMPCProblem()->getConfig();
-        const auto n_legs = config->getNumberOfLegs(0);
+        const auto n_legs = config->getStanceState(0).size();
         int offset = qp_problem_->getNx();
         for (size_t j = 0; j < n_legs; j++)
         {

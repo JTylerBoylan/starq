@@ -20,7 +20,7 @@ int main()
     // gait ->setControlMode(GAIT_VELOCITY_CONTROL);
     // gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
 
-    gait->setPose(Vector3f(0, 0, UNITREE_A1_HEIGHT), Vector3f(0, 0, 0));
+    gait->setPose(Vector3f(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3f(0, 0, 0));
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
     auto swing_duration = gait->getSwingDuration();
@@ -46,7 +46,7 @@ int main()
     robot->startSimulation();
     printf("Simulation started\n");
 
-    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -UNITREE_A1_HEIGHT);
+    const auto foot_position = Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT);
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
         robot->setFootPosition(id, foot_position);
@@ -65,7 +65,7 @@ int main()
         float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
         float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
 
-        gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_HEIGHT + offset_z), Vector3f(0, 0, 0));
+        gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z), Vector3f(0, 0, 0));
 
         if (!osqp->update(mpc_config))
             break;

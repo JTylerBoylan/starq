@@ -28,10 +28,6 @@ namespace starq
         /// @return The gravity vector
         virtual Vector3f getGravity() const = 0;
 
-        /// @brief Get the body height
-        /// @return The body height
-        virtual float getBodyHeight() const = 0;
-
         /// @brief Get the foot friction
         /// @return The foot friction
         virtual float getFootFriction() const = 0;
@@ -39,6 +35,10 @@ namespace starq
         /// @brief Get the hip locations
         /// @return The hip locations
         virtual std::vector<Vector3f> getHipLocations() const = 0;
+
+        /// @brief Get the default foot locations
+        /// @return The default foot locations
+        virtual std::vector<Vector3f> getDefaultFootLocations() const = 0;
 
         /// @brief Get the minimum force in the z direction
         /// @return The minimum force in the z direction

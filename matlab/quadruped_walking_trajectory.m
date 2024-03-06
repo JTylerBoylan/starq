@@ -49,7 +49,7 @@ axis equal
 
 force_traj = zeros(size(pos_traj));
 
-t = floor(t * 1E6);
+t = floor(t * 1E3);
 
 output = [];
 for leg = 0:3

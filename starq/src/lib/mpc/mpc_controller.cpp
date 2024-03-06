@@ -7,21 +7,26 @@ namespace starq::mpc
 
     MPCController::MPCController(const MPCConfiguration::Ptr config,
                                  const MPCSolver::Ptr solver,
-                                 const slam::Localization::Ptr localization,
-                                 const LegCommandPublisher::Ptr leg_command_publisher,
-                                 const TrajectoryPublisher::Ptr trajectory_publisher)
+                                 const LegCommandPublisher::Ptr leg_command_publisher)
         : config_(config),
           solver_(solver),
-          localization_(localization),
           leg_command_publisher_(leg_command_publisher),
-          trajectory_publisher_(trajectory_publisher),
+          legs_(config->getLegControllers()),
+          localization_(config->getLocalization()),
+          robot_dynamics_(config->getRobotDynamics()),
           stop_on_fail_(false),
           sleep_duration_us_(1000),
           step_height_(0.15f),
           swing_resolution_(100)
     {
-        last_force_state_.resize(leg_command_publisher_->getLegControllers().size(),
+        last_force_state_.resize(legs_.size(),
                                  std::make_pair(true, Vector3f::Zero()));
+
+        trajectory_publishers_.resize(legs_.size());
+        for (size_t i = 0; i < legs_.size(); i++)
+        {
+            trajectory_publishers_[i] = std::make_shared<TrajectoryPublisher>(leg_command_publisher_);
+        }
     }
 
     MPCController::~MPCController()
@@ -84,8 +89,8 @@ namespace starq::mpc
 
         VectorXf start_position;
         leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position);
-        Vector3f end_position = 0.5f * velocity * stance_duration.count() * 1E-3f;
-        end_position.z() = start_position.z();
+        Vector3f end_position = 0.5f * velocity * stance_duration.count() * 1E-3f +
+                                robot_dynamics_->getDefaultFootLocations()[leg_id];
 
         const Vector3f delta = end_position - start_position.head(3);
         const float radius = 0.5f * delta.norm();
@@ -93,6 +98,9 @@ namespace starq::mpc
         const float angle = std::atan2(delta.y(), delta.x());
         Matrix3f rotation;
         rotation = AngleAxisf(angle, Vector3f::UnitZ());
+
+        std::cout << "Start position: " << start_position.head(3).transpose() << std::endl;
+        std::cout << "Swing trajectory for leg " << static_cast<int>(leg_id) << std::endl;
 
         std::vector<LegCommand::Ptr> trajectory;
         for (size_t i = 0; i <= swing_resolution_; i++)
@@ -107,12 +115,14 @@ namespace starq::mpc
             LegCommand::Ptr command = std::make_shared<LegCommand>();
             command->control_mode = ControlMode::POSITION;
             command->leg_id = leg_id;
-            command->delay = microseconds(time_t(swing_duration.count() * 1E3 * ratio));
+            command->delay = milliseconds(time_t(swing_duration.count() * ratio));
             command->target_position = position;
             trajectory.push_back(command);
+
+            std::cout << "  " << position.transpose() << std::endl;
         }
 
-        trajectory_publisher_->runTrajectory(trajectory);
+        trajectory_publishers_[leg_id]->runTrajectory(trajectory);
     }
 
 }

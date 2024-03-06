@@ -10,10 +10,6 @@
 #define UNITREE_A1_NUM_MOTORS 12
 #define UNITREE_A1_NUM_LEGS 4
 
-#define UNITREE_A1_LENGTH_D 0.08505
-#define UNITREE_A1_LENGTH_LT 0.2
-#define UNITREE_A1_LENGTH_LC 0.2
-
 namespace starq::robots
 {
     using namespace starq::mujoco;

@@ -8,12 +8,15 @@ namespace starq::dynamics
         body_mass_ = UNITREE_A1_MASS;
         body_inertia_ << UNITREE_A1_INERTIA;
         gravity_ << UNITREE_A1_GRAVITY;
-        body_height_ = UNITREE_A1_HEIGHT;
         foot_friction_ = UNITREE_A1_FOOT_FRICTION;
         hip_locations_ = {Vector3f(UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
                           Vector3f(-UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
                           Vector3f(-UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0),
                           Vector3f(UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0)};
+        default_foot_locations_ = {Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
         force_z_min_ = 10;
         force_z_max_ = 250;
     }
@@ -37,11 +40,6 @@ namespace starq::dynamics
         return gravity_;
     }
 
-    float UnitreeA1RobotDynamics::getBodyHeight() const
-    {
-        return body_height_;
-    }
-
     float UnitreeA1RobotDynamics::getFootFriction() const
     {
         return foot_friction_;
@@ -50,6 +48,11 @@ namespace starq::dynamics
     std::vector<Vector3f> UnitreeA1RobotDynamics::getHipLocations() const
     {
         return hip_locations_;
+    }
+
+    std::vector<Vector3f> UnitreeA1RobotDynamics::getDefaultFootLocations() const
+    {
+        return default_foot_locations_;
     }
 
     float UnitreeA1RobotDynamics::getForceZMin() const

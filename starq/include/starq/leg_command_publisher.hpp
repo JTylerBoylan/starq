@@ -2,6 +2,8 @@
 #define STARQ__LEG_COMMAND_PUBLISHER_HPP_
 
 #include "starq/leg_controller.hpp"
+#include "starq/slam/localization.hpp"
+#include "starq/system_localization.hpp"
 #include "starq/thread_runner.hpp"
 
 #include <memory>
@@ -12,13 +14,11 @@
 namespace starq
 {
 
-    using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
-
     /// @brief Leg command structure
     struct LegCommand
     {
         using Ptr = std::shared_ptr<LegCommand>;
-        std::chrono::microseconds delay;
+        std::chrono::milliseconds delay;
         uint8_t leg_id = 0;
         uint32_t control_mode = 0;
         uint32_t input_mode = 0x1;
@@ -26,10 +26,10 @@ namespace starq
         VectorXf target_velocity = VectorXf();
         VectorXf target_force = VectorXf();
 
-        time_point_t release_time;
-        void stamp()
+        std::chrono::milliseconds release_time;
+        void stamp(const std::chrono::milliseconds &clock)
         {
-            release_time = std::chrono::high_resolution_clock::now() + delay;
+            release_time = clock + delay;
         }
     };
 
@@ -43,7 +43,9 @@ namespace starq
 
         /// @brief Construct a new Leg Command Publisher object
         /// @param leg_controllers Leg controllers to publish commands to.
-        LegCommandPublisher(const LegList leg_controllers);
+        /// @param localization Localization (for clock synchronization)
+        LegCommandPublisher(const LegList leg_controllers,
+                            const slam::Localization::Ptr localization = std::make_shared<SystemLocalization>());
 
         /// @brief Destroy the Leg Command Publisher object
         ~LegCommandPublisher();
@@ -51,6 +53,10 @@ namespace starq
         /// @brief Get the leg controllers.
         /// @return Leg controllers.
         LegList getLegControllers() const { return leg_controllers_; }
+
+        /// @brief Get the localization.
+        /// @return Localization.
+        slam::Localization::Ptr getLocalization() const { return localization_; }
 
         /// @brief Send a leg command to the leg controller.
         /// @param leg_command Leg command to send.
@@ -72,6 +78,7 @@ namespace starq
         void run() override;
 
         LegList leg_controllers_;
+        slam::Localization::Ptr localization_;
         std::unordered_map<uint8_t, LegCommand::Ptr> leg_command_map_;
 
         bool stop_on_fail_;
