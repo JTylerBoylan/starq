@@ -56,6 +56,10 @@ namespace starq::mpc
         /// @param gait The gait
         void setNextGait(const Gait::Ptr &gait);
 
+        /// @brief Check if the MPC configuration is ready
+        /// @return If the MPC configuration is ready
+        bool isReady() const;
+
         /// @brief Update the MPC configuration
         /// @return True if the MPC configuration was updated, false otherwise
         bool update();
@@ -131,6 +135,8 @@ namespace starq::mpc
         const std::vector<LegController::Ptr> leg_controllers_;
         const RobotDynamics::Ptr robot_dynamics_;
         const slam::Localization::Ptr localization_;
+
+        bool is_ready_;
 
         GaitSequencer::Ptr gait_sequencer_;
         CenterOfMassPlanner::Ptr com_planner_;

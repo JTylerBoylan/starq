@@ -48,6 +48,10 @@ namespace starq::dynamics
         /// @return The foot friction
         float getFootFriction() const override;
 
+        /// @brief Get the standing height
+        /// @return The standing height
+        float getStandingHeight() const override;
+
         /// @brief Get the hip locations
         /// @return The hip locations
         std::vector<Vector3f> getHipLocations() const override;
@@ -69,6 +73,7 @@ namespace starq::dynamics
         Matrix3f body_inertia_;
         Vector3f gravity_;
         float foot_friction_;
+        float standing_height_;
         std::vector<Vector3f> hip_locations_;
         std::vector<Vector3f> default_foot_locations_;
         float force_z_min_;

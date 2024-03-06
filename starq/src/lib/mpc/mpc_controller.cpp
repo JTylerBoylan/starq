@@ -39,11 +39,29 @@ namespace starq::mpc
     {
         while (isRunning())
         {
-            if (!solver_->update(config_) && stop_on_fail_)
-                break;
+            std::this_thread::sleep_for(sleep_duration_us_);
 
-            if (!solver_->solve() && stop_on_fail_)
-                break;
+            if (!config_->isReady())
+            {
+                continue;
+            }
+            
+
+            if (!solver_->update(config_))
+            {
+                if (stop_on_fail_)
+                    break;
+                else
+                    continue;
+            }
+
+            if (!solver_->solve())
+            {
+                if (stop_on_fail_)
+                    break;
+                else
+                    continue;
+            }
 
             FootForceState force_state = solver_->getFirstForceState();
 
@@ -60,8 +78,6 @@ namespace starq::mpc
             }
 
             last_force_state_ = force_state;
-
-            std::this_thread::sleep_for(sleep_duration_us_);
         }
 
         stop();

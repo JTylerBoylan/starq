@@ -32,6 +32,10 @@ namespace starq
         /// @return The foot friction
         virtual float getFootFriction() const = 0;
 
+        /// @brief Get the standing height
+        /// @return The standing height
+        virtual float getStandingHeight() const = 0;
+
         /// @brief Get the hip locations
         /// @return The hip locations
         virtual std::vector<Vector3f> getHipLocations() const = 0;

@@ -14,19 +14,22 @@ int main(void)
     auto robot = std::make_shared<robots::UnitreeA1MuJoCoRobot>();
     printf("UnitreeA1MuJoCoRobot created\n");
 
-    Gait::Ptr gait = std::make_shared<Gait>();
-    gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
-    gait->setVelocity(Vector3f(0.5, 0, 0), Vector3f(0, 0, 0));
-    gait->setFrequency(2.0);
-    // gait->setPose(Vector3f(0, 0, UNITREE_A1_HEIGHT), Vector3f(0, 0, 0));
-    printf("Gait loaded\n");
+    Gait::Ptr walk_gait = std::make_shared<Gait>();
+    walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
+    walk_gait->setVelocity(Vector3f(0.5, 0, 0), Vector3f(0, 0, 0));
+    walk_gait->setFrequency(2.0);
+    printf("Walk Gait loaded\n");
+
+    Gait::Ptr stand_gait = std::make_shared<Gait>();
+    stand_gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
+    stand_gait->setPose(Vector3f(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3f(0, 0, 0));
+    printf("Stand Gait loaded\n");
 
     MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
                                                                           robot->getRobotDynamics(),
                                                                           robot->getLocalization());
     mpc_config->setTimeStep(milliseconds(50));
     mpc_config->setWindowSize(21);
-    mpc_config->setNextGait(gait);
     printf("MPCConfiguration created\n");
 
     OSQP::Ptr osqp = std::make_shared<OSQP>();
@@ -52,16 +55,16 @@ int main(void)
     mpc_controller->start();
     printf("MPCController started\n");
 
-    // while (robot->isSimulationOpen())
-    // {
-    //     auto global_time = robot->getLocalization()->getCurrentTime();
+    printf("Standing for 5 seconds...\n");
+    mpc_config->setNextGait(stand_gait);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    //     float offset_x = 0.025 * std::cos(2 * 1E-3 * global_time.count());
-    //     float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
-    //     float offset_z = 0;
+    printf("Walking for 10 seconds...\n");
+    mpc_config->setNextGait(walk_gait);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    //     gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_HEIGHT + offset_z), Vector3f(0, 0, 0));
-    // }
+    printf("Standing...\n");
+    mpc_config->setNextGait(stand_gait);
 
     robot->waitForSimulation();
     printf("Simulation closed\n");

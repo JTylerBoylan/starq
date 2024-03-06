@@ -66,9 +66,37 @@ namespace starq::mpc
             }
             case GAIT_VELOCITY_CONTROL:
             {
-                const Matrix3f rotation = localization_->toRotationMatrix(ref_traj[i - 1].orientation);
+                Matrix3f rotation;
+                rotation = AngleAxisf(ref_traj[i - 1].orientation.z(), Vector3f::UnitZ());
                 linear_velocity = rotation * gait_seq[i - 1]->getLinearVelocity();
                 angular_velocity = rotation * gait_seq[i - 1]->getAngularVelocity();
+
+                const float delta_z = robot_dynamics_->getStandingHeight() - ref_traj[i - 1].position.z();
+                const float max_vz = gait_seq[i - 1]->getMaxLinearVelocity().z();
+                const float max_delta_z = max_vz * dT;
+                if (std::abs(delta_z) > max_delta_z)
+                {
+                    linear_velocity.z() = delta_z > 0 ? max_vz : -max_vz;
+                }
+                else
+                {
+                    linear_velocity.z() = delta_z / dT;
+                }
+
+                const Vector2f delta_o = -ref_traj[i - 1].orientation.head(2);
+                const Vector2f max_w = gait_seq[i - 1]->getMaxAngularVelocity().head(2);
+                const Vector2f max_delta_o = max_w * dT;
+                for (int j = 0; j < 2; j++)
+                {
+                    if (std::abs(delta_o[j]) > max_delta_o[j])
+                    {
+                        angular_velocity[j] = delta_o[j] > 0 ? max_w[j] : -max_w[j];
+                    }
+                    else
+                    {
+                        angular_velocity[j] = delta_o[j] / dT;
+                    }
+                }
                 break;
             }
             }

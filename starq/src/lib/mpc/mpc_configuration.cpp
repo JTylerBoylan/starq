@@ -11,6 +11,7 @@ namespace starq::mpc
         : leg_controllers_(leg_controllers),
           robot_dynamics_(robot_dynamics),
           localization_(localization),
+          is_ready_(false),
           gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
           com_planner_(std::make_shared<CenterOfMassPlanner>(localization, robot_dynamics)),
           foothold_planner_(std::make_shared<FootholdPlanner>(leg_controllers, robot_dynamics, localization))
@@ -51,6 +52,12 @@ namespace starq::mpc
     void MPCConfiguration::setNextGait(const Gait::Ptr &gait)
     {
         gait_sequencer_->setNextGait(gait);
+        is_ready_ = update();
+    }
+
+    bool MPCConfiguration::isReady() const
+    {
+        return is_ready_;
     }
 
     bool MPCConfiguration::update()
