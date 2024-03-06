@@ -16,13 +16,14 @@ int main(void)
 
     Gait::Ptr walk_gait = std::make_shared<Gait>();
     walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
-    walk_gait->setVelocity(Vector3f(0.5, 0, 0), Vector3f(0, 0, 0));
+    walk_gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
     walk_gait->setFrequency(2.0);
     printf("Walk Gait loaded\n");
 
     Gait::Ptr stand_gait = std::make_shared<Gait>();
     stand_gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
     stand_gait->setPose(Vector3f(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3f(0, 0, 0));
+    stand_gait->setFrequency(10.0);
     printf("Stand Gait loaded\n");
 
     MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
