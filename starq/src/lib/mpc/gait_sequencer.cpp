@@ -1,5 +1,7 @@
 #include "starq/mpc/gait_sequencer.hpp"
 
+#include <iostream>
+
 namespace starq::mpc
 {
     GaitSequencer::GaitSequencer(starq::slam::Localization::Ptr localization)
@@ -67,9 +69,9 @@ namespace starq::mpc
         }
 
         const auto end_time = start_time_ + current_gait_->getDuration();
-        if (time < start_time_)
+        if (time <= start_time_)
         {
-            return current_gait_->getStanceState(milliseconds(0));
+            return current_gait_->getStanceState(milliseconds(1));
         }
         else if (time < end_time)
         {

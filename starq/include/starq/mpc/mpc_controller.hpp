@@ -43,6 +43,10 @@ namespace starq::mpc
         /// @param swing_resolution Swing resolution.
         void setSwingResolution(const size_t swing_resolution) { swing_resolution_ = swing_resolution; }
 
+        /// @brief Set the swing duration factor.
+        /// @param swing_duration_factor Swing duration factor.
+        void setSwingDurationFactor(const float swing_duration_factor) { swing_duration_factor_ = swing_duration_factor; }
+
     private:
         void run() override;
 
@@ -63,6 +67,7 @@ namespace starq::mpc
         microseconds sleep_duration_us_;
         float step_height_;
         size_t swing_resolution_;
+        float swing_duration_factor_;
 
         FootForceState last_force_state_;
     };

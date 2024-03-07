@@ -17,7 +17,8 @@ namespace starq::mpc
           stop_on_fail_(false),
           sleep_duration_us_(1000),
           step_height_(0.075f),
-          swing_resolution_(100)
+          swing_resolution_(100),
+          swing_duration_factor_(0.90f)
     {
         last_force_state_.resize(legs_.size(),
                                  std::make_pair(true, Vector3f::Zero()));
@@ -45,7 +46,7 @@ namespace starq::mpc
             {
                 continue;
             }
-            
+
             if (!solver_->update(config_))
             {
                 if (stop_on_fail_)
@@ -64,10 +65,8 @@ namespace starq::mpc
 
             FootForceState force_state = solver_->getFirstForceState();
 
-            std::cout << "Force state: ";
             for (size_t j = 0; j < force_state.size(); j++)
             {
-                std::cout << force_state[j].first << " ";
                 if (force_state[j].first)
                 {
                     sendFootForce(j, -force_state[j].second);
@@ -77,7 +76,6 @@ namespace starq::mpc
                     sendSwingTrajectory(j);
                 }
             }
-            std::cout << std::endl;
 
             last_force_state_ = force_state;
         }
@@ -103,7 +101,22 @@ namespace starq::mpc
     {
         const milliseconds swing_duration = config_->getGait(0)->getSwingDuration();
         const milliseconds stance_duration = config_->getGait(0)->getStanceDuration();
-        const Vector3f velocity = config_->getReferenceState(1).linear_velocity;
+
+        const milliseconds time_step = milliseconds(time_t(config_->getTimeStep() * 1E3));
+        const float node_span = static_cast<float>(swing_duration.count()) / static_cast<float>(time_step.count());
+
+        if (node_span > config_->getWindowSize())
+        {
+            std::cerr << "Node span exceeds window size" << std::endl;
+            return;
+        }
+
+        Vector3f velocity_sum = Vector3f::Zero();
+        for (size_t i = 0; i < node_span; i++)
+        {
+            velocity_sum += config_->getReferenceState(i).linear_velocity;
+        }
+        const Vector3f velocity = velocity_sum / node_span;
 
         VectorXf start_position;
         leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position);
@@ -130,7 +143,7 @@ namespace starq::mpc
             LegCommand::Ptr command = std::make_shared<LegCommand>();
             command->control_mode = ControlMode::POSITION;
             command->leg_id = leg_id;
-            command->delay = milliseconds(time_t(swing_duration.count() * ratio));
+            command->delay = milliseconds(time_t(swing_duration.count() * ratio * swing_duration_factor_));
             command->target_position = position;
             trajectory.push_back(command);
         }

@@ -62,12 +62,8 @@ int main(void)
     mpc_config->setNextGait(stand_gait);
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    printf("Walking for 10 seconds...\n");
+    printf("Walking...\n");
     mpc_config->setNextGait(walk_gait);
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-
-    printf("Standing...\n");
-    mpc_config->setNextGait(stand_gait);
 
     robot->waitForSimulation();
     printf("Simulation closed\n");
