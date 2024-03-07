@@ -91,9 +91,9 @@ namespace starq::mujoco
             float vel_cmd = 0.f;
             float torq_cmd = 0.f;
 
-            float kp = 150.0f;
-            float kd = 0.1f;
-            float ki = 1.0f;
+            float kp = 50.0f;
+            float kd = 1.0f;
+            float ki = 0.3f;
 
             float torq_integral = 0.f;
 

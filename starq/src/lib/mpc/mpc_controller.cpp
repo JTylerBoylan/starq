@@ -18,7 +18,7 @@ namespace starq::mpc
           sleep_duration_us_(1000),
           step_height_(0.075f),
           swing_resolution_(100),
-          swing_duration_factor_(0.90f)
+          swing_duration_factor_(0.75f)
     {
         last_force_state_.resize(legs_.size(),
                                  std::make_pair(true, Vector3f::Zero()));
@@ -116,7 +116,8 @@ namespace starq::mpc
         {
             velocity_sum += config_->getReferenceState(i).linear_velocity;
         }
-        const Vector3f velocity = velocity_sum / node_span;
+        const Vector3f xy_mask = Vector3f(1.0f, 1.0f, 0.0f);
+        const Vector3f velocity = velocity_sum.cwiseProduct(xy_mask) / node_span;
 
         VectorXf start_position;
         leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position);
