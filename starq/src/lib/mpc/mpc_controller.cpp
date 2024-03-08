@@ -18,7 +18,7 @@ namespace starq::mpc
           sleep_duration_us_(1000),
           step_height_(0.075f),
           swing_resolution_(100),
-          swing_duration_factor_(0.75f)
+          swing_duration_factor_(0.5f)
     {
         last_force_state_.resize(legs_.size(),
                                  std::make_pair(true, Vector3f::Zero()));
@@ -103,28 +103,34 @@ namespace starq::mpc
         const milliseconds stance_duration = config_->getGait(0)->getStanceDuration();
 
         const milliseconds time_step = milliseconds(time_t(config_->getTimeStep() * 1E3));
-        const float node_span = static_cast<float>(swing_duration.count()) / static_cast<float>(time_step.count());
-
-        if (node_span > config_->getWindowSize())
+        const float node_span = std::round(static_cast<float>(swing_duration.count()) / static_cast<float>(time_step.count()));
+        if (node_span >= config_->getWindowSize())
         {
             std::cerr << "Node span exceeds window size" << std::endl;
             return;
         }
 
-        Vector3f velocity_sum = Vector3f::Zero();
-        for (size_t i = 0; i < node_span; i++)
-        {
-            velocity_sum += config_->getReferenceState(i).linear_velocity;
-        }
-        const Vector3f xy_mask = Vector3f(1.0f, 1.0f, 0.0f);
-        const Vector3f velocity = velocity_sum.cwiseProduct(xy_mask) / node_span;
+        const Vector3f b_pos_body_hip = robot_dynamics_->getHipLocations()[leg_id];
 
-        VectorXf start_position;
-        leg_command_publisher_->getLegControllers()[leg_id]->getFootPositionEstimate(start_position);
-        Vector3f end_position = 0.5f * velocity * stance_duration.count() * 1E-3f +
-                                robot_dynamics_->getDefaultFootLocations()[leg_id];
+        VectorXf b_pos_hip_foot_0;
+        legs_[leg_id]->getFootPositionEstimate(b_pos_hip_foot_0);
 
-        const Vector3f delta = end_position - start_position.head(3);
+        const ReferenceState w_state_body = config_->getReferenceState(std::round(node_span));
+        const Vector3f w_pos_N_body = w_state_body.position;
+        const Vector3f w_ori_body = w_state_body.orientation;
+        const Matrix3f w_R_b = localization_->toRotationMatrix(w_ori_body);
+        const Vector3f w_vel_body = w_state_body.linear_velocity;
+
+        const Vector3f w_pos_N_hip = w_pos_N_body + w_R_b * b_pos_body_hip;
+        Vector3f w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_body * stance_duration.count() * 1E-3f;
+
+        const Vector3f w_pos_hip_foot = w_pos_N_foot - w_pos_N_hip;
+        const Vector3f b_pos_hip_foot_f = w_R_b.transpose() * w_pos_hip_foot;
+
+        const Vector3f start_position = b_pos_hip_foot_0.head(3);
+        const Vector3f end_position = b_pos_hip_foot_f + robot_dynamics_->getDefaultFootLocations()[leg_id];
+
+        const Vector3f delta = end_position - start_position;
         const float radius = 0.5f * delta.norm();
 
         const float angle = std::atan2(delta.y(), delta.x());
@@ -139,7 +145,7 @@ namespace starq::mpc
             const float px = radius * (1 - std::cos(s));
             const float pz = step_height_ * std::sin(s);
             const Vector3f arc_position = Vector3f(px, 0.0f, pz);
-            const Vector3f position = rotation * arc_position + start_position.head(3);
+            const Vector3f position = rotation * arc_position + start_position;
 
             LegCommand::Ptr command = std::make_shared<LegCommand>();
             command->control_mode = ControlMode::POSITION;
