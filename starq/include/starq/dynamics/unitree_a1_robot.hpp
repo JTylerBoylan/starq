@@ -17,6 +17,10 @@
 
 #define UNITREE_A1_STAND_HEIGHT 0.27
 
+#define UNITREE_A1_Z_FORCE_MIN 10
+#define UNITREE_A1_Z_FORCE_MAX 250
+
+
 namespace starq::dynamics
 {
 

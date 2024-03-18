@@ -18,7 +18,7 @@ int main(void)
     walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
     walk_gait->setControlMode(GaitControlMode::GAIT_POSITION_CONTROL);
     walk_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
-    //walk_gait->setVelocity(Vector3f(0.5, 0, 0), Vector3f(0, 0, 0));
+    // walk_gait->setVelocity(Vector3f(0.5, 0, 0), Vector3f(0, 0, 0));
     walk_gait->setFrequency(2.0);
     printf("Walk Gait loaded\n");
 
@@ -64,6 +64,51 @@ int main(void)
 
     printf("Walking...\n");
     mpc_config->setNextGait(walk_gait);
+
+    while (robot->isSimulationOpen())
+    {
+        auto solution = osqp->getSolution();
+
+        if (solution == nullptr)
+        {
+            printf("No solution\n");
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            continue;
+        }
+
+        for (size_t i = 0; i < 1; i++)
+        {
+            printf("------\n");
+            printf("Node[%lu]\n", i);
+
+            const Vector3 position = solution->x_star[i].position;
+            const Vector3 orientation = solution->x_star[i].orientation;
+            const Vector3 linear_velocity = solution->x_star[i].linear_velocity;
+            const Vector3 angular_velocity = solution->x_star[i].angular_velocity;
+
+            printf("Position: %f %f %f\n", position.x(), position.y(), position.z());
+            printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
+            printf("Linear velocity: %f %f %f\n", linear_velocity.x(), linear_velocity.y(), linear_velocity.z());
+            printf("Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
+
+            if (i < mpc_config->getWindowSize() - 1)
+            {
+                const FootForceState force_state = solution->u_star[i];
+                for (size_t j = 0; j < force_state.size(); j++)
+                {
+                    if (force_state[j].first)
+                    {
+                        Vector3 foot_force = force_state[j].second;
+                        printf("Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
+                    }
+                }
+            }
+        }
+
+        printf("\n\n");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 
     robot->waitForSimulation();
     printf("Simulation closed\n");

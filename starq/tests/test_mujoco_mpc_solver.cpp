@@ -117,9 +117,9 @@ int main()
         const Vector3 current_orientation = robot->getLocalization()->getCurrentOrientation();
         const Matrix3 current_rotation = robot->getLocalization()->toRotationMatrix(current_orientation);
 
-        for (size_t j = 0; j < solution.u_star[0].size(); j++)
+        for (size_t j = 0; j < solution->u_star[0].size(); j++)
         {
-            if (solution.u_star[0][j].first)
+            if (solution->u_star[0][j].first)
             {
                 std::string leg_name;
                 switch (j)
@@ -138,7 +138,7 @@ int main()
                     break;
                 }
 
-                Vector3 foot_force_world = -solution.u_star[0][j].second;
+                Vector3 foot_force_world = -solution->u_star[0][j].second;
                 Vector3 foot_force_body = current_rotation.transpose() * foot_force_world;
                 robot->setFootForce(j, foot_force_body);
                 printf("%s Force: %f %f %f\n", leg_name.c_str(), foot_force_body.x(), foot_force_body.y(), foot_force_body.z());

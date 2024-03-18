@@ -23,7 +23,7 @@ namespace starq::mpc
 
         /// @brief Get the solution
         /// @return The solution
-        virtual MPCSolution getSolution() const = 0;
+        virtual MPCSolution::Ptr getSolution() const = 0;
 
         /// @brief Get the first force state of the solution
         /// @return The first force state

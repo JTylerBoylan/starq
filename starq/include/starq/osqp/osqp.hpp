@@ -31,7 +31,7 @@ namespace starq::osqp
 
         /// @brief Get the solution
         /// @return The solution
-        starq::mpc::MPCSolution getSolution() const override;
+        starq::mpc::MPCSolution::Ptr getSolution() const override;
 
         /// @brief Get the first force state of the solution
         /// @return The first force state
@@ -50,7 +50,11 @@ namespace starq::osqp
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
 
 
+        void saveMPCSolution();
+
         mpc::QPProblem::Ptr qp_problem_ = nullptr;
+
+        mpc::MPCSolution::Ptr solution_ = nullptr;
 
         OSQPInt n_, m_;
 

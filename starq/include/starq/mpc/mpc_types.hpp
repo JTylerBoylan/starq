@@ -38,6 +38,8 @@ namespace starq::mpc
 
     struct MPCSolution
     {
+        using Ptr = std::shared_ptr<MPCSolution>;
+        
         int exit_flag;
         std::chrono::microseconds run_time;
         std::chrono::microseconds setup_time;

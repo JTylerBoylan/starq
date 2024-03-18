@@ -18,8 +18,8 @@ namespace starq::dynamics
                                    Vector3(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
                                    Vector3(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
                                    Vector3(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
-        force_z_min_ = 10;
-        force_z_max_ = 250;
+        force_z_min_ = UNITREE_A1_Z_FORCE_MIN;
+        force_z_max_ = UNITREE_A1_Z_FORCE_MAX;
     }
 
     UnitreeA1RobotDynamics::~UnitreeA1RobotDynamics()

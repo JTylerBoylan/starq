@@ -79,76 +79,21 @@ namespace starq::osqp
             std::cerr << "Error solving OSQP problem (Error: " << flag << ")" << std::endl;
             return false;
         }
+        
+        saveMPCSolution();
         return true;
     }
 
-    starq::mpc::MPCSolution OSQP::getSolution() const
+    starq::mpc::MPCSolution::Ptr OSQP::getSolution() const
     {
-        starq::mpc::MPCSolution solution;
-        solution.run_time = std::chrono::microseconds(static_cast<int>(solver_->info->run_time * 1e6));
-        solution.setup_time = std::chrono::microseconds(static_cast<int>(solver_->info->setup_time * 1e6));
-        solution.solve_time = std::chrono::microseconds(static_cast<int>(solver_->info->solve_time * 1e6));
-
-        const auto config = qp_problem_->getMPCProblem()->getConfig();
-        const size_t window_size = config->getWindowSize();
-        const auto x = solver_->solution->x;
-        for (size_t i = 0; i < window_size; i++)
-        {
-            const int ox = 13 * i;
-            Vector3 orientation(x[ox], x[ox + 1], x[ox + 2]);
-            Vector3 position(x[ox + 3], x[ox + 4], x[ox + 5]);
-            Vector3 angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
-            Vector3 linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
-            starq::mpc::ReferenceState state = {position, orientation, linear_velocity, angular_velocity};
-            solution.x_star.push_back(state);
-        }
-
-        int offset = qp_problem_->getNx();
-        for (size_t i = 0; i < window_size - 1; i++)
-        {
-            starq::mpc::FootForceState forces;
-            const auto n_legs = config->getNumberOfLegs(i);
-            for (size_t j = 0; j < n_legs; j++)
-            {
-                if (config->getStanceState(i)[j])
-                {
-                    Vector3 force(x[offset], x[offset + 1], x[offset + 2]);
-                    forces.push_back(std::make_pair(true, force));
-                    offset += 3;
-                }
-                else
-                {
-                    forces.push_back(std::make_pair(false, Vector3::Zero()));
-                }
-            }
-            solution.u_star.push_back(forces);
-        }
-
-        return solution;
+        return solution_;
     }
 
     starq::mpc::FootForceState OSQP::getFirstForceState() const
     {
-        starq::mpc::FootForceState forces;
-
-        const auto x = solver_->solution->x;
-        const auto config = qp_problem_->getMPCProblem()->getConfig();
-        const auto n_legs = config->getStanceState(0).size();
-        int offset = qp_problem_->getNx();
-        for (size_t j = 0; j < n_legs; j++)
-        {
-            if (config->getStanceState(0)[j])
-            {
-                Vector3 force(x[offset], x[offset + 1], x[offset + 2]);
-                forces.push_back(std::make_pair(true, force));
-                offset += 3;
-            }
-            else
-            {
-                forces.push_back(std::make_pair(false, Vector3::Zero()));
-            }
-        }
-        return forces;
+        if (solution_ == nullptr)
+            return starq::mpc::FootForceState();
+        return solution_->u_star[0];
     }
 
     void OSQP::convertEigenSparseToCSC(const Eigen::SparseMatrix<Float> &matrix,
@@ -182,6 +127,56 @@ namespace starq::osqp
             Mp[j + 1] = k;
         }
         csc_set_data(M, matrix.rows(), matrix.cols(), Mnnz, Mx, Mi, Mp);
+    }
+
+    void OSQP::saveMPCSolution()
+    {
+        if (solution_ == nullptr)
+            solution_ = std::make_shared<starq::mpc::MPCSolution>();
+
+        solution_->run_time = std::chrono::microseconds(static_cast<int>(solver_->info->run_time * 1e6));
+        solution_->setup_time = std::chrono::microseconds(static_cast<int>(solver_->info->setup_time * 1e6));
+        solution_->solve_time = std::chrono::microseconds(static_cast<int>(solver_->info->solve_time * 1e6));
+
+        const auto config = qp_problem_->getMPCProblem()->getConfig();
+        const size_t window_size = config->getWindowSize();
+
+        solution_->x_star.resize(window_size);
+        const auto x = solver_->solution->x;
+        for (size_t i = 0; i < window_size; i++)
+        {
+            const int ox = 13 * i;
+            Vector3 orientation(x[ox], x[ox + 1], x[ox + 2]);
+            Vector3 position(x[ox + 3], x[ox + 4], x[ox + 5]);
+            Vector3 angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
+            Vector3 linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
+            starq::mpc::ReferenceState state = {position, orientation, linear_velocity, angular_velocity};
+            solution_->x_star[i] = state;
+        }
+
+        solution_->u_star.resize(window_size - 1);
+        int offset = qp_problem_->getNx();
+        for (size_t i = 0; i < window_size - 1; i++)
+        {
+            starq::mpc::FootForceState forces;
+            const auto n_legs = config->getStanceState(i).size();
+
+            forces.reserve(n_legs);
+            for (size_t j = 0; j < n_legs; j++)
+            {
+                if (config->getStanceState(i)[j])
+                {
+                    Vector3 force(x[offset], x[offset + 1], x[offset + 2]);
+                    forces.push_back(std::make_pair(true, force));
+                    offset += 3;
+                }
+                else
+                {
+                    forces.push_back(std::make_pair(false, Vector3::Zero()));
+                }
+            }
+            solution_->u_star[i] = forces;
+        }
     }
 
 }
