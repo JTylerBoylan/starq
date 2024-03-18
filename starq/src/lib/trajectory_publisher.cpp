@@ -29,35 +29,31 @@ namespace starq
             leg_command->stamp(leg_command_publisher_->getLocalization()->getCurrentTime());
         }
 
-        trajectory_queue_ = std::priority_queue<starq::LegCommand::Ptr,
-                                                std::vector<starq::LegCommand::Ptr>,
-                                                TrajectoryComparator>(trajectory.begin(), trajectory.end());
+        trajectory_ = trajectory;
+
+        std::sort(trajectory_.begin(), trajectory_.end(),
+                  [](const starq::LegCommand::Ptr &lhs, const starq::LegCommand::Ptr &rhs)
+                  {
+                      return lhs->release_time < rhs->release_time;
+                  });
 
         start();
 
         return true;
     }
 
-    bool TrajectoryPublisher::isEmpty()
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        return trajectory_queue_.empty();
-    }
-
     void TrajectoryPublisher::run()
     {
 
-        while (!isEmpty())
+        for (auto &leg_command : trajectory_)
         {
 
-            auto next = getNext();
-
-            while (next->release_time > leg_command_publisher_->getLocalization()->getCurrentTime())
+            while (leg_command->release_time > leg_command_publisher_->getLocalization()->getCurrentTime())
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
             }
 
-            leg_command_publisher_->sendCommand(next);
+            leg_command_publisher_->sendCommand(leg_command);
 
             std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
         }
@@ -65,11 +61,4 @@ namespace starq
         stop();
     }
 
-    LegCommand::Ptr TrajectoryPublisher::getNext()
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto top = trajectory_queue_.top();
-        trajectory_queue_.pop();
-        return top;
-    }
 }
