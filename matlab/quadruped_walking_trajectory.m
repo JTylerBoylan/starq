@@ -65,8 +65,8 @@ for leg = 0:3
     end
 
     pos_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
-    vel_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
-    force_traj = [pos_traj(:,leg/4*N+1:end), pos_traj(:,1:leg/4*N)];
+    vel_traj = [vel_traj(:,leg/4*N+1:end), vel_traj(:,1:leg/4*N)];
+    force_traj = [force_traj(:,leg/4*N+1:end), force_traj(:,1:leg/4*N)];
 
     output = [output;
               t', leg_id', control_mode', input_mode', flip .* pos_traj', vel_traj', force_traj']

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define MUJOCO_Q_OFFSET 7
+#define MUJOCO_V_OFFSET 6
 
 namespace starq::mujoco
 {
@@ -85,8 +86,8 @@ namespace starq::mujoco
         (void)model;
 
         const mjtNum pos_est = data->qpos[motor_id_ + MUJOCO_Q_OFFSET];
-        const mjtNum vel_est = data->qvel[motor_id_ + MUJOCO_Q_OFFSET];
-        const mjtNum torq_est = data->ctrl[motor_id_ + MUJOCO_Q_OFFSET];
+        const mjtNum vel_est = data->qvel[motor_id_ + MUJOCO_V_OFFSET];
+        const mjtNum torq_est = data->ctrl[motor_id_];
 
         switch (state_.control_mode)
         {
