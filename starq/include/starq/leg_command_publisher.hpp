@@ -18,16 +18,16 @@ namespace starq
     struct LegCommand
     {
         using Ptr = std::shared_ptr<LegCommand>;
-        std::chrono::milliseconds delay;
+        milliseconds delay = milliseconds(0);
         uint8_t leg_id = 0;
         uint32_t control_mode = 0;
         uint32_t input_mode = 0x1;
-        VectorXf target_position = VectorXf();
-        VectorXf target_velocity = VectorXf();
-        VectorXf target_force = VectorXf();
+        Vector3 target_position = Vector3::Zero();
+        Vector3 target_velocity = Vector3::Zero();
+        Vector3 target_force = Vector3::Zero();
 
-        std::chrono::milliseconds release_time;
-        void stamp(const std::chrono::milliseconds &clock)
+        milliseconds release_time;
+        void stamp(const milliseconds &clock)
         {
             release_time = clock + delay;
         }

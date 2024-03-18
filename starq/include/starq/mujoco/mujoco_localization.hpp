@@ -18,38 +18,38 @@ namespace starq::mujoco
 
         /// @brief Get the current time.
         /// @return The current time in milliseconds.
-        virtual std::chrono::milliseconds getCurrentTime() override;
+        virtual milliseconds getCurrentTime() override;
 
         /// @brief Get the current position of the robot.
         /// @return Position vector [m] (x, y, z) in the world frame.
-        virtual Eigen::Vector3f getCurrentPosition() override;
+        virtual Vector3 getCurrentPosition() override;
 
         /// @brief Get the current orientation of the robot.
         /// @return Orientation vector [rad] (roll, pitch, yaw) in the world frame.
-        virtual Eigen::Vector3f getCurrentOrientation() override;
+        virtual Vector3 getCurrentOrientation() override;
 
         /// @brief Get the current linear velocity of the robot.
         /// @return Velocity vector [m/s] (x, y, z) in the world frame.
-        virtual Eigen::Vector3f getCurrentLinearVelocity() override;
+        virtual Vector3 getCurrentLinearVelocity() override;
 
         /// @brief Get the current angular velocity of the robot.
         /// @return Angular velocity vector [rad/s] (roll, pitch, yaw) in the world frame.
-        virtual Eigen::Vector3f getCurrentAngularVelocity() override;
+        virtual Vector3 getCurrentAngularVelocity() override;
 
     private:
         /// @brief Get state information
         void localizationCallback(const mjModel *model, mjData *data);
 
         /// @brief Convert quaternion to euler angles
-        void quat2eul(const Eigen::Quaternionf &q, Eigen::Vector3f &eul);
+        void quat2eul(const Eigen::Quaternion<Float> &q, Vector3 &eul);
 
-        Eigen::Vector3f position_;
-        Eigen::Vector3f orientation_;
-        Eigen::Vector3f linear_velocity_;
-        Eigen::Vector3f angular_velocity_;
+        Vector3 position_;
+        Vector3 orientation_;
+        Vector3 linear_velocity_;
+        Vector3 angular_velocity_;
 
-        Eigen::Vector3f last_position_;
-        Eigen::Vector3f last_orientation_;
+        Vector3 last_position_;
+        Vector3 last_orientation_;
         mjtNum last_time_;
     };
 

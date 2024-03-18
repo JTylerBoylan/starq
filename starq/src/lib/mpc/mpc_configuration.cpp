@@ -145,32 +145,32 @@ namespace starq::mpc
         return gait_sequence_[node]->getForceWeights();
     }
 
-    Vector3f MPCConfiguration::getGravity() const
+    Vector3 MPCConfiguration::getGravity() const
     {
         return robot_dynamics_->getGravity();
     }
 
-    float MPCConfiguration::getFrictionCoefficient() const
+    Float MPCConfiguration::getFrictionCoefficient() const
     {
         return robot_dynamics_->getFootFriction();
     }
 
-    float MPCConfiguration::getForceZMin() const
+    Float MPCConfiguration::getForceZMin() const
     {
         return robot_dynamics_->getForceZMin();
     }
 
-    float MPCConfiguration::getForceZMax() const
+    Float MPCConfiguration::getForceZMax() const
     {
         return robot_dynamics_->getForceZMax();
     }
 
-    float MPCConfiguration::getMass() const
+    Float MPCConfiguration::getMass() const
     {
         return robot_dynamics_->getBodyMass();
     }
 
-    Matrix3f MPCConfiguration::getInertia() const
+    Matrix3 MPCConfiguration::getInertia() const
     {
         return robot_dynamics_->getBodyInertia();
     }

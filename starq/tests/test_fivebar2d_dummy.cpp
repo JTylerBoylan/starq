@@ -42,19 +42,19 @@ int main(void)
         const float x_off = 0.025f * std::cos(t);
         const float y_off = 0.025f * std::sin(t);
 
-        VectorXf foot_position(2);
-        foot_position << center_x + x_off, center_y + y_off;
+        Vector3 foot_position;
+        foot_position << center_x + x_off, center_y + y_off, 0;
 
         printf("Setting foot position to (%f, %f)\n", foot_position(0), foot_position(1));
 
         leg->setFootPosition(foot_position);
 
-        VectorXf pos_estimate;
+        Vector3 pos_estimate;
         leg->getFootPositionEstimate(pos_estimate);
 
         printf("Foot position estimate: (%f, %f)\n", pos_estimate(0), pos_estimate(1));
 
-        VectorXf joint_angles = leg->getCurrentJointAngles();
+        Vector3 joint_angles = leg->getCurrentJointAngles();
 
         printf("Motor positions: (%f, %f)\n", joint_angles(0), joint_angles(1));
 
@@ -62,9 +62,9 @@ int main(void)
 
         printf("Setting foot force to (%f, %f)\n", 0.0, force);
 
-        leg->setFootForce(Vector2f(0.0f, force));
+        leg->setFootForce(Vector3(0.0, force, 0.0));
 
-        VectorXf motor_torques = leg->getCurrentJointTorques();
+        Vector3 motor_torques = leg->getCurrentJointTorques();
 
         printf("Motor torques: (%f, %f)\n", motor_torques(0), motor_torques(1));
 

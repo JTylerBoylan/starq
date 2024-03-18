@@ -62,11 +62,11 @@ int main(void)
     const float force_y = -20.0f;
     printf("Applying Force: %f, %f\n", force_x, force_y);
 
-    const VectorXf current_joint_angles = leg->getCurrentJointAngles();
+    const Vector3 current_joint_angles = leg->getCurrentJointAngles();
 
-    MatrixXf jacobian;
+    Matrix3 jacobian;
     fivebar_dynamics->getJacobian(current_joint_angles, jacobian);
-    const VectorXf joint_torque = jacobian.transpose() * Vector2f(force_x, force_y);
+    const Vector3 joint_torque = jacobian.transpose() * Vector3(force_x, force_y, 0);
 
     printf("Joint torque: %f, %f\n", joint_torque(0), joint_torque(1));
 
@@ -74,7 +74,7 @@ int main(void)
     const float frequency = 100.0; // Hz
     for (float t = 0.0; t < duration; t += 1.0f / frequency)
     {
-        if (!leg->setFootForce(Vector2f(force_x, force_y)))
+        if (!leg->setFootForce(Vector3(force_x, force_y, 0)))
             return 1;
         usleep(1E6 / frequency);
     }

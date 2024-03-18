@@ -3,11 +3,10 @@
 
 #include <memory>
 #include <vector>
-#include "eigen3/Eigen/Dense"
+#include "starq/types.hpp"
 
 namespace starq
 {
-    using namespace Eigen;
 
     /// @brief RobotDynamics class
     class RobotDynamics
@@ -18,39 +17,39 @@ namespace starq
 
         /// @brief Get the body mass
         /// @return The body mass
-        virtual float getBodyMass() const = 0;
+        virtual Float getBodyMass() const = 0;
 
         /// @brief Get the body inertia
         /// @return The body inertia
-        virtual Matrix3f getBodyInertia() const = 0;
+        virtual Matrix3 getBodyInertia() const = 0;
 
         /// @brief Get the gravity vector
         /// @return The gravity vector
-        virtual Vector3f getGravity() const = 0;
+        virtual Vector3 getGravity() const = 0;
 
         /// @brief Get the foot friction
         /// @return The foot friction
-        virtual float getFootFriction() const = 0;
+        virtual Float getFootFriction() const = 0;
 
         /// @brief Get the standing height
         /// @return The standing height
-        virtual float getStandingHeight() const = 0;
+        virtual Float getStandingHeight() const = 0;
 
         /// @brief Get the hip locations
         /// @return The hip locations
-        virtual std::vector<Vector3f> getHipLocations() const = 0;
+        virtual std::vector<Vector3> getHipLocations() const = 0;
 
         /// @brief Get the default foot locations
         /// @return The default foot locations
-        virtual std::vector<Vector3f> getDefaultFootLocations() const = 0;
+        virtual std::vector<Vector3> getDefaultFootLocations() const = 0;
 
         /// @brief Get the minimum force in the z direction
         /// @return The minimum force in the z direction
-        virtual float getForceZMin() const = 0;
+        virtual Float getForceZMin() const = 0;
 
         /// @brief Get the maximum force in the z direction
         /// @return The maximum force in the z direction
-        virtual float getForceZMax() const = 0;
+        virtual Float getForceZMax() const = 0;
     };
 
 }

@@ -109,27 +109,27 @@ namespace starq::mpc
 
         /// @brief Get the gravity
         /// @return The gravity
-        Vector3f getGravity() const;
+        Vector3 getGravity() const;
 
         /// @brief Get the friction coefficient
         /// @return The friction coefficient
-        float getFrictionCoefficient() const;
+        Float getFrictionCoefficient() const;
 
         /// @brief Get the minimum force in the z direction
         /// @return The minimum force in the z direction
-        float getForceZMin() const;
+        Float getForceZMin() const;
 
         /// @brief Get the maximum force in the z direction
         /// @return The maximum force in the z direction
-        float getForceZMax() const;
+        Float getForceZMax() const;
 
         /// @brief Get the mass
         /// @return The mass
-        float getMass() const;
+        Float getMass() const;
 
         /// @brief Get the inertia
         /// @return The inertia
-        Matrix3f getInertia() const;
+        Matrix3 getInertia() const;
 
     private:
         const std::vector<LegController::Ptr> leg_controllers_;

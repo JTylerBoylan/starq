@@ -29,7 +29,7 @@ namespace starq
         trajectory_publisher_ = std::make_shared<TrajectoryPublisher>(publisher_);
     }
 
-    bool Robot::setFootPosition(const uint8_t &leg_id, const Eigen::Vector3f &position)
+    bool Robot::setFootPosition(const uint8_t &leg_id, const Vector3 &position)
     {
         if (leg_id >= legs_.size())
         {
@@ -46,7 +46,7 @@ namespace starq
         return true;
     }
 
-    bool Robot::setFootVelocity(const uint8_t &leg_id, const Eigen::Vector3f &velocity)
+    bool Robot::setFootVelocity(const uint8_t &leg_id, const Vector3 &velocity)
     {
         if (leg_id >= legs_.size())
         {
@@ -63,7 +63,7 @@ namespace starq
         return true;
     }
 
-    bool Robot::setFootForce(const uint8_t &leg_id, const Eigen::Vector3f &force)
+    bool Robot::setFootForce(const uint8_t &leg_id, const Vector3 &force)
     {
         if (leg_id >= legs_.size())
         {
@@ -80,14 +80,9 @@ namespace starq
         return true;
     }
 
-    bool Robot::load2DTrajectory(const std::string &file)
+    bool Robot::loadTrajectory(const std::string &file)
     {
-        return trajectory_file_reader_->load2D(file);
-    }
-
-    bool Robot::load3DTrajectory(const std::string &file)
-    {
-        return trajectory_file_reader_->load3D(file);
+        return trajectory_file_reader_->load(file);
     }
 
     bool Robot::startTrajectory()

@@ -20,7 +20,7 @@ int main()
     // gait ->setControlMode(GAIT_VELOCITY_CONTROL);
     // gait->setVelocity(Vector3f(0, 0, 0), Vector3f(0, 0, 0));
 
-    gait->setPose(Vector3f(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3f(0, 0, 0));
+    gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
     auto duration = gait->getDuration();
     auto stance_duration = gait->getStanceDuration();
     auto swing_duration = gait->getSwingDuration();
@@ -64,7 +64,7 @@ int main()
         float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
         float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
 
-        gait->setPose(Vector3f(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z), Vector3f(0, 0, 0));
+        gait->setPose(Vector3(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z), Vector3(0, 0, 0));
 
         if (!osqp->update(mpc_config))
             break;
@@ -114,8 +114,8 @@ int main()
         printf("Current Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
         printf("\n");
 
-        const Vector3f current_orientation = robot->getLocalization()->getCurrentOrientation();
-        const Matrix3f current_rotation = robot->getLocalization()->toRotationMatrix(current_orientation);
+        const Vector3 current_orientation = robot->getLocalization()->getCurrentOrientation();
+        const Matrix3 current_rotation = robot->getLocalization()->toRotationMatrix(current_orientation);
 
         for (size_t j = 0; j < solution.u_star[0].size(); j++)
         {
@@ -138,8 +138,8 @@ int main()
                     break;
                 }
 
-                Vector3f foot_force_world = -solution.u_star[0][j].second;
-                Vector3f foot_force_body = current_rotation.transpose() * foot_force_world;
+                Vector3 foot_force_world = -solution.u_star[0][j].second;
+                Vector3 foot_force_body = current_rotation.transpose() * foot_force_world;
                 robot->setFootForce(j, foot_force_body);
                 printf("%s Force: %f %f %f\n", leg_name.c_str(), foot_force_body.x(), foot_force_body.y(), foot_force_body.z());
             }

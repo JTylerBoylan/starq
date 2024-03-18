@@ -42,7 +42,6 @@ namespace starq
 
     void LegCommandPublisher::run()
     {
-        using namespace std::chrono;
 
         while (isRunning())
         {
@@ -95,7 +94,7 @@ namespace starq
                 }
             }
 
-            std::this_thread::sleep_for(microseconds(sleep_duration_us_));
+            std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
         }
     }
 }

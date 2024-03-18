@@ -22,7 +22,7 @@ namespace starq::mujoco
         /// @brief Set the gear ratio
         /// @param gear_ratio The gear ratio to set the motor to.
         /// @return If the gear ratio was set successfully.
-        bool setGearRatio(const float gear_ratio) override;
+        bool setGearRatio(const Float gear_ratio) override;
 
         /// @brief Set the motor state.
         /// @param state The state to set the motor to.
@@ -40,30 +40,30 @@ namespace starq::mujoco
         /// @param vel_ff The velocity feedforward to set the motor to. [rad/s] (default: 0)
         /// @param torque_ff The torque feedforward to set the motor to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        bool setPosition(const float pos, const float vel_ff = 0.F, const float torque_ff = 0.F) override;
+        bool setPosition(const Float pos, const Float vel_ff = 0.0, const Float torque_ff = 0.0) override;
 
         /// @brief Set the velocity.
         /// @param vel The velocity to set the motor to. [rad/s]
         /// @param torque_ff The torque feedforward to set the motor to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        bool setVelocity(const float vel, const float torque_ff = 0.F) override;
+        bool setVelocity(const Float vel, const Float torque_ff = 0.0) override;
 
         /// @brief Set the torque.
         /// @param torque The torque to set the motor to. [N-m]
         /// @return If the command was sent successfully.
-        bool setTorque(const float torque) override;
+        bool setTorque(const Float torque) override;
 
         /// @brief Get the encoder position estimate.
         /// @return The encoder position estimate in radians.
-        float getPositionEstimate() override;
+        Float getPositionEstimate() override;
 
         /// @brief Get the encoder velocity estimate.
         /// @return The encoder velocity estimate in radians per second.
-        float getVelocityEstimate() override;
+        Float getVelocityEstimate() override;
 
         /// @brief Get the controller torque estimate.
         /// @return The controller torque estimate in Newton-meters.
-        float getTorqueEstimate() override;
+        Float getTorqueEstimate() override;
 
         /// @brief Set the gains
         /// @param kp The position gain to set the motor to.
@@ -81,7 +81,7 @@ namespace starq::mujoco
 
         struct
         {
-            float gear_ratio = 1.0;
+            Float gear_ratio = 1.0;
 
             uint32_t state = 0x0;
             uint32_t control_mode = ControlMode::TORQUE;
@@ -97,7 +97,7 @@ namespace starq::mujoco
 
             float torq_integral = 0.f;
 
-            float pos_est, vel_est, torq_est;
+            Float pos_est, vel_est, torq_est;
         } state_;
     };
 

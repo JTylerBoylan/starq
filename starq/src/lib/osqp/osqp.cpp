@@ -32,9 +32,24 @@ namespace starq::osqp
         n_ = qp_problem_->getN();
         m_ = qp_problem_->getM();
 
-        q_ = qp_problem_->getG().data();
-        l_ = qp_problem_->getLc().data();
-        u_ = qp_problem_->getUc().data();
+        const Eigen::VectorXd &q = qp_problem_->getG().cast<double>();
+        const Eigen::VectorXd &l = qp_problem_->getLc().cast<double>();
+        const Eigen::VectorXd &u = qp_problem_->getUc().cast<double>();
+
+        if (q_ != nullptr)
+            delete[] q_;
+        if (l_ != nullptr)
+            delete[] l_;
+        if (u_ != nullptr)
+            delete[] u_;
+
+        q_ = new OSQPFloat[n_];
+        l_ = new OSQPFloat[m_];
+        u_ = new OSQPFloat[m_];
+
+        std::memcpy(q_, q.data(), n_ * sizeof(OSQPFloat));
+        std::memcpy(l_, l.data(), m_ * sizeof(OSQPFloat));
+        std::memcpy(u_, u.data(), m_ * sizeof(OSQPFloat));
 
         convertEigenSparseToCSC(qp_problem_->getH(), P_, Pnnz_, Px_, Pi_, Pp_);
         convertEigenSparseToCSC(qp_problem_->getAc(), A_, Annz_, Ax_, Ai_, Ap_);
@@ -80,10 +95,10 @@ namespace starq::osqp
         for (size_t i = 0; i < window_size; i++)
         {
             const int ox = 13 * i;
-            Vector3f orientation(x[ox], x[ox + 1], x[ox + 2]);
-            Vector3f position(x[ox + 3], x[ox + 4], x[ox + 5]);
-            Vector3f angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
-            Vector3f linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
+            Vector3 orientation(x[ox], x[ox + 1], x[ox + 2]);
+            Vector3 position(x[ox + 3], x[ox + 4], x[ox + 5]);
+            Vector3 angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
+            Vector3 linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
             starq::mpc::ReferenceState state = {position, orientation, linear_velocity, angular_velocity};
             solution.x_star.push_back(state);
         }
@@ -97,13 +112,13 @@ namespace starq::osqp
             {
                 if (config->getStanceState(i)[j])
                 {
-                    Vector3f force(x[offset], x[offset + 1], x[offset + 2]);
+                    Vector3 force(x[offset], x[offset + 1], x[offset + 2]);
                     forces.push_back(std::make_pair(true, force));
                     offset += 3;
                 }
                 else
                 {
-                    forces.push_back(std::make_pair(false, Vector3f::Zero()));
+                    forces.push_back(std::make_pair(false, Vector3::Zero()));
                 }
             }
             solution.u_star.push_back(forces);
@@ -124,19 +139,19 @@ namespace starq::osqp
         {
             if (config->getStanceState(0)[j])
             {
-                Vector3f force(x[offset], x[offset + 1], x[offset + 2]);
+                Vector3 force(x[offset], x[offset + 1], x[offset + 2]);
                 forces.push_back(std::make_pair(true, force));
                 offset += 3;
             }
             else
             {
-                forces.push_back(std::make_pair(false, Vector3f::Zero()));
+                forces.push_back(std::make_pair(false, Vector3::Zero()));
             }
         }
         return forces;
     }
 
-    void OSQP::convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
+    void OSQP::convertEigenSparseToCSC(const Eigen::SparseMatrix<Float> &matrix,
                                        OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp)
     {
         if (M != nullptr)
@@ -158,10 +173,10 @@ namespace starq::osqp
         Mp[0] = 0;
         for (int j = 0; j < matrix.outerSize(); ++j)
         {
-            for (SparseMatrix<double>::InnerIterator it(matrix, j); it; ++it)
+            for (Eigen::SparseMatrix<Float>::InnerIterator it(matrix, j); it; ++it)
             {
-                Mx[k] = it.value();
-                Mi[k] = it.row();
+                Mx[k] = static_cast<OSQPFloat>(it.value());
+                Mi[k] = static_cast<OSQPFloat>(it.row());
                 ++k;
             }
             Mp[j + 1] = k;

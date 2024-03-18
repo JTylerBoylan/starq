@@ -64,19 +64,19 @@ int main()
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
     printf("Simulation started\n");
 
-    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_FL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_RL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while (mujoco->isOpen())
     {
-        Eigen::Vector3f position = localization->getCurrentPosition();
-        Eigen::Vector3f orientation = localization->getCurrentOrientation();
-        Eigen::Vector3f linear_velocity = localization->getCurrentLinearVelocity();
-        Eigen::Vector3f angular_velocity = localization->getCurrentAngularVelocity();
+        Vector3 position = localization->getCurrentPosition();
+        Vector3 orientation = localization->getCurrentOrientation();
+        Vector3 linear_velocity = localization->getCurrentLinearVelocity();
+        Vector3 angular_velocity = localization->getCurrentAngularVelocity();
         printf("Position: %f %f %f\n", position.x(), position.y(), position.z());
         printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
         printf("Linear velocity: %f %f %f\n", linear_velocity.x(), linear_velocity.y(), linear_velocity.z());

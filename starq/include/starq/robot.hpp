@@ -25,29 +25,24 @@ namespace starq
         /// @param leg_id The leg id
         /// @param position The target position [m] (x, y, z) in the hip frame
         /// @return True if successful
-        bool setFootPosition(const uint8_t &leg_id, const Eigen::Vector3f &position);
+        bool setFootPosition(const uint8_t &leg_id, const Vector3 &position);
 
         /// @brief Set the velocity of the foot
         /// @param leg_id The leg id
         /// @param velocity The target velocity [m/s] (x, y, z) in the hip frame
         /// @return True if successful
-        bool setFootVelocity(const uint8_t &leg_id, const Eigen::Vector3f &velocity);
+        bool setFootVelocity(const uint8_t &leg_id, const Vector3 &velocity);
 
         /// @brief Set the force of the foot
         /// @param leg_id The leg id
         /// @param force The target force [N] (x, y, z) in the hip frame
         /// @return True if successful
-        bool setFootForce(const uint8_t &leg_id, const Eigen::Vector3f &force);
-
-        /// @brief Load a 2D trajectory from a file
-        /// @param file The file path
-        /// @return True if successful
-        bool load2DTrajectory(const std::string &file);
+        bool setFootForce(const uint8_t &leg_id, const Vector3 &force);
 
         /// @brief Load a 3D trajectory from a file
         /// @param file The file path
         /// @return True if successful
-        bool load3DTrajectory(const std::string &file);
+        bool loadTrajectory(const std::string &file);
 
         /// @brief Start the trajectory
         /// @return True if successful

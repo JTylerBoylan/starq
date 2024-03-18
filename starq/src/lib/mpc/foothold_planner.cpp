@@ -22,9 +22,9 @@ namespace starq::mpc
     {
         foothold_traj.resize(N);
 
-        const Vector3f current_position = localization_->getCurrentPosition();
-        const Vector3f current_orientation = localization_->getCurrentOrientation();
-        const Matrix3f current_rotation = localization_->toRotationMatrix(current_orientation);
+        const Vector3 current_position = localization_->getCurrentPosition();
+        const Vector3 current_orientation = localization_->getCurrentOrientation();
+        const Matrix3 current_rotation = localization_->toRotationMatrix(current_orientation);
 
         const auto hip_locations = robot_dynamics_->getHipLocations();
 
@@ -32,10 +32,10 @@ namespace starq::mpc
         foothold_traj[0].resize(num_legs);
         for (size_t j = 0; j < num_legs; j++)
         {
-            VectorXf leg_position_hip;
+            Vector3 leg_position_hip;
             legs_[j]->getFootPositionEstimate(leg_position_hip);
-            const Vector3f leg_position_body = hip_locations[j] + leg_position_hip;
-            const Vector3f leg_position_world = current_position + current_rotation * leg_position_body;
+            const Vector3 leg_position_body = hip_locations[j] + leg_position_hip;
+            const Vector3 leg_position_world = current_position + current_rotation * leg_position_body;
 
             if (stance_traj[0][j])
                 foothold_traj[0][j] = leg_position_world;
@@ -45,9 +45,9 @@ namespace starq::mpc
 
         for (size_t i = 1; i < N; i++)
         {
-            const Vector3f position_i = ref_traj[i].position;
-            const Vector3f orientation_i = ref_traj[i].orientation;
-            const Matrix3f rotation_i = localization_->toRotationMatrix(orientation_i);
+            const Vector3 position_i = ref_traj[i].position;
+            const Vector3 orientation_i = ref_traj[i].orientation;
+            const Matrix3 rotation_i = localization_->toRotationMatrix(orientation_i);
 
             const size_t num_legs_i = stance_traj[i].size();
             foothold_traj[i].resize(num_legs_i);
@@ -62,11 +62,11 @@ namespace starq::mpc
                 }
                 else if (curr_stance && !last_stance)
                 {
-                    const Vector3f hip_position_i = position_i + rotation_i * hip_locations[j];
-                    const Vector3f body_velocity = rotation_i * ref_traj[i].linear_velocity;
+                    const Vector3 hip_position_i = position_i + rotation_i * hip_locations[j];
+                    const Vector3 body_velocity = rotation_i * ref_traj[i].linear_velocity;
                     const milliseconds stance_duration = gait_seq[i]->getStanceDuration();
 
-                    Vector3f leg_position_world = hip_position_i + 0.5f * body_velocity * stance_duration.count() * 1E-3f;
+                    Vector3 leg_position_world = hip_position_i + 0.5f * body_velocity * stance_duration.count() * 1E-3f;
                     leg_position_world.z() = 0.0;
 
                     foothold_traj[i][j] = leg_position_world;

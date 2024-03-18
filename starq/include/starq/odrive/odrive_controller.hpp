@@ -24,7 +24,7 @@ namespace starq::odrive
         /// @brief Set the gear ratio
         /// @param gear_ratio The gear ratio of the motor.
         /// @return If the gear ratio was set successfully.
-        bool setGearRatio(const float gear_ratio) override;
+        bool setGearRatio(const Float gear_ratio) override;
 
         /// @brief Set the axis state.
         /// @param state The state to set the ODrive to.
@@ -42,18 +42,18 @@ namespace starq::odrive
         /// @param vel_ff The velocity feedforward to set the ODrive to. [rad/s] (default: 0)
         /// @param torque_ff The torque feedforward to set the ODrive to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        bool setPosition(const float pos, const float vel_ff = 0.F, const float torque_ff = 0.F) override;
+        bool setPosition(const Float pos, const Float vel_ff = 0.F, const Float torque_ff = 0.F) override;
 
         /// @brief Set the velocity.
         /// @param vel The velocity to set the ODrive to. [rad/s]
         /// @param torque_ff The torque feedforward to set the ODrive to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        bool setVelocity(const float vel, const float torque_ff = 0.F) override;
+        bool setVelocity(const Float vel, const Float torque_ff = 0.F) override;
 
         /// @brief Set the torque.
         /// @param torque The torque to set the ODrive to. [N-m]
         /// @return If the command was sent successfully.
-        bool setTorque(const float torque) override;
+        bool setTorque(const Float torque) override;
 
         /// @brief Set the position gain.
         /// @param pos_gain The position gain to set the ODrive to.
@@ -82,15 +82,15 @@ namespace starq::odrive
 
         /// @brief Get the encoder position estimate.
         /// @return The encoder position estimate in radians.
-        float getPositionEstimate() override;
+        Float getPositionEstimate() override;
 
         /// @brief Get the encoder velocity estimate.
         /// @return The encoder velocity estimate in radians per second.
-        float getVelocityEstimate() override;
+        Float getVelocityEstimate() override;
 
         /// @brief Get the controller torque estimate.
         /// @return The controller torque estimate in Newton-meters.
-        float getTorqueEstimate() override;
+        Float getTorqueEstimate() override;
 
         /// @brief Get the axis error.
         /// @return The axis error.
@@ -135,6 +135,7 @@ namespace starq::odrive
         const ODriveSocket::Ptr socket_;
         const uint8_t can_id_;
 
+        Float gear_ratio_ = 1.0f;
         uint32_t axis_state_ = 0;
         uint32_t control_mode_ = 0;
         uint32_t input_mode_ = 0;
@@ -143,7 +144,6 @@ namespace starq::odrive
         float integrator_gain_ = 0.0f;
         float velocity_limit_ = 0.0f;
         float current_limit_ = 0.0f;
-        float gear_ratio_ = 1.0f;
     };
 
 }

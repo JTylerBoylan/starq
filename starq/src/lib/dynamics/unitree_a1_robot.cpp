@@ -10,14 +10,14 @@ namespace starq::dynamics
         gravity_ << UNITREE_A1_GRAVITY;
         foot_friction_ = UNITREE_A1_FOOT_FRICTION;
         standing_height_ = UNITREE_A1_STAND_HEIGHT;
-        hip_locations_ = {Vector3f(UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
-                          Vector3f(-UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
-                          Vector3f(-UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0),
-                          Vector3f(UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0)};
-        default_foot_locations_ = {Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
-                                   Vector3f(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
-                                   Vector3f(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
-                                   Vector3f(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
+        hip_locations_ = {Vector3(UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
+                          Vector3(-UNITREE_A1_HIP_OFFSET_X, UNITREE_A1_HIP_OFFSET_Y, 0.0),
+                          Vector3(-UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0),
+                          Vector3(UNITREE_A1_HIP_OFFSET_X, -UNITREE_A1_HIP_OFFSET_Y, 0.0)};
+        default_foot_locations_ = {Vector3(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3(0.0, UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT),
+                                   Vector3(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
         force_z_min_ = 10;
         force_z_max_ = 250;
     }
@@ -26,47 +26,47 @@ namespace starq::dynamics
     {
     }
 
-    float UnitreeA1RobotDynamics::getBodyMass() const
+    Float UnitreeA1RobotDynamics::getBodyMass() const
     {
         return body_mass_;
     }
 
-    Matrix3f UnitreeA1RobotDynamics::getBodyInertia() const
+    Matrix3 UnitreeA1RobotDynamics::getBodyInertia() const
     {
         return body_inertia_;
     }
 
-    Vector3f UnitreeA1RobotDynamics::getGravity() const
+    Vector3 UnitreeA1RobotDynamics::getGravity() const
     {
         return gravity_;
     }
 
-    float UnitreeA1RobotDynamics::getFootFriction() const
+    Float UnitreeA1RobotDynamics::getFootFriction() const
     {
         return foot_friction_;
     }
 
-    float UnitreeA1RobotDynamics::getStandingHeight() const
+    Float UnitreeA1RobotDynamics::getStandingHeight() const
     {
         return standing_height_;
     }
 
-    std::vector<Vector3f> UnitreeA1RobotDynamics::getHipLocations() const
+    std::vector<Vector3> UnitreeA1RobotDynamics::getHipLocations() const
     {
         return hip_locations_;
     }
 
-    std::vector<Vector3f> UnitreeA1RobotDynamics::getDefaultFootLocations() const
+    std::vector<Vector3> UnitreeA1RobotDynamics::getDefaultFootLocations() const
     {
         return default_foot_locations_;
     }
 
-    float UnitreeA1RobotDynamics::getForceZMin() const
+    Float UnitreeA1RobotDynamics::getForceZMin() const
     {
         return force_z_min_;
     }
 
-    float UnitreeA1RobotDynamics::getForceZMax() const
+    Float UnitreeA1RobotDynamics::getForceZMax() const
     {
         return force_z_max_;
     }

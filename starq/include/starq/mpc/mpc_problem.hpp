@@ -29,54 +29,54 @@ namespace starq::mpc
         /// @brief Get the reference state at node k
         /// @param k The node index
         /// @return The reference state vector
-        VectorXf &getXref(const size_t &k);
+        VectorX &getXref(const size_t &k);
 
         /// @brief Get the Q matrix at node k
         /// @param k The node index
         /// @return The Q matrix
-        MatrixXf &getQ(const size_t &k);
+        MatrixX &getQ(const size_t &k);
 
         /// @brief Get the R matrix at node k
         /// @param k The node index
         /// @return The R matrix
-        MatrixXf &getR(const size_t &k);
+        MatrixX &getR(const size_t &k);
 
         /// @brief Get the A matrix at node k
         /// @param k The node index
         /// @return The A matrix
-        MatrixXf &getA(const size_t &k);
+        MatrixX &getA(const size_t &k);
 
         /// @brief Get the B matrix at node k
         /// @param k The node index
         /// @return The B matrix
-        MatrixXf &getB(const size_t &k);
+        MatrixX &getB(const size_t &k);
 
         /// @brief Get the C matrix at node k
         /// @param k The node index
         /// @return The C matrix
-        MatrixXf &getC(const size_t &k);
+        MatrixX &getC(const size_t &k);
 
         /// @brief Get the lower bound vector at node k
         /// @param k The node index
         /// @return The lower bound vector
-        VectorXf &getLower(const size_t &k);
+        VectorX &getLower(const size_t &k);
 
         /// @brief Get the upper bound vector at node k
         /// @param k The node index
         /// @return The upper bound vector
-        VectorXf &getUpper(const size_t &k);
+        VectorX &getUpper(const size_t &k);
 
     private:
         MPCConfiguration::Ptr config_;
 
-        std::vector<VectorXf> xref_;
-        std::vector<MatrixXf> Q_;
-        std::vector<MatrixXf> R_;
-        std::vector<MatrixXf> A_;
-        std::vector<MatrixXf> B_;
-        std::vector<MatrixXf> C_;
-        std::vector<VectorXf> lower_;
-        std::vector<VectorXf> upper_;
+        std::vector<VectorX> xref_;
+        std::vector<MatrixX> Q_;
+        std::vector<MatrixX> R_;
+        std::vector<MatrixX> A_;
+        std::vector<MatrixX> B_;
+        std::vector<MatrixX> C_;
+        std::vector<VectorX> lower_;
+        std::vector<VectorX> upper_;
 
         void computeXref();
         void computeQ();
@@ -87,7 +87,7 @@ namespace starq::mpc
         void computeLower();
         void computeUpper();
 
-        Matrix3f getSkewSymmetricMatrix(const Vector3f &v) const;
+        Matrix3 getSkewSymmetricMatrix(const Vector3 &v) const;
     };
 
 }

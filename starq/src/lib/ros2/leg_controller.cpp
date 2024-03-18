@@ -24,7 +24,7 @@ namespace starq::ros2
 
     void LegControllerROS2::legCommandCallback(const starq::msg::LegCommand::SharedPtr msg)
     {
-        Vector3f foot_position, foot_velocity, foot_force;
+        Vector3 foot_position, foot_velocity, foot_force;
         ros2eigen(msg->input_position, foot_position);
         ros2eigen(msg->input_velocity, foot_velocity);
         ros2eigen(msg->input_force, foot_force);
@@ -47,7 +47,7 @@ namespace starq::ros2
 
     void LegControllerROS2::publishStateCallback()
     {
-        VectorXf foot_position, foot_velocity, foot_force;
+        Vector3 foot_position, foot_velocity, foot_force;
         if (!leg_controller_->getFootPositionEstimate(foot_position))
         {
             RCLCPP_ERROR(node_->get_logger(), "Failed to get foot position estimate for leg %s", leg_name_.c_str());

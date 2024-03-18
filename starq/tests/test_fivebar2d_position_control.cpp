@@ -59,7 +59,7 @@ int main(void)
     const float center_x = 0.0f;
     const float center_y = -std::sqrt(2) * 0.1f;
 
-    if (!leg->setFootPosition(Vector2f(center_x, center_y)))
+    if (!leg->setFootPosition(Vector3(center_x, center_y, 0)))
         return 1;
     printf("Centered foot position.\n");
 
@@ -72,8 +72,8 @@ int main(void)
         const float x_off = radius * std::cos(t);
         const float y_off = radius * std::sin(t);
 
-        VectorXf foot_position(2);
-        foot_position << center_x + x_off, center_y + y_off;
+        Vector3 foot_position;
+        foot_position << center_x + x_off, center_y + y_off, 0;
 
         printf("Setting foot position to (%f, %f)\n", foot_position(0), foot_position(1));
         if (!leg->setFootPosition(foot_position))
@@ -81,11 +81,11 @@ int main(void)
 
         usleep(2500);
 
-        const VectorXf joint_angles = leg->getCurrentJointAngles();
+        const Vector3 joint_angles = leg->getCurrentJointAngles();
         printf("Joint angles: (%f, %f)\n", joint_angles(0), joint_angles(1));
     }
 
-    if (!leg->setFootPosition(Vector2f(center_x, center_y)))
+    if (!leg->setFootPosition(Vector3(center_x, center_y, 0)))
         return 1;
     printf("Centered foot position.\n");
 

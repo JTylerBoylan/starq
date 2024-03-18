@@ -19,15 +19,10 @@ namespace starq
         /// @brief Destroy the trajectory file reader.
         ~TrajectoryFileReader();
 
-        /// @brief Load a 2D trajectory from a file.
-        /// @param file_path Path to the file.
-        /// @return True if the trajectory was loaded successfully, false otherwise.
-        bool load2D(const std::string &file_path);
-
         /// @brief Load a 3D trajectory from a file.
         /// @param file_path Path to the file.
         /// @return True if the trajectory was loaded successfully, false otherwise.
-        bool load3D(const std::string &file_path);
+        bool load(const std::string &file_path);
 
         /// @brief Get the trajectory.
         /// @return Vector of leg commands.

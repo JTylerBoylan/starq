@@ -47,13 +47,13 @@ int main()
     printf("Dynamics created\n");
 
     LegController::Ptr leg_FR = std::make_shared<LegController>(unitree_RRR_R,
-                                                                 MotorList{motor_FRA, motor_FRB, motor_FRC});
+                                                                MotorList{motor_FRA, motor_FRB, motor_FRC});
     LegController::Ptr leg_FL = std::make_shared<LegController>(unitree_RRR_L,
-                                                                 MotorList{motor_FLA, motor_FLB, motor_FLC});
+                                                                MotorList{motor_FLA, motor_FLB, motor_FLC});
     LegController::Ptr leg_RR = std::make_shared<LegController>(unitree_RRR_R,
-                                                                 MotorList{motor_RRA, motor_RRB, motor_RRC});
+                                                                MotorList{motor_RRA, motor_RRB, motor_RRC});
     LegController::Ptr leg_RL = std::make_shared<LegController>(unitree_RRR_L,
-                                                                 MotorList{motor_RLA, motor_RLB, motor_RLC});
+                                                                MotorList{motor_RLA, motor_RLB, motor_RLC});
     printf("Legs created\n");
 
     leg_FR->setControlMode(ControlMode::POSITION);
@@ -63,7 +63,7 @@ int main()
     printf("Control mode set\n");
 
     TrajectoryFileReader::Ptr trajectory_file_reader = std::make_shared<TrajectoryFileReader>();
-    if (!trajectory_file_reader->load3D("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt"))
+    if (!trajectory_file_reader->load("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt"))
     {
         printf("Failed to load trajectory\n");
         return 1;
@@ -82,12 +82,19 @@ int main()
 
     std::future<void> sim = std::async(std::launch::async, [&]
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
-    printf("Simulation started\n");
 
-    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    while (!mujoco->isOpen())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    printf("Simulation started\n");
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    leg_FR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_FL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_RL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 

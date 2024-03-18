@@ -34,50 +34,50 @@ namespace starq::dynamics
 
         /// @brief Get the body mass
         /// @return The body mass
-        float getBodyMass() const override;
+        Float getBodyMass() const override;
 
         /// @brief Get the body inertia
         /// @return The body inertia
-        Matrix3f getBodyInertia() const override;
+        Matrix3 getBodyInertia() const override;
 
         /// @brief Get the gravity vector
         /// @return The gravity vector
-        Vector3f getGravity() const override;
+        Vector3 getGravity() const override;
 
         /// @brief Get the foot friction
         /// @return The foot friction
-        float getFootFriction() const override;
+        Float getFootFriction() const override;
 
         /// @brief Get the standing height
         /// @return The standing height
-        float getStandingHeight() const override;
+        Float getStandingHeight() const override;
 
         /// @brief Get the hip locations
         /// @return The hip locations
-        std::vector<Vector3f> getHipLocations() const override;
+        std::vector<Vector3> getHipLocations() const override;
 
         /// @brief Get the default foot locations
         /// @return The default foot locations
-        std::vector<Vector3f> getDefaultFootLocations() const override;
+        std::vector<Vector3> getDefaultFootLocations() const override;
 
         /// @brief Get the minimum force in the z direction
         /// @return The minimum force in the z direction
-        float getForceZMin() const override;
+        Float getForceZMin() const override;
 
         /// @brief Get the maximum force in the z direction
         /// @return The maximum force in the z direction
-        float getForceZMax() const override;
+        Float getForceZMax() const override;
 
     private:
-        float body_mass_;
-        Matrix3f body_inertia_;
-        Vector3f gravity_;
-        float foot_friction_;
-        float standing_height_;
-        std::vector<Vector3f> hip_locations_;
-        std::vector<Vector3f> default_foot_locations_;
-        float force_z_min_;
-        float force_z_max_;
+        Float body_mass_;
+        Matrix3 body_inertia_;
+        Vector3 gravity_;
+        Float foot_friction_;
+        Float standing_height_;
+        std::vector<Vector3> hip_locations_;
+        std::vector<Vector3> default_foot_locations_;
+        Float force_z_min_;
+        Float force_z_max_;
     };
 
 }

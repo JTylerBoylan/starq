@@ -46,7 +46,7 @@ namespace starq::osqp
         OSQPSolver *getSolver() const { return solver_; }
 
     private:
-        void convertEigenSparseToCSC(const SparseMatrix<double> &matrix,
+        void convertEigenSparseToCSC(const Eigen::SparseMatrix<Float> &matrix,
                                      OSQPCscMatrix *&M, OSQPInt &Mnnz, OSQPFloat *&Mx, OSQPInt *&Mi, OSQPInt *&Mp);
 
 

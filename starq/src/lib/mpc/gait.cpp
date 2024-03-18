@@ -10,10 +10,10 @@ namespace starq::mpc
     Gait::Gait()
         : duration_(1000),
           control_mode_(GAIT_VELOCITY_CONTROL),
-          position_(Vector3f::Zero()),
-          orientation_(Vector3f::Zero()),
-          linear_velocity_(Vector3f::Zero()),
-          angular_velocity_(Vector3f::Zero())
+          position_(Vector3::Zero()),
+          orientation_(Vector3::Zero()),
+          linear_velocity_(Vector3::Zero()),
+          angular_velocity_(Vector3::Zero())
     {
     }
 
@@ -189,19 +189,19 @@ namespace starq::mpc
         control_mode_ = control_mode;
     }
 
-    void Gait::setPose(const Vector3f &position, const Vector3f &orientation)
+    void Gait::setPose(const Vector3 &position, const Vector3 &orientation)
     {
         position_ = position;
         orientation_ = orientation;
     }
 
-    void Gait::setMaxVelocity(const Vector3f &max_linear_velocity, const Vector3f &max_angular_velocity)
+    void Gait::setMaxVelocity(const Vector3 &max_linear_velocity, const Vector3 &max_angular_velocity)
     {
         max_linear_velocity_ = max_linear_velocity;
         max_angular_velocity_ = max_angular_velocity;
     }
 
-    void Gait::setVelocity(const Vector3f &linear_velocity, const Vector3f &angular_velocity)
+    void Gait::setVelocity(const Vector3 &linear_velocity, const Vector3 &angular_velocity)
     {
         linear_velocity_ = linear_velocity;
         angular_velocity_ = angular_velocity;
@@ -233,32 +233,32 @@ namespace starq::mpc
         return control_mode_;
     }
 
-    Vector3f Gait::getPosition() const
+    Vector3 Gait::getPosition() const
     {
         return position_;
     }
 
-    Vector3f Gait::getOrientation() const
+    Vector3 Gait::getOrientation() const
     {
         return orientation_;
     }
 
-    Vector3f Gait::getMaxLinearVelocity() const
+    Vector3 Gait::getMaxLinearVelocity() const
     {
         return max_linear_velocity_;
     }
 
-    Vector3f Gait::getMaxAngularVelocity() const
+    Vector3 Gait::getMaxAngularVelocity() const
     {
         return max_angular_velocity_;
     }
 
-    Vector3f Gait::getLinearVelocity() const
+    Vector3 Gait::getLinearVelocity() const
     {
         return linear_velocity_;
     }
 
-    Vector3f Gait::getAngularVelocity() const
+    Vector3 Gait::getAngularVelocity() const
     {
         return angular_velocity_;
     }

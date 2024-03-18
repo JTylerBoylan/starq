@@ -60,24 +60,31 @@ int main()
 
     std::future<void> sim = std::async(std::launch::async, [&]
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+
+    while (!mujoco->isOpen())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
     printf("Simulation started\n");
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     leg_FR->setControlMode(ControlMode::POSITION);
     leg_FL->setControlMode(ControlMode::POSITION);
     leg_RR->setControlMode(ControlMode::POSITION);
     leg_RL->setControlMode(ControlMode::POSITION);
 
-    leg_FR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_FL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
-    leg_RR->setFootPosition(Eigen::Vector3f(0, -UNITREE_A1_LENGTH_D, -0.2));
-    leg_RL->setFootPosition(Eigen::Vector3f(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_FR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_FL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
+    leg_RR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
+    leg_RL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     LegCommand leg_command;
     leg_command.delay = std::chrono::milliseconds(0);
     leg_command.control_mode = ControlMode::TORQUE;
-    leg_command.target_force = Eigen::Vector3f(0, 0, -100);
+    leg_command.target_force = Vector3(0, 0, -100);
 
     for (uint32_t id = 0; id < 4; id++)
     {
@@ -87,15 +94,15 @@ int main()
 
     while (mujoco->isOpen())
     {
-        VectorXf foot_position;
+        Vector3 foot_position;
         leg_FR->getFootPositionEstimate(foot_position);
-        VectorXf foot_force;
+        Vector3 foot_force;
         leg_FR->getFootForceEstimate(foot_force);
         printf("Foot position: %f, %f, %f\n", foot_position(0), foot_position(1), foot_position(2));
         printf("Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
 
-        VectorXf joint_angles = leg_FL->getCurrentJointAngles();
-        VectorXf joint_torques = leg_FL->getCurrentJointTorques();
+        Vector3 joint_angles = leg_FL->getCurrentJointAngles();
+        Vector3 joint_torques = leg_FL->getCurrentJointTorques();
         printf("Joint angles: %f, %f, %f\n", joint_angles(0), joint_angles(1), joint_angles(2));
         printf("Joint torques: %f, %f, %f\n", joint_torques(0), joint_torques(1), joint_torques(2));
 

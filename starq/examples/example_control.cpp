@@ -53,7 +53,7 @@ int main() {
   LegController::Ptr leg_controller = std::make_shared<LegController>(fivebar, motors);
 
   // Move foot to center
-  Eigen::Vector2f foot_center(0.0, -0.15);
+  Vector3 foot_center(0.0, -0.15, 0.0);
   leg_controller->setState(AxisState::CLOSED_LOOP_CONTROL);
   leg_controller->setControlMode(ControlMode::POSITION);
   leg_controller->setFootPosition(foot_center);

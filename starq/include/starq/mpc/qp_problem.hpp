@@ -46,23 +46,23 @@ namespace starq::mpc
 
         /// @brief Get the H matrix
         /// @return The H matrix
-        SparseMatrix<double> &getH();
+        Eigen::SparseMatrix<Float> &getH();
 
         /// @brief Get the g vector
         /// @return The g vector
-        VectorXd &getG();
+        VectorX &getG();
 
         /// @brief Get the Ac matrix
         /// @return The Ac matrix
-        SparseMatrix<double> &getAc();
+        Eigen::SparseMatrix<Float> &getAc();
 
         /// @brief Get the lc vector
         /// @return The lc vector
-        VectorXd &getLc();
+        VectorX &getLc();
 
         /// @brief Get the uc vector
         /// @return The uc vector
-        VectorXd &getUc();
+        VectorX &getUc();
 
     protected:
         MPCProblem::Ptr mpc_problem_;
@@ -72,11 +72,11 @@ namespace starq::mpc
         size_t n_;
         size_t m_;
 
-        SparseMatrix<double> H_;
-        VectorXd g_;
-        SparseMatrix<double> Ac_;
-        VectorXd lc_;
-        VectorXd uc_;
+        Eigen::SparseMatrix<Float> H_;
+        VectorX g_;
+        Eigen::SparseMatrix<Float> Ac_;
+        VectorX lc_;
+        VectorX uc_;
 
         void computeH();
         void computeG();

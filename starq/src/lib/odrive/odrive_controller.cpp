@@ -17,7 +17,7 @@ namespace starq::odrive
         this->setState(AxisState::IDLE);
     }
 
-    bool ODriveController::setGearRatio(const float gear_ratio)
+    bool ODriveController::setGearRatio(const Float gear_ratio)
     {
         gear_ratio_ = gear_ratio;
         return true;
@@ -145,7 +145,7 @@ namespace starq::odrive
         return socket_->clearErrors(can_id_);
     }
 
-    bool ODriveController::setPosition(const float pos, const float vel_ff, const float torque_ff)
+    bool ODriveController::setPosition(const Float pos, const Float vel_ff, const Float torque_ff)
     {
         uint32_t axis_error = socket_->getAxisError(can_id_);
         if (axis_error != 0x0)
@@ -155,14 +155,14 @@ namespace starq::odrive
         }
 
         // Convert from radians to revolutions and apply gear ratio
-        const float pos_rev = gear_ratio_ * pos / (2.0f * M_PI);
-        const float vel_ff_rev = gear_ratio_ * vel_ff / (2.0f * M_PI);
-        const float torque_ff_N = torque_ff / gear_ratio_;
+        const Float pos_rev = gear_ratio_ * pos / (2.0f * M_PI);
+        const Float vel_ff_rev = gear_ratio_ * vel_ff / (2.0f * M_PI);
+        const Float torque_ff_N = torque_ff / gear_ratio_;
 
         return socket_->setPosition(can_id_, pos_rev, vel_ff_rev, torque_ff_N);
     }
 
-    bool ODriveController::setVelocity(const float vel, const float torque_ff)
+    bool ODriveController::setVelocity(const Float vel, const Float torque_ff)
     {
 
         uint32_t axis_error = socket_->getAxisError(can_id_);
@@ -173,13 +173,13 @@ namespace starq::odrive
         }
 
         // Convert from radians to revolutions and apply gear ratio
-        const float vel_rev = gear_ratio_ * vel / (2.0f * M_PI);
-        const float torque_ff_N = torque_ff / gear_ratio_;
+        const Float vel_rev = gear_ratio_ * vel / (2.0f * M_PI);
+        const Float torque_ff_N = torque_ff / gear_ratio_;
 
         return socket_->setVelocity(can_id_, vel_rev, torque_ff_N);
     }
 
-    bool ODriveController::setTorque(const float torque)
+    bool ODriveController::setTorque(const Float torque)
     {
 
         uint32_t axis_error = socket_->getAxisError(can_id_);
@@ -190,7 +190,7 @@ namespace starq::odrive
         }
 
         // Apply gear ratio
-        const float torque_N = torque / gear_ratio_;
+        const Float torque_N = torque / gear_ratio_;
 
         return socket_->setTorque(can_id_, torque_N);
     }
@@ -248,21 +248,21 @@ namespace starq::odrive
         return socket_->getBusCurrent(can_id_);
     }
 
-    float ODriveController::getPositionEstimate()
+    Float ODriveController::getPositionEstimate()
     {
 
         // Convert from revolutions to radians and apply gear ratio
         return socket_->getPosEstimate(can_id_) * (2.0f * M_PI) / gear_ratio_;
     }
 
-    float ODriveController::getVelocityEstimate()
+    Float ODriveController::getVelocityEstimate()
     {
 
         // Convert from revolutions to radians and apply gear ratio
         return socket_->getVelEstimate(can_id_) * (2.0f * M_PI) / gear_ratio_;
     }
 
-    float ODriveController::getTorqueEstimate()
+    Float ODriveController::getTorqueEstimate()
     {
 
         // Apply gear ratio

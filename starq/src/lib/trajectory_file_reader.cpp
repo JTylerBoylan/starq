@@ -16,7 +16,7 @@ namespace starq
     {
     }
 
-    bool TrajectoryFileReader::load2D(const std::string &file_path)
+    bool TrajectoryFileReader::load(const std::string &file_path)
     {
 
         trajectory_.clear();
@@ -38,55 +38,6 @@ namespace starq
             time_t delay_time;
 
             LegCommand::Ptr command = std::make_shared<LegCommand>();
-            command->target_position = VectorXf::Zero(2);
-            command->target_velocity = VectorXf::Zero(2);
-            command->target_force = VectorXf::Zero(2);
-            if (!(iss >>
-                  delay_time >>
-                  leg_id >>
-                  command->control_mode >> command->input_mode >>
-                  command->target_position.x() >> command->target_position.y() >>
-                  command->target_velocity.x() >> command->target_velocity.y() >>
-                  command->target_force.x() >> command->target_force.y()))
-            {
-                std::cerr << "Error reading line " << line << std::endl;
-                return false;
-            }
-
-            command->delay = std::chrono::milliseconds(delay_time);
-            command->leg_id = leg_id;
-
-            trajectory_.push_back(command);
-        }
-
-        return true;
-    }
-
-    bool TrajectoryFileReader::load3D(const std::string &file_path)
-    {
-
-        trajectory_.clear();
-
-        std::ifstream file(file_path);
-
-        if (!file.is_open())
-        {
-            std::cerr << "Could not open file " << file_path << std::endl;
-            return false;
-        }
-
-        std::string line;
-        while (std::getline(file, line))
-        {
-            std::istringstream iss(line);
-
-            int leg_id;
-            time_t delay_time;
-
-            LegCommand::Ptr command = std::make_shared<LegCommand>();
-            command->target_position = VectorXf::Zero(3);
-            command->target_velocity = VectorXf::Zero(3);
-            command->target_force = VectorXf::Zero(3);
             if (!(iss >>
                   delay_time >>
                   leg_id >>

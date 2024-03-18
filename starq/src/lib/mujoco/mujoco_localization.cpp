@@ -5,37 +5,37 @@ namespace starq::mujoco
 
     MuJoCoLocalization::MuJoCoLocalization(MuJoCo::Ptr mujoco)
     {
-        position_ = Eigen::Vector3f::Zero();
-        orientation_ = Eigen::Vector3f::Zero();
-        last_position_ = Eigen::Vector3f::Zero();
-        last_orientation_ = Eigen::Vector3f::Zero();
+        position_ = Vector3::Zero();
+        orientation_ = Vector3::Zero();
+        last_position_ = Vector3::Zero();
+        last_orientation_ = Vector3::Zero();
         last_time_ = 0;
 
         mujoco->addMotorControlFunction(std::bind(&MuJoCoLocalization::localizationCallback, this,
                                                   std::placeholders::_1, std::placeholders::_2));
     }
 
-    std::chrono::milliseconds MuJoCoLocalization::getCurrentTime()
+    milliseconds MuJoCoLocalization::getCurrentTime()
     {
-        return std::chrono::milliseconds(time_t(last_time_ * 1E3));
+        return milliseconds(time_t(last_time_ * 1E3));
     }
 
-    Eigen::Vector3f MuJoCoLocalization::getCurrentPosition()
+    Vector3 MuJoCoLocalization::getCurrentPosition()
     {
         return position_;
     }
 
-    Eigen::Vector3f MuJoCoLocalization::getCurrentOrientation()
+    Vector3 MuJoCoLocalization::getCurrentOrientation()
     {
         return orientation_;
     }
 
-    Eigen::Vector3f MuJoCoLocalization::getCurrentLinearVelocity()
+    Vector3 MuJoCoLocalization::getCurrentLinearVelocity()
     {
         return linear_velocity_;
     }
 
-    Eigen::Vector3f MuJoCoLocalization::getCurrentAngularVelocity()
+    Vector3 MuJoCoLocalization::getCurrentAngularVelocity()
     {
         return angular_velocity_;
     }
@@ -51,16 +51,16 @@ namespace starq::mujoco
         auto elapsed_time = now - last_time_;
         last_time_ = now;
 
-        position_ = Eigen::Vector3f(data->qpos[0], data->qpos[1], data->qpos[2]);
+        position_ = Vector3(data->qpos[0], data->qpos[1], data->qpos[2]);
 
-        Eigen::Quaternionf q(data->qpos[3], data->qpos[4], data->qpos[5], data->qpos[6]);
+        Eigen::Quaternion<Float> q(data->qpos[3], data->qpos[4], data->qpos[5], data->qpos[6]);
         quat2eul(q, orientation_);
 
         linear_velocity_ = (position_ - last_position_) / elapsed_time;
         angular_velocity_ = (orientation_ - last_orientation_) / elapsed_time;
     }
 
-    void MuJoCoLocalization::quat2eul(const Eigen::Quaternionf &q, Eigen::Vector3f &eul)
+    void MuJoCoLocalization::quat2eul(const Eigen::Quaternion<Float> &q, Vector3 &eul)
     {
         eul.x() = atan2(2 * (q.w() * q.x() + q.y() * q.z()), 1 - 2 * (q.x() * q.x() + q.y() * q.y()));
         eul.y() = asin(2 * (q.w() * q.y() - q.z() * q.x()));

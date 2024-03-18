@@ -3,49 +3,45 @@
 
 #include <vector>
 #include <memory>
-#include <chrono>
 
-#include "eigen3/Eigen/Dense"
+#include "starq/types.hpp"
 
 namespace starq::mpc
 {
-    using namespace std::chrono;
-    using namespace Eigen;
-
     struct ReferenceState
     {
-        Vector3f position;
-        Vector3f orientation;
-        Vector3f linear_velocity;
-        Vector3f angular_velocity;
+        Vector3 position;
+        Vector3 orientation;
+        Vector3 linear_velocity;
+        Vector3 angular_velocity;
     };
     using ReferenceTrajectory = std::vector<ReferenceState>;
 
     struct ReferenceWeights
     {
-        Vector3f position;
-        Vector3f orientation;
-        Vector3f linear_velocity;
-        Vector3f angular_velocity;
+        Vector3 position;
+        Vector3 orientation;
+        Vector3 linear_velocity;
+        Vector3 angular_velocity;
     };
 
-    using ForceWeights = Vector3f;
+    using ForceWeights = Vector3;
 
     using StanceState = std::vector<bool>;
     using StanceTrajectory = std::vector<StanceState>;
 
-    using FootholdState = std::vector<Vector3f>;
+    using FootholdState = std::vector<Vector3>;
     using FootholdTrajectory = std::vector<FootholdState>;
 
-    using FootForceState = std::vector<std::pair<bool, Vector3f>>;
+    using FootForceState = std::vector<std::pair<bool, Vector3>>;
     using FootForceTrajectory = std::vector<FootForceState>;
 
     struct MPCSolution
     {
         int exit_flag;
-        microseconds run_time;
-        microseconds setup_time;
-        microseconds solve_time;
+        std::chrono::microseconds run_time;
+        std::chrono::microseconds setup_time;
+        std::chrono::microseconds solve_time;
 
         ReferenceTrajectory x_star;
         FootForceTrajectory u_star;

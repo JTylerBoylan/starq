@@ -3,8 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
-
-#include "eigen3/Eigen/Dense"
+#include "starq/types.hpp"
 
 namespace starq::ros2
 {
@@ -28,14 +27,14 @@ namespace starq::ros2
         return qos_reliable;
     }
 
-    inline void ros2eigen(const geometry_msgs::msg::Vector3 &ros, Eigen::Vector3f &eigen)
+    inline void ros2eigen(const geometry_msgs::msg::Vector3 &ros, Vector3 &eigen)
     {
         eigen.x() = ros.x;
         eigen.y() = ros.y;
         eigen.z() = ros.z;
     }
 
-    inline void eigen2ros(const Eigen::VectorXf &eigen, geometry_msgs::msg::Vector3 &ros)
+    inline void eigen2ros(const Vector3 &eigen, geometry_msgs::msg::Vector3 &ros)
     {
         ros.x = eigen.x();
         ros.y = eigen.y();

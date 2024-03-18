@@ -3,35 +3,12 @@
 
 #include <memory>
 
+#include "starq/types.hpp"
+
 #define MAX_MOTOR_ID 0x3F
 
 namespace starq
 {
-
-    enum AxisState
-    {
-        UNDEFINED = 0x0,
-        IDLE = 0x1,
-        CLOSED_LOOP_CONTROL = 0x8
-    };
-
-    enum ControlMode
-    {
-        VOLTAGE = 0x0,
-        TORQUE = 0x1,
-        VELOCITY = 0x2,
-        POSITION = 0x3
-    };
-
-    enum InputMode
-    {
-        INACTIVE = 0x0,
-        PASSTHROUGH = 0x1,
-        VEL_RAMP = 0x2,
-        POS_FILTER = 0x3,
-        TRAP_TRAJ = 0x5,
-        TORQUE_RAMP = 0x6
-    };
 
     /// @brief Abstract class for motor controllers. Used as a template for derived classes.
     class MotorController
@@ -42,7 +19,7 @@ namespace starq
         /// @brief Set the gear ratio
         /// @param gear_ratio The gear ratio to set the motor to.
         /// @return If the gear ratio was set successfully.
-        virtual bool setGearRatio(const float gear_ratio) = 0;
+        virtual bool setGearRatio(const Float gear_ratio) = 0;
 
         /// @brief Set the motor state.
         /// @param state The state to set the motor to.
@@ -60,30 +37,30 @@ namespace starq
         /// @param vel_ff The velocity feedforward to set the motor to. [rad/s] (default: 0)
         /// @param torque_ff The torque feedforward to set the motor to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        virtual bool setPosition(const float pos, const float vel_ff = 0.F, const float torque_ff = 0.F) = 0;
+        virtual bool setPosition(const Float pos, const Float vel_ff = 0.F, const Float torque_ff = 0.F) = 0;
 
         /// @brief Set the velocity.
         /// @param vel The velocity to set the motor to. [rad/s]
         /// @param torque_ff The torque feedforward to set the motor to. [N-m] (default: 0)
         /// @return If the command was sent successfully.
-        virtual bool setVelocity(const float vel, const float torque_ff = 0.F) = 0;
+        virtual bool setVelocity(const Float vel, const Float torque_ff = 0.F) = 0;
 
         /// @brief Set the torque.
         /// @param torque The torque to set the motor to. [N-m]
         /// @return If the command was sent successfully.
-        virtual bool setTorque(const float torque) = 0;
+        virtual bool setTorque(const Float torque) = 0;
 
         /// @brief Get the encoder position estimate.
         /// @return The encoder position estimate in radians.
-        virtual float getPositionEstimate() = 0;
+        virtual Float getPositionEstimate() = 0;
 
         /// @brief Get the encoder velocity estimate.
         /// @return The encoder velocity estimate in radians per second.
-        virtual float getVelocityEstimate() = 0;
+        virtual Float getVelocityEstimate() = 0;
 
         /// @brief Get the controller torque estimate.
         /// @return The controller torque estimate in Newton-meters.
-        virtual float getTorqueEstimate() = 0;
+        virtual Float getTorqueEstimate() = 0;
     };
 
 }

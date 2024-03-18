@@ -42,9 +42,9 @@ int main(void)
     LegCommand::Ptr cmd = std::make_shared<LegCommand>();
     cmd->leg_id = LEG_ID;
     cmd->control_mode = 0x3;
-    cmd->target_position = Vector2f(center_x, center_y);
-    cmd->target_velocity = VectorXf::Zero(2);
-    cmd->target_force = VectorXf::Zero(2);
+    cmd->target_position = Vector3(center_x, center_y, 0);
+    cmd->target_velocity = Vector3::Zero();
+    cmd->target_force = Vector3::Zero();
 
     publisher->sendCommand(cmd);
     printf("Pushed leg command.\n");

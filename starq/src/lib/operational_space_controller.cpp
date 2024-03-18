@@ -15,67 +15,56 @@ namespace starq
     {
     }
 
-    bool OperationalSpaceController::setFootPosition(const VectorXf &foot_position,
-                                                     const VectorXf &foot_velocity_ff,
-                                                     const VectorXf &foot_accleration_ff)
+    bool OperationalSpaceController::setFootPosition(const Vector3 &foot_position,
+                                                     const Vector3 &foot_velocity_ff,
+                                                     const Vector3 &foot_accleration_ff)
     {
+        const Vector3 current_joint_angles = getCurrentJointAngles();
 
-        if (foot_position.size() == 0)
-        {
-            std::cerr << "Empty foot position." << std::endl;
-            return false;
-        }
-
-        const bool has_velocity_ff = foot_velocity_ff.size() > 0;
-        const bool has_accleration_ff = foot_accleration_ff.size() > 0;
-
-        const VectorXf current_joint_angles = getCurrentJointAngles();
-
-        MatrixXf jacobian;
-        if ((has_velocity_ff || has_accleration_ff) &&
-            !this->dynamics_->getJacobian(current_joint_angles, jacobian))
+        Matrix3 jacobian;
+        if (!this->dynamics_->getJacobian(current_joint_angles, jacobian))
         {
             std::cerr << "Failed to get jacobian." << std::endl;
             return false;
         }
 
-        const VectorXf pos_ref = foot_position;
-        const VectorXf vel_ref = has_velocity_ff ? foot_velocity_ff : VectorXf::Zero(foot_position.size());
-        const VectorXf acc_ref = has_accleration_ff ? foot_accleration_ff : VectorXf::Zero(foot_position.size());
+        const Vector3 pos_ref = foot_position;
+        const Vector3 vel_ref = foot_velocity_ff;
+        const Vector3 acc_ref = foot_accleration_ff;
 
-        VectorXf pos_est, vel_est;
+        Vector3 pos_est, vel_est;
         getFootPositionEstimate(pos_est);
         getFootVelocityEstimate(vel_est);
 
-        const VectorXf torque_ff = jacobian.transpose() * inertia_matrix_ * (acc_ref - d_inertia_matrix_dt_ * vel_ref) +
+        const Vector3 torque_ff = jacobian.transpose() * inertia_matrix_ * (acc_ref - d_inertia_matrix_dt_ * vel_ref) +
                                    coriolis_matrix_ * vel_ref + gravity_vector_;
-        const VectorXf joint_torques = jacobian.transpose() * (kp_matrix_ * (pos_ref - pos_est) + kd_matrix_ * (vel_ref - vel_est)) +
+        const Vector3 joint_torques = jacobian.transpose() * (kp_matrix_ * (pos_ref - pos_est) + kd_matrix_ * (vel_ref - vel_est)) +
                                        torque_ff;
 
         return setJointTorques(joint_torques);
     }
 
-    void OperationalSpaceController::setInertiaMatrix(const MatrixXf &inertia_matrix)
+    void OperationalSpaceController::setInertiaMatrix(const Matrix3 &inertia_matrix)
     {
         inertia_matrix_ = inertia_matrix;
     }
 
-    void OperationalSpaceController::setCoriolisMatrix(const MatrixXf &coriolis_matrix)
+    void OperationalSpaceController::setCoriolisMatrix(const Matrix3 &coriolis_matrix)
     {
         coriolis_matrix_ = coriolis_matrix;
     }
 
-    void OperationalSpaceController::setGravityVector(const VectorXf &gravity_vector)
+    void OperationalSpaceController::setGravityVector(const Vector3 &gravity_vector)
     {
         gravity_vector_ = gravity_vector;
     }
 
-    void OperationalSpaceController::setKpMatrix(const MatrixXf &kp_matrix)
+    void OperationalSpaceController::setKpMatrix(const Matrix3 &kp_matrix)
     {
         kp_matrix_ = kp_matrix;
     }
 
-    void OperationalSpaceController::setKdMatrix(const MatrixXf &kd_matrix)
+    void OperationalSpaceController::setKdMatrix(const Matrix3 &kd_matrix)
     {
         kd_matrix_ = kd_matrix;
     }

@@ -18,7 +18,7 @@ namespace starq::testing
 
         ~DummyMotorController() {}
 
-        bool setGearRatio(const float gear_ratio) override
+        bool setGearRatio(const Float gear_ratio) override
         {
             std::cout << "Setting gear ratio for motor " << (int)motor_id_ << " to " << gear_ratio << std::endl;
             return true;
@@ -36,7 +36,7 @@ namespace starq::testing
             return true;
         }
 
-        bool setPosition(const float pos, const float vel_ff = 0.F, const float torque_ff = 0.F) override
+        bool setPosition(const Float pos, const Float vel_ff = 0.F, const Float torque_ff = 0.F) override
         {
             std::cout << "Setting position for motor " << (int)motor_id_ << " to " << pos
                       << " with velocity feedforward " << vel_ff
@@ -48,7 +48,7 @@ namespace starq::testing
             return true;
         }
 
-        bool setVelocity(const float vel, const float torque_ff = 0.F) override
+        bool setVelocity(const Float vel, const Float torque_ff = 0.F) override
         {
             std::cout << "Setting velocity for motor " << (int)motor_id_ << " to " << vel
                       << " with torque feedforward " << torque_ff << std::endl;
@@ -58,7 +58,7 @@ namespace starq::testing
             return true;
         }
 
-        bool setTorque(const float torque) override
+        bool setTorque(const Float torque) override
         {
             std::cout << "Setting torque for motor " << (int)motor_id_ << " to " << torque << std::endl;
 
@@ -66,17 +66,17 @@ namespace starq::testing
             return true;
         }
 
-        float getPositionEstimate() override
+        Float getPositionEstimate() override
         {
             return last_pos_;
         }
 
-        float getVelocityEstimate() override
+        Float getVelocityEstimate() override
         {
             return last_vel_;
         }
 
-        float getTorqueEstimate() override
+        Float getTorqueEstimate() override
         {
             return last_torque_;
         }

@@ -11,7 +11,6 @@
 
 namespace starq::mpc
 {
-    using namespace std::chrono;
 
     /// @brief MPC controller class
     class MPCController : public ThreadRunner
@@ -33,7 +32,7 @@ namespace starq::mpc
 
         /// @brief Set the sleep duration between commands.
         /// @param sleep_duration_us Sleep duration in microseconds.
-        void setSleepDuration(const microseconds sleep_duration_us) { sleep_duration_us_ = sleep_duration_us; }
+        void setSleepDuration(const std::chrono::microseconds sleep_duration_us) { sleep_duration_us_ = sleep_duration_us; }
 
         /// @brief Set the step height.
         /// @param step_height Step height.
@@ -50,7 +49,7 @@ namespace starq::mpc
     private:
         void run() override;
 
-        void sendFootForce(const uint8_t leg_id, const Vector3f &force);
+        void sendFootForce(const uint8_t leg_id, const Vector3 &force);
 
         void sendSwingTrajectory(const uint8_t leg_id);
 
@@ -64,7 +63,7 @@ namespace starq::mpc
         std::vector<TrajectoryPublisher::Ptr> trajectory_publishers_;
 
         bool stop_on_fail_;
-        microseconds sleep_duration_us_;
+        std::chrono::microseconds sleep_duration_us_;
         float step_height_;
         size_t swing_resolution_;
         float swing_duration_factor_;

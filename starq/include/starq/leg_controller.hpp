@@ -8,7 +8,6 @@
 
 namespace starq
 {
-    using namespace Eigen;
 
     using MotorList = std::vector<MotorController::Ptr>;
 
@@ -44,69 +43,69 @@ namespace starq
         /// @param foot_velocity_ff Foot velocity feedforward.
         /// @param foot_torque_ff Foot torque feedforward.
         /// @return If the command was sent successfully.
-        virtual bool setFootPosition(const VectorXf &foot_position,
-                             const VectorXf &foot_velocity_ff = VectorXf(),
-                             const VectorXf &foot_torque_ff = VectorXf());
+        virtual bool setFootPosition(const Vector3 &foot_position,
+                                     const Vector3 &foot_velocity_ff = Vector3::Zero(),
+                                     const Vector3 &foot_torque_ff = Vector3::Zero());
 
         /// @brief Set the foot velocity for a leg.
         /// @param foot_velocity Foot velocity.
         /// @param foot_torque_ff Foot torque feedforward.
         /// @return  If the command was sent successfully.
-        virtual bool setFootVelocity(const VectorXf &foot_velocity,
-                             const VectorXf &foot_torque_ff = VectorXf());
+        virtual bool setFootVelocity(const Vector3 &foot_velocity,
+                                     const Vector3 &foot_torque_ff = Vector3::Zero());
 
         /// @brief Set the foot force for a leg.
         /// @param foot_force Foot force.
         /// @return If the command was sent successfully.
-        virtual bool setFootForce(const VectorXf &foot_force);
+        virtual bool setFootForce(const Vector3 &foot_force);
 
         /// @brief Get the foot position estimate for a leg.
         /// @param foot_position Foot position.
         /// @return If the position was retrieved successfully.
-        virtual bool getFootPositionEstimate(VectorXf &foot_position);
+        virtual bool getFootPositionEstimate(Vector3 &foot_position);
 
         /// @brief Get the foot velocity estimate for a leg.
         /// @param foot_velocity Foot velocity.
         /// @return If the velocity was retrieved successfully.
-        virtual bool getFootVelocityEstimate(VectorXf &foot_velocity);
+        virtual bool getFootVelocityEstimate(Vector3 &foot_velocity);
 
         /// @brief Get the foot force estimate for a leg.
         /// @param foot_force Foot force.
         /// @return If the force was retrieved successfully.
-        virtual bool getFootForceEstimate(VectorXf &foot_force);
+        virtual bool getFootForceEstimate(Vector3 &foot_force);
 
         /// @brief Get the current joint angles for a leg.
         /// @return Vector of joint angles.
-        VectorXf getCurrentJointAngles();
+        Vector3 getCurrentJointAngles();
 
         /// @brief Get the current joint velocities for a leg.
         /// @return Vector of joint velocities.
-        VectorXf getCurrentJointVelocities();
+        Vector3 getCurrentJointVelocities();
 
         /// @brief Get the current joint torques for a leg.
         /// @return Vector of joint torques.
-        VectorXf getCurrentJointTorques();
+        Vector3 getCurrentJointTorques();
 
         /// @brief Set the joint angles for a leg.
         /// @param joint_angles Joint angles.
         /// @param joint_velocity_ff Joint velocity feedforward.
         /// @param joint_torque_ff Joint torque feedforward.
         /// @return If the command was sent successfully.
-        bool setJointAngles(const VectorXf &joint_angles,
-                            const VectorXf &joint_velocity_ff,
-                            const VectorXf &joint_torque_ff);
+        bool setJointAngles(const Vector3 &joint_angles,
+                            const Vector3 &joint_velocity_ff,
+                            const Vector3 &joint_torque_ff);
 
         /// @brief Set the joint velocities for a leg.
         /// @param joint_velocities Joint velocities.
         /// @param joint_torque_ff Joint torque feedforward.
         /// @return If the command was sent successfully.
-        bool setJointVelocities(const VectorXf &joint_velocities,
-                                const VectorXf &joint_torque_ff);
+        bool setJointVelocities(const Vector3 &joint_velocities,
+                                const Vector3 &joint_torque_ff);
 
         /// @brief Set the joint torques for a leg.
         /// @param joint_torques Joint torques.
         /// @return If the command was sent successfully.
-        bool setJointTorques(const VectorXf &joint_torques);
+        bool setJointTorques(const Vector3 &joint_torques);
 
     protected:
         const starq::LegDynamics::Ptr dynamics_;

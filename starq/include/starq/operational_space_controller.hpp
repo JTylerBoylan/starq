@@ -25,37 +25,37 @@ namespace starq
         /// @param foot_velocity_ff Foot velocity feedforward.
         /// @param foot_accleration_ff Foot acceleration feedforward.
         /// @return If the command was sent successfully.
-        bool setFootPosition(const VectorXf &foot_position,
-                             const VectorXf &foot_velocity_ff = VectorXf(),
-                             const VectorXf &foot_accleration_ff = VectorXf()) override;
+        bool setFootPosition(const Vector3 &foot_position,
+                             const Vector3 &foot_velocity_ff = Vector3::Zero(),
+                             const Vector3 &foot_accleration_ff = Vector3::Zero()) override;
 
         /// @brief Set the inertia matrix for a leg.
         /// @param inertia_matrix Inertia matrix.
-        void setInertiaMatrix(const MatrixXf &inertia_matrix);
+        void setInertiaMatrix(const Matrix3 &inertia_matrix);
 
         /// @brief Set the coriolis matrix for a leg.
         /// @param coriolis_matrix Coriolis matrix.
-        void setCoriolisMatrix(const MatrixXf &coriolis_matrix);
+        void setCoriolisMatrix(const Matrix3 &coriolis_matrix);
 
         /// @brief Set the gravity vector for a leg.
         /// @param gravity_vector Gravity vector.
-        void setGravityVector(const VectorXf &gravity_vector);
+        void setGravityVector(const Vector3 &gravity_vector);
 
         /// @brief Set the kp matrix for a leg.
         /// @param kp_matrix Kp matrix.
-        void setKpMatrix(const MatrixXf &kp_matrix);
+        void setKpMatrix(const Matrix3 &kp_matrix);
 
         /// @brief Set the kd matrix for a leg.
         /// @param kd_matrix Kd matrix.
-        void setKdMatrix(const MatrixXf &kd_matrix);
+        void setKdMatrix(const Matrix3 &kd_matrix);
 
     private:
-        MatrixXf inertia_matrix_;
-        MatrixXf d_inertia_matrix_dt_;
-        MatrixXf coriolis_matrix_;
-        VectorXf gravity_vector_;
-        MatrixXf kp_matrix_;
-        MatrixXf kd_matrix_;
+        Matrix3 inertia_matrix_;
+        Matrix3 d_inertia_matrix_dt_;
+        Matrix3 coriolis_matrix_;
+        Vector3 gravity_vector_;
+        Matrix3 kp_matrix_;
+        Matrix3 kd_matrix_;
     };
 }
 

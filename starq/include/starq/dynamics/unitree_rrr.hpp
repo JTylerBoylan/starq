@@ -15,31 +15,31 @@ namespace starq::dynamics
         /// @brief Constructor for RRR leg.
         /// @param d Abduction link length.
         /// @param lt Thigh link length.
-        Unitree_RRR(float d, float lt, float lc);
+        Unitree_RRR(Float d, Float lt, Float lc);
 
         /// @brief Forward kinematics for FiveBar2D leg.
         /// @param joint_angles Joint angles.
         /// @param foot_position Foot position.
         /// @return If the forward kinematics was successful.
-        bool getForwardKinematics(const VectorXf &joint_angles, VectorXf &foot_position) override;
+        bool getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position) override;
 
         /// @brief Inverse kinematics for FiveBar2D leg.
         /// @param foot_position Foot position.
         /// @param joint_angles Joint angles.
         /// @return If the inverse kinematics was successful.
-        bool getInverseKinematics(const VectorXf &foot_position, VectorXf &joint_angles) override;
+        bool getInverseKinematics(const Vector3 &foot_position, Vector3 &joint_angles) override;
 
         /// @brief Jacobian for FiveBar2D leg.
         /// @param joint_angles Joint angles.
         /// @param jacobian Jacobian matrix.
         /// @return If the Jacobian matrix was successful.
-        bool getJacobian(const VectorXf &joint_angles, MatrixXf &jacobian) override;
+        bool getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian) override;
 
         /// @brief Flip the leg in the Y axis.
         void flipYAxis();
 
     private:
-        float d_, lt_, lc_, a_axis_;
+        Float d_, lt_, lc_, a_axis_;
     };
 
 }

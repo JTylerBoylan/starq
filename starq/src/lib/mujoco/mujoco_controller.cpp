@@ -15,7 +15,7 @@ namespace starq::mujoco
                                                    std::placeholders::_1, std::placeholders::_2));
     }
 
-    bool MuJoCoController::setGearRatio(const float gear_ratio)
+    bool MuJoCoController::setGearRatio(const Float gear_ratio)
     {
         state_.gear_ratio = gear_ratio;
         return true;
@@ -34,41 +34,41 @@ namespace starq::mujoco
         return true;
     }
 
-    bool MuJoCoController::setPosition(const float pos, const float vel_ff, const float torque_ff)
+    bool MuJoCoController::setPosition(const Float pos, const Float vel_ff, const Float torque_ff)
     {
-        const float GR = state_.gear_ratio;
+        const Float GR = state_.gear_ratio;
         state_.pos_cmd = pos * GR;
         state_.vel_cmd = vel_ff * GR;
         state_.torq_cmd = torque_ff / GR;
         return true;
     }
 
-    bool MuJoCoController::setVelocity(const float vel, const float torque_ff)
+    bool MuJoCoController::setVelocity(const Float vel, const Float torque_ff)
     {
-        const float GR = state_.gear_ratio;
+        const Float GR = state_.gear_ratio;
         state_.vel_cmd = vel * GR;
         state_.torq_cmd = torque_ff / GR;
         return true;
     }
 
-    bool MuJoCoController::setTorque(const float torque)
+    bool MuJoCoController::setTorque(const Float torque)
     {
-        const float GR = state_.gear_ratio;
+        const Float GR = state_.gear_ratio;
         state_.torq_cmd = torque / GR;
         return true;
     }
 
-    float MuJoCoController::getPositionEstimate()
+    Float MuJoCoController::getPositionEstimate()
     {
         return state_.pos_est;
     }
 
-    float MuJoCoController::getVelocityEstimate()
+    Float MuJoCoController::getVelocityEstimate()
     {
         return state_.vel_est;
     }
 
-    float MuJoCoController::getTorqueEstimate()
+    Float MuJoCoController::getTorqueEstimate()
     {
         return state_.torq_est;
     }
