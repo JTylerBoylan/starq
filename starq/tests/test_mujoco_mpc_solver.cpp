@@ -60,11 +60,16 @@ int main()
     {
         auto global_time = robot->getLocalization()->getCurrentTime();
 
-        float offset_x = 0.025 * std::cos(2 * 1E-3 * global_time.count());
-        float offset_y = 0.025 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_x = 0; // 0.025 * std::cos(2 * 1E-3 * global_time.count());
+        float offset_y = 0; // 0.025 * std::sin(2 * 1E-3 * global_time.count());
         float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
 
-        gait->setPose(Vector3(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z), Vector3(0, 0, 0));
+        float offset_roll = 0;    // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_pitch = 0.1; // 0.2 * std::cos(2 * 1E-3 * global_time.count());
+        float offset_yaw = 0;     // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+
+        gait->setPose(Vector3(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z),
+                      Vector3(offset_roll, offset_pitch, offset_yaw));
 
         if (!osqp->update(mpc_config))
             break;
@@ -74,33 +79,34 @@ int main()
 
         auto solution = osqp->getSolution();
 
-        // for (size_t i = 0; i < config.window_size; i++)
-        // {
-        //     printf("------\n");
-        //     printf("Node[%lu]\n", i);
+        for (size_t i = 0; i < mpc_config->getWindowSize(); i++)
+        {
+            printf("------\n");
+            printf("Node[%lu]\n", i);
 
-        //     const Vector3f position = solution.x_star[i].position;
-        //     const Vector3f orientation = solution.x_star[i].orientation;
-        //     const Vector3f linear_velocity = solution.x_star[i].linear_velocity;
-        //     const Vector3f angular_velocity = solution.x_star[i].angular_velocity;
+            const Vector3 position = solution->x_star[i].position;
+            const Vector3 orientation = solution->x_star[i].orientation;
+            const Vector3 linear_velocity = solution->x_star[i].linear_velocity;
+            const Vector3 angular_velocity = solution->x_star[i].angular_velocity;
 
-        //     printf("Position: %f %f %f\n", position.x(), position.y(), position.z());
-        //     printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
-        //     printf("Linear velocity: %f %f %f\n", linear_velocity.x(), linear_velocity.y(), linear_velocity.z());
-        //     printf("Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
+            printf("Position: %f %f %f\n", position.x(), position.y(), position.z());
+            printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
+            printf("Linear velocity: %f %f %f\n", linear_velocity.x(), linear_velocity.y(), linear_velocity.z());
+            printf("Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
 
-        //     for (auto force_state : solution.u_star)
-        //     {
-        //         for (size_t j = 0; j < force_state.size(); j++)
-        //         {
-        //             if (force_state[j].first)
-        //             {
-        //                 Vector3f foot_force = force_state[j].second;
-        //                 printf("Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
-        //             }
-        //         }
-        //     }
-        // }
+            if (i < mpc_config->getWindowSize() - 1)
+            {
+                const FootForceState force_state = solution->u_star[i];
+                for (size_t j = 0; j < force_state.size(); j++)
+                {
+                    if (force_state[j].first)
+                    {
+                        Vector3 foot_force = force_state[j].second;
+                        printf("Force[%lu]: %f %f %f\n", j, foot_force.x(), foot_force.y(), foot_force.z());
+                    }
+                }
+            }
+        }
 
         printf("------\n");
         printf("Global time: %d\n\n", int(global_time.count()));
