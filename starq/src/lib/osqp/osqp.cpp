@@ -32,9 +32,9 @@ namespace starq::osqp
         n_ = qp_problem_->getN();
         m_ = qp_problem_->getM();
 
-        const Eigen::VectorXd &q = qp_problem_->getG().cast<double>();
-        const Eigen::VectorXd &l = qp_problem_->getLc().cast<double>();
-        const Eigen::VectorXd &u = qp_problem_->getUc().cast<double>();
+        const Eigen::VectorX<OSQPFloat> &q = qp_problem_->getG().cast<OSQPFloat>();
+        const Eigen::VectorX<OSQPFloat> &l = qp_problem_->getLc().cast<OSQPFloat>();
+        const Eigen::VectorX<OSQPFloat> &u = qp_problem_->getUc().cast<OSQPFloat>();
 
         if (q_ != nullptr)
             delete[] q_;
