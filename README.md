@@ -325,11 +325,9 @@ struct LegCommand
 // Constructor
 TrajectoryFileReader();
 
-bool load2D(const std::string &file_path);
+bool load(const std::string &file_path);
 
-bool load3D(const std::string &file_path);
-
-std::vector<LegCommand> getTrajectory();
+std::vector<LegCommand::Ptr> getTrajectory();
 ```
 
 #### TrajectoryPublisher
@@ -342,7 +340,7 @@ std::vector<LegCommand> getTrajectory();
 // Constructor
 TrajectoryPublisher(LegCommandPublisher::Ptr leg_command_publisher);
 
-bool setTrajectory(const std::vector<LegCommand> &trajectory);
+bool setTrajectory(const std::vector<LegCommand::Ptr> &trajectory);
 
 bool setFrequency(int frequency);
 
@@ -351,44 +349,14 @@ void start();
 void stop();
 ```
 
-#### GaitController (TODO)
-
-* Abstract class for gait control
-* Functions:
-```
-void start();
-
-void stop();
-
-void setVelocity(const Vector3f &linear_speed, const Vector3f &angular_speed);
-```
-
-#### WalkingGaitController (TODO)
-
-* Implementation of GaitController for walking
-
-#### WalkingGaitPlanner (TODO)
-
-* Plan body of mass trajectory and foot positions
-
-#### BodyControlMPC (TODO)
+#### MPCController (TODO)
 
 * Formulate plan into a QP problem to solve for leg forces
 * QP Solver: OSQP or qpOASIS
 * Reference: \
 *Di Carlo, J., Wensing, P. M., Katz, B., Bledt, G., & Kim, S. (2018). Dynamic locomotion in the MIT Cheetah 3 through Convex Model-predictive control. 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). https://doi.org/10.1109/iros.2018.8594448*
 
-#### SwimmingGaitController (TODO)
-
-* Implementation of GaitController for swimming
-* Includes FF-SLIP
-
-#### GaitPlanner (TODO)
-
-* Find the optimal trajectory and gait sequence to a user-defined goal.
-* Planner: SBMPO
-
-#### Localization (TODO)
+#### Localization
 
 * Abstract class for localization methods
 * Functions:
@@ -402,7 +370,7 @@ Vector3f getCurrentVelocity();
 Vector3f getCurrentAngularVelocity();
 ```
 
-#### TerrainMap (TODO)
+#### TerrainMap
 
 * Abstract class for mapping methods
 * Functions:

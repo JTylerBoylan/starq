@@ -4,6 +4,7 @@
 #include "starq/mujoco/mujoco_robot.hpp"
 #include "starq/dynamics/unitree_rrr.hpp"
 #include "starq/dynamics/unitree_a1_robot.hpp"
+#include "starq/osqp/osqp.hpp"
 
 #define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"
 
@@ -14,6 +15,7 @@ namespace starq::robots
 {
     using namespace starq::mujoco;
     using namespace starq::dynamics;
+    using namespace starq::osqp;
 
     /// @brief Unitree A1 MuJoCo robot class
     class UnitreeA1MuJoCoRobot : public MuJoCoRobot
@@ -40,6 +42,10 @@ namespace starq::robots
         /// @return The right leg dynamics
         Unitree_RRR::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
 
+        /// @brief Get the OSQP solver
+        /// @return The OSQP solver
+        OSQP::Ptr getOSQPSolver() const { return osqp_; }
+
     private:
 
         /// @brief Setup the motors
@@ -48,8 +54,15 @@ namespace starq::robots
         /// @brief Setup the legs
         void setupLegs() override;
 
+        /// @brief Setup the robot dynamics
+        void setupRobotDynamics() override;
+
+        /// @brief Setup the model predictive control solver
+        void setupMPCSolver() override;
+
         Unitree_RRR::Ptr unitree_RRR_L_;
         Unitree_RRR::Ptr unitree_RRR_R_;
+        OSQP::Ptr osqp_;
     };
 
 }

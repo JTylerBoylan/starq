@@ -8,6 +8,7 @@
 #include "starq/trajectory_publisher.hpp"
 #include "starq/slam/localization.hpp"
 #include "starq/robot_dynamics.hpp"
+#include "starq/mpc/mpc_controller.hpp"
 
 namespace starq
 {
@@ -53,6 +54,18 @@ namespace starq
         /// @return True if successful
         bool runTrajectory(const std::vector<LegCommand::Ptr> &trajectory);
 
+        /// @brief Start the model predictive control
+        /// @return True if successful
+        bool startMPC();
+
+        /// @brief Stop the model predictive control
+        /// @return True if successful
+        bool stopMPC();
+
+        /// @brief Set the next gait for the model predictive control
+        /// @param gait The gait
+        void setNextGait(mpc::Gait::Ptr gait);
+
         /// @brief Get the motor controllers
         /// @return The motor controllers
         std::vector<MotorController::Ptr> getMotors() const { return motors_; }
@@ -69,6 +82,10 @@ namespace starq
         /// @return The robot dynamics
         RobotDynamics::Ptr getRobotDynamics() const { return robot_dynamics_; }
 
+        /// @brief Get the model predictive control solver
+        /// @return The model predictive control solver
+        mpc::MPCSolver::Ptr getMPCSolver() const { return mpc_solver_; }
+
         /// @brief Get the leg command publisher
         /// @return The leg command publisher
         LegCommandPublisher::Ptr getLegCommandPublisher() const { return publisher_; }
@@ -81,6 +98,14 @@ namespace starq
         /// @return The trajectory publisher
         TrajectoryPublisher::Ptr getTrajectoryPublisher() const { return trajectory_publisher_; }
 
+        /// @brief Get the model predictive control configuration
+        /// @return The model predictive control configuration
+        mpc::MPCConfiguration::Ptr getMPCConfiguration() const { return mpc_configuration_; }
+
+        /// @brief Get the model predictive control controller
+        /// @return The model predictive control controller
+        mpc::MPCController::Ptr getMPCController() const { return mpc_controller_; }
+
     protected:
 
         /// @brief Setup the motor controllers
@@ -92,6 +117,12 @@ namespace starq
         /// @brief Setup the localization
         virtual void setupLocalization() = 0;
 
+        /// @brief Setup the robot dynamics
+        virtual void setupRobotDynamics() = 0;
+
+        /// @brief Setup the model predictive control solver
+        virtual void setupMPCSolver() = 0;
+
         /// @brief Setup the leg command publisher
         virtual void setupLegCommandPublisher();
 
@@ -101,14 +132,24 @@ namespace starq
         /// @brief Setup the trajectory publisher
         virtual void setupTrajectoryPublisher();
 
+        /// @brief Setup the model predictive control configuration
+        virtual void setupMPCConfiguration();
+
+        /// @brief Setup the model predictive control controller
+        virtual void setupMPCController();
+
         std::vector<MotorController::Ptr> motors_;
         std::vector<LegController::Ptr> legs_;
         slam::Localization::Ptr localization_;
         RobotDynamics::Ptr robot_dynamics_;
+        mpc::MPCSolver::Ptr mpc_solver_;
 
         LegCommandPublisher::Ptr publisher_;
         TrajectoryFileReader::Ptr trajectory_file_reader_;
         TrajectoryPublisher::Ptr trajectory_publisher_;
+        mpc::MPCConfiguration::Ptr mpc_configuration_;
+        mpc::MPCController::Ptr mpc_controller_;
+
     };
 
 }

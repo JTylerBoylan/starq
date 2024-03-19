@@ -10,8 +10,6 @@ namespace starq::robots
     {
         scene_file_ = UNITREE_A1_MUJOCO_SCENE_FILE;
 
-        robot_dynamics_ = std::make_shared<dynamics::UnitreeA1RobotDynamics>();
-
         setup();
     }
 
@@ -56,6 +54,22 @@ namespace starq::robots
                                                       MotorList{motors_[9], motors_[10], motors_[11]});
 
         legs_ = {leg_FL, leg_RL, leg_RR, leg_FR};
+    }
+
+    void UnitreeA1MuJoCoRobot::setupRobotDynamics()
+    {
+        robot_dynamics_ = std::make_shared<dynamics::UnitreeA1RobotDynamics>();
+    }
+
+    void UnitreeA1MuJoCoRobot::setupMPCSolver()
+    {
+        osqp_ = std::make_shared<osqp::OSQP>();
+        mpc_solver_ = osqp_;
+        
+        osqp_->getSettings()->verbose = false;
+        osqp_->getSettings()->max_iter = 2000;
+        osqp_->getSettings()->polishing = true;
+        osqp_->getSettings()->warm_starting = true;
     }
 
 }

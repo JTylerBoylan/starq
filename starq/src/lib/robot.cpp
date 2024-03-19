@@ -9,9 +9,13 @@ namespace starq
         setupMotors();
         setupLegs();
         setupLocalization();
+        setupRobotDynamics();
+        setupMPCSolver();
         setupLegCommandPublisher();
         setupTrajectoryFileReader();
         setupTrajectoryPublisher();
+        setupMPCConfiguration();
+        setupMPCController();
     }
 
     void Robot::setupLegCommandPublisher()
@@ -27,6 +31,18 @@ namespace starq
     void Robot::setupTrajectoryPublisher()
     {
         trajectory_publisher_ = std::make_shared<TrajectoryPublisher>(publisher_);
+    }
+
+    void Robot::setupMPCConfiguration()
+    {
+        mpc_configuration_ = std::make_shared<mpc::MPCConfiguration>(legs_, robot_dynamics_, localization_);
+        mpc_configuration_->setTimeStep(milliseconds(50));
+        mpc_configuration_->setWindowSize(21);
+    }
+
+    void Robot::setupMPCController()
+    {
+        mpc_controller_ = std::make_shared<mpc::MPCController>(mpc_configuration_, mpc_solver_, publisher_);
     }
 
     bool Robot::setFootPosition(const uint8_t &leg_id, const Vector3 &position)
@@ -93,6 +109,21 @@ namespace starq
     bool Robot::runTrajectory(const std::vector<LegCommand::Ptr> &trajectory)
     {
         return trajectory_publisher_->runTrajectory(trajectory);
+    }
+
+    bool Robot::startMPC()
+    {
+        return mpc_controller_->start();
+    }
+
+    bool Robot::stopMPC()
+    {
+        return mpc_controller_->stop();
+    }
+
+    void Robot::setNextGait(mpc::Gait::Ptr gait)
+    {
+        mpc_configuration_->setNextGait(gait);
     }
 
 }
