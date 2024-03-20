@@ -15,6 +15,7 @@ docker build -t ${PROJECT_NAME}:latest "${SCRIPT_DIR}"
 docker run -it \
     --rm \
     --net host \
+    --privileged \
     -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/${SCRIPT_DIR}:${PROJECT_DIR}" \

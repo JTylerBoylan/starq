@@ -7,7 +7,8 @@ RUN apt-get update && \
         g++ cmake gdb \
         libsocketcan-dev can-utils \
         libeigen3-dev \
-        libx11-dev xorg-dev libglfw3 libglfw3-dev
+        libx11-dev xorg-dev libglfw3 libglfw3-dev \
+        ros-humble-joy
 
 # Create a new user with a specific UID and GID, and set up the workspace
 RUN useradd -m -u 1000 -s /bin/bash nvidia && \
@@ -30,6 +31,9 @@ RUN mkdir ${OSQP_PATH}/build && \
     cd ${OSQP_PATH}/build && \
     cmake -G "Unix Makefiles" .. && \
     cmake --build . --target install
+
+# Give the user input group permissions
+RUN groupadd -g 107 input && usermod -aG input nvidia
 
 # Switch to the new non-root user
 USER nvidia
