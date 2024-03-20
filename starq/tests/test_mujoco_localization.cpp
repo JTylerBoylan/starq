@@ -3,14 +3,14 @@
 #include <thread>
 
 #include "starq/mujoco/mujoco_controller.hpp"
-#include "starq/dynamics/unitree_rrr.hpp"
+#include "starq/unitree/unitree_a1_leg_dynamics.hpp"
 #include "starq/leg_controller.hpp"
 
 #include "starq/mujoco/mujoco_localization.hpp"
 
 using namespace starq;
-using namespace starq::dynamics;
 using namespace starq::mujoco;
+using namespace starq::unitree;
 
 #define UNITREE_A1_LENGTH_D 0.08505
 #define UNITREE_A1_LENGTH_LT 0.2
@@ -37,13 +37,13 @@ int main()
     MuJoCoController::Ptr motor_RLC = std::make_shared<MuJoCoController>(mujoco, 11);
     printf("Controllers created\n");
 
-    Unitree_RRR::Ptr unitree_RRR_L = std::make_shared<Unitree_RRR>(UNITREE_A1_LENGTH_D,
-                                                                   UNITREE_A1_LENGTH_LT,
-                                                                   UNITREE_A1_LENGTH_LC);
+    UnitreeA1LegDynamics::Ptr unitree_RRR_L = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
+                                                                                     UNITREE_A1_LENGTH_LT,
+                                                                                     UNITREE_A1_LENGTH_LC);
 
-    Unitree_RRR::Ptr unitree_RRR_R = std::make_shared<Unitree_RRR>(UNITREE_A1_LENGTH_D,
-                                                                   UNITREE_A1_LENGTH_LT,
-                                                                   UNITREE_A1_LENGTH_LC);
+    UnitreeA1LegDynamics::Ptr unitree_RRR_R = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
+                                                                                     UNITREE_A1_LENGTH_LT,
+                                                                                     UNITREE_A1_LENGTH_LC);
     unitree_RRR_R->flipYAxis();
 
     LegController::Ptr leg_FR = std::make_shared<LegController>(unitree_RRR_R,

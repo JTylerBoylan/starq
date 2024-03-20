@@ -1,9 +1,9 @@
-#ifndef STARQ_ROBOTS__UNITREE_A1_MUJOCO_HPP_
-#define STARQ_ROBOTS__UNITREE_A1_MUJOCO_HPP_
+#ifndef STARQ_UNITREE__UNITREE_A1_MUJOCO_ROBOT_HPP_
+#define STARQ_UNITREE__UNITREE_A1_MUJOCO_ROBOT_HPP_
 
 #include "starq/mujoco/mujoco_robot.hpp"
-#include "starq/dynamics/unitree_rrr.hpp"
-#include "starq/dynamics/unitree_a1_robot.hpp"
+#include "starq/unitree/unitree_a1_leg_dynamics.hpp"
+#include "starq/unitree/unitree_a1_robot_dynamics.hpp"
 #include "starq/osqp/osqp.hpp"
 
 #define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"
@@ -11,10 +11,9 @@
 #define UNITREE_A1_NUM_MOTORS 12
 #define UNITREE_A1_NUM_LEGS 4
 
-namespace starq::robots
+namespace starq::unitree
 {
     using namespace starq::mujoco;
-    using namespace starq::dynamics;
     using namespace starq::osqp;
 
     /// @brief Unitree A1 MuJoCo robot class
@@ -36,11 +35,11 @@ namespace starq::robots
 
         /// @brief Get the left leg dynamics
         /// @return The left leg dynamics
-        Unitree_RRR::Ptr getLeftLegDynamics() const { return unitree_RRR_L_; }
+        UnitreeA1LegDynamics::Ptr getLeftLegDynamics() const { return unitree_RRR_L_; }
 
         /// @brief Get the right leg dynamics
         /// @return The right leg dynamics
-        Unitree_RRR::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
+        UnitreeA1LegDynamics::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
 
         /// @brief Get the OSQP solver
         /// @return The OSQP solver
@@ -60,8 +59,8 @@ namespace starq::robots
         /// @brief Setup the model predictive control solver
         void setupMPCSolver() override;
 
-        Unitree_RRR::Ptr unitree_RRR_L_;
-        Unitree_RRR::Ptr unitree_RRR_R_;
+        UnitreeA1LegDynamics::Ptr unitree_RRR_L_;
+        UnitreeA1LegDynamics::Ptr unitree_RRR_R_;
         OSQP::Ptr osqp_;
     };
 

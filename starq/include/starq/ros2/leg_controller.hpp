@@ -25,9 +25,11 @@ namespace starq::ros2
         /// @brief Create a new LegControllerROS2 object
         /// @param node ROS2 node
         /// @param leg_controller LegController object
+        /// @param ns Namespace for the leg
         /// @param leg_name Name of the leg
         LegControllerROS2(rclcpp::Node::SharedPtr node,
                           LegController::Ptr leg_controller,
+                          const std::string &ns,
                           const std::string &leg_name);
 
     private:
@@ -40,6 +42,7 @@ namespace starq::ros2
 
         rclcpp::Node::SharedPtr node_;
         LegController::Ptr leg_controller_;
+        std::string ns_;
         std::string leg_name_;
 
         rclcpp::Subscription<starq::msg::LegCommand>::SharedPtr leg_command_sub_;

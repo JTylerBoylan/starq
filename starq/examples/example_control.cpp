@@ -7,9 +7,7 @@ using namespace starq::can;
 #include "starq/odrive/odrive_controller.hpp"
 using namespace starq::odrive;
 
-#include "starq/dynamics/starq_fivebar2d.hpp"
-using namespace starq::dynamics;
-
+#include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 #include "starq/leg_controller.hpp"
 using namespace starq;
 
@@ -22,7 +20,8 @@ using namespace starq;
 #define LINK_LENGTH_1 0.05
 #define LINK_LENGTH_2 0.15
 
-int main() {
+int main()
+{
 
   printf("Hello, World!\n");
 
@@ -30,8 +29,8 @@ int main() {
   CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can0");
   if (!can_socket->connect())
   {
-      printf("Failed to connect to CAN interface.\n");
-      return 1;
+    printf("Failed to connect to CAN interface.\n");
+    return 1;
   }
 
   // Connect to ODrive controllers
@@ -47,7 +46,7 @@ int main() {
   odrive_B->setGearRatio(GEAR_RATIO_B);
 
   // Create FiveBar2D Dynamics
-  STARQ_FiveBar2D::Ptr fivebar = std::make_shared<STARQ_FiveBar2D>(LINK_LENGTH_1, LINK_LENGTH_2);
+  STARQFiveBar2DLegDynamics::Ptr fivebar = std::make_shared<STARQFiveBar2DLegDynamics>(LINK_LENGTH_1, LINK_LENGTH_2);
 
   // Create Leg Controller
   LegController::Ptr leg_controller = std::make_shared<LegController>(fivebar, motors);
@@ -62,4 +61,4 @@ int main() {
   leg_controller->setState(AxisState::IDLE);
 
   return 0;
-} 
+}

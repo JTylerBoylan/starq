@@ -7,9 +7,7 @@ using namespace starq::can;
 #include "starq/odrive/odrive_controller.hpp"
 using namespace starq::odrive;
 
-#include "starq/dynamics/starq_fivebar2d.hpp"
-using namespace starq::dynamics;
-
+#include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 #include "starq/leg_controller.hpp"
 using namespace starq;
 
@@ -50,7 +48,7 @@ int main(int argc, char **argv)
     odrive_B->setGearRatio(GEAR_RATIO_B);
 
     // Create FiveBar2D Dynamics
-    STARQ_FiveBar2D::Ptr fivebar = std::make_shared<STARQ_FiveBar2D>(LINK_LENGTH_1, LINK_LENGTH_2);
+    STARQFiveBar2DLegDynamics::Ptr fivebar = std::make_shared<STARQFiveBar2DLegDynamics>(LINK_LENGTH_1, LINK_LENGTH_2);
 
     // Create Leg Controller
     LegController::Ptr leg_controller = std::make_shared<LegController>(fivebar, motors);
@@ -60,11 +58,11 @@ int main(int argc, char **argv)
     auto node = std::make_shared<rclcpp::Node>("starq_node");
 
     // Create ODrive ROS2 Controllers
-    ODriveControllerROS2::Ptr odrive_ros2_A = std::make_shared<ODriveControllerROS2>(node, odrive_A, "odrv0");
-    ODriveControllerROS2::Ptr odrive_ros2_B = std::make_shared<ODriveControllerROS2>(node, odrive_B, "odrv1");
+    ODriveControllerROS2::Ptr odrive_ros2_A = std::make_shared<ODriveControllerROS2>(node, odrive_A, "starq", "odrv0");
+    ODriveControllerROS2::Ptr odrive_ros2_B = std::make_shared<ODriveControllerROS2>(node, odrive_B, "starq", "odrv1");
 
     // Create Leg ROS2 Controller
-    LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller, "leg0");
+    LegControllerROS2::Ptr leg_controller_ros2 = std::make_shared<LegControllerROS2>(node, leg_controller, "starq", "leg0");
 
     rclcpp::spin(node);
     rclcpp::shutdown();

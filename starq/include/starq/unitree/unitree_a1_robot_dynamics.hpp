@@ -1,5 +1,5 @@
-#ifndef STARQ_DYNAMICS__UNITREE_A1_ROBOT_HPP_
-#define STARQ_DYNAMICS__UNITREE_A1_ROBOT_HPP_
+#ifndef STARQ_DYNAMICS__UNITREE_A1_ROBOT_DYNAMICS_HPP_
+#define STARQ_DYNAMICS__UNITREE_A1_ROBOT_DYNAMICS_HPP_
 
 #include "starq/robot_dynamics.hpp"
 
@@ -21,7 +21,7 @@
 #define UNITREE_A1_Z_FORCE_MAX 250
 
 
-namespace starq::dynamics
+namespace starq::unitree
 {
 
     /// @brief UnitreeA1RobotDynamics class

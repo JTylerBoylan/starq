@@ -1,21 +1,21 @@
-#ifndef STARQ_DYNAMICS__STARQ_FIVEBAR2D_DYNAMICS_HPP_
-#define STARQ_DYNAMICS__STARQ_FIVEBAR2D_DYNAMICS_HPP_
+#ifndef STARQ_DYNAMICS__UNITREE_A1_LEG_DYNAMICS_HPP_
+#define STARQ_DYNAMICS__UNITREE_A1_LEG_DYNAMICS_HPP_
 
 #include "starq/leg_dynamics.hpp"
 
-namespace starq::dynamics
+namespace starq::unitree
 {
 
-    /// @brief Implementation of LegDynamics for the 2D symmetric five-bar leg
-    class STARQ_FiveBar2D : public LegDynamics
+    /// @brief Implementation of LegDynamics for the Unitree RRR leg
+    class UnitreeA1LegDynamics : public LegDynamics
     {
     public:
-        using Ptr = std::shared_ptr<STARQ_FiveBar2D>;
+        using Ptr = std::shared_ptr<UnitreeA1LegDynamics>;
 
-        /// @brief Constructor for FiveBar2D leg.
-        /// @param L1 Length of the first link in meters
-        /// @param L2 Length of the second link in meters
-        STARQ_FiveBar2D(Float L1, Float L2);
+        /// @brief Constructor for RRR leg.
+        /// @param d Abduction link length.
+        /// @param lt Thigh link length.
+        UnitreeA1LegDynamics(Float d, Float lt, Float lc);
 
         /// @brief Forward kinematics for FiveBar2D leg.
         /// @param joint_angles Joint angles.
@@ -35,8 +35,11 @@ namespace starq::dynamics
         /// @return If the Jacobian matrix was successful.
         bool getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian) override;
 
+        /// @brief Flip the leg in the Y axis.
+        void flipYAxis();
+
     private:
-        Float L1_, L2_;
+        Float d_, lt_, lc_, a_axis_;
     };
 
 }

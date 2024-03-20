@@ -1,16 +1,16 @@
-#include "starq/dynamics/unitree_rrr.hpp"
+#include "starq/unitree/unitree_a1_leg_dynamics.hpp"
 
 #include <cmath>
 
-namespace starq::dynamics
+namespace starq::unitree
 {
 
-    Unitree_RRR::Unitree_RRR(Float d, Float lt, Float lc)
+    UnitreeA1LegDynamics::UnitreeA1LegDynamics(Float d, Float lt, Float lc)
         : d_(d), lt_(lt), lc_(lc), a_axis_(1)
     {
     }
 
-    bool Unitree_RRR::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
+    bool UnitreeA1LegDynamics::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
     {
         const Float q1 = joint_angles(0);
         const Float q2 = joint_angles(1);
@@ -33,7 +33,7 @@ namespace starq::dynamics
         return true;
     }
 
-    bool Unitree_RRR::getInverseKinematics(const Vector3 &foot_position, Vector3 &joint_angles)
+    bool UnitreeA1LegDynamics::getInverseKinematics(const Vector3 &foot_position, Vector3 &joint_angles)
     {
 
         const Float x = foot_position(0);
@@ -67,7 +67,7 @@ namespace starq::dynamics
         return true;
     }
 
-    bool Unitree_RRR::getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian)
+    bool UnitreeA1LegDynamics::getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian)
     {
 
         const Float q1 = joint_angles(0);
@@ -100,7 +100,7 @@ namespace starq::dynamics
         return true;
     }
 
-    void Unitree_RRR::flipYAxis()
+    void UnitreeA1LegDynamics::flipYAxis()
     {
         a_axis_ = -1;
     }

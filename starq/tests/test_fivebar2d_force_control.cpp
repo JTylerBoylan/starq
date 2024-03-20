@@ -2,7 +2,7 @@
 
 #include "starq/leg_controller.hpp"
 #include "starq/odrive/odrive_controller.hpp"
-#include "starq/dynamics/starq_fivebar2d.hpp"
+#include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
 #define LEG_LINK_1_LENGTH_M 0.05f
 #define LEG_LINK_2_LENGTH_M 0.150f
@@ -13,7 +13,6 @@
 using namespace starq;
 using namespace starq::can;
 using namespace starq::odrive;
-using namespace starq::dynamics;
 
 int main(void)
 {
@@ -41,8 +40,8 @@ int main(void)
     odrive_B->setGearRatio(GEAR_RATIO_B);
     printf("Set gear ratios.\n");
 
-    STARQ_FiveBar2D::Ptr fivebar_dynamics = std::make_shared<STARQ_FiveBar2D>(LEG_LINK_1_LENGTH_M,
-                                                                              LEG_LINK_2_LENGTH_M);
+    STARQFiveBar2DLegDynamics::Ptr fivebar_dynamics = std::make_shared<STARQFiveBar2DLegDynamics>(LEG_LINK_1_LENGTH_M,
+                                                                                                  LEG_LINK_2_LENGTH_M);
 
     LegController::Ptr leg = std::make_shared<LegController>(fivebar_dynamics,
                                                              std::vector<MotorController::Ptr>{odrive_A, odrive_B});

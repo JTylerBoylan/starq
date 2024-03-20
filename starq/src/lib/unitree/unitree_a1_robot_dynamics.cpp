@@ -1,6 +1,6 @@
-#include "starq/dynamics/unitree_a1_robot.hpp"
+#include "starq/unitree/unitree_a1_robot_dynamics.hpp"
 
-namespace starq::dynamics
+namespace starq::unitree
 {
 
     UnitreeA1RobotDynamics::UnitreeA1RobotDynamics()

@@ -5,17 +5,19 @@ namespace starq::ros2
 
     LegControllerROS2::LegControllerROS2(rclcpp::Node::SharedPtr node,
                                          LegController::Ptr leg_controller,
+                                         const std::string &ns,
                                          const std::string &leg_name)
         : node_(node),
           leg_controller_(leg_controller),
+          ns_(ns),
           leg_name_(leg_name)
     {
         leg_command_sub_ = node_->create_subscription<starq::msg::LegCommand>(
-            "/starq/leg/" + leg_name_ + "/cmd", getFastQoS(),
+            "/" + ns_ + "/leg/" + leg_name_ + "/cmd", getFastQoS(),
             std::bind(&LegControllerROS2::legCommandCallback, this, std::placeholders::_1));
 
         leg_state_pub_ = node_->create_publisher<starq::msg::LegState>(
-            "/starq/leg/" + leg_name_ + "/state", getFastQoS());
+            "/" + ns_ + "/leg/" + leg_name_ + "/state", getFastQoS());
 
         publish_state_timer_ = node_->create_wall_timer(
             std::chrono::milliseconds(1000 / LEG_CONTROLLER_STATE_PUBLISH_RATE),

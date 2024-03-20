@@ -5,12 +5,13 @@ namespace starq::ros2
 
     ODriveControllerROS2::ODriveControllerROS2(rclcpp::Node::SharedPtr node,
                                                starq::odrive::ODriveController::Ptr odrive_controller,
+                                               const std::string &ns,
                                                const std::string &motor_name)
-        : MotorControllerROS2(node, odrive_controller, motor_name),
+        : MotorControllerROS2(node, odrive_controller, ns, motor_name),
           odrive_controller_(odrive_controller)
     {
         odrive_info_pub_ = node_->create_publisher<starq::msg::ODriveInfo>(
-            "/starq/motor/" + motor_name_ + "/odrive_info", getFastQoS());
+            "/" + ns_ + "/motor/" + motor_name_ + "/odrive_info", getFastQoS());
 
         publish_odrive_info_timer_ = node_->create_wall_timer(
             std::chrono::milliseconds(1000 / ODRIVE_CONTROLLER_INFO_PUBLISH_RATE),

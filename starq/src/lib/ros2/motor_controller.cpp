@@ -5,17 +5,19 @@ namespace starq::ros2
 
     MotorControllerROS2::MotorControllerROS2(rclcpp::Node::SharedPtr node,
                                              MotorController::Ptr motor_controller,
+                                             const std::string &ns,
                                              const std::string &motor_name)
         : node_(node),
           motor_controller_(motor_controller),
+          ns_(ns),
           motor_name_(motor_name)
     {
         motor_command_sub_ = node_->create_subscription<starq::msg::MotorCommand>(
-            "/starq/motor/" + motor_name_ + "/cmd", getFastQoS(),
+            "/" + ns_ + "/motor/" + motor_name_ + "/cmd", getFastQoS(),
             std::bind(&MotorControllerROS2::motorCommandCallback, this, std::placeholders::_1));
 
         motor_state_pub_ = node_->create_publisher<starq::msg::MotorState>(
-            "/starq/motor/" + motor_name_ + "/state", getFastQoS());
+            "/" + ns_ + "/motor/" + motor_name_ + "/state", getFastQoS());
 
         publish_state_timer_ = node_->create_wall_timer(
             std::chrono::milliseconds(1000 / MOTOR_CONTROLLER_STATE_PUBLISH_RATE),
@@ -33,26 +35,26 @@ namespace starq::ros2
 
         switch (msg->control_mode)
         {
-            case starq::ControlMode::POSITION:
-                if (!motor_controller_->setPosition(input_position, input_velocity, input_torque))
-                {
-                    RCLCPP_ERROR(node_->get_logger(), "Failed to set position for motor %s", motor_name_.c_str());
-                }
-                break;
-            case starq::ControlMode::VELOCITY:
-                if (!motor_controller_->setVelocity(input_velocity, input_torque))
-                {
-                    RCLCPP_ERROR(node_->get_logger(), "Failed to set velocity for motor %s", motor_name_.c_str());
-                }
-                break;
-            case starq::ControlMode::TORQUE:
-                if (!motor_controller_->setTorque(input_torque))
-                {
-                    RCLCPP_ERROR(node_->get_logger(), "Failed to set torque for motor %s", motor_name_.c_str());
-                }
-                break;
-            default:
-                break;
+        case starq::ControlMode::POSITION:
+            if (!motor_controller_->setPosition(input_position, input_velocity, input_torque))
+            {
+                RCLCPP_ERROR(node_->get_logger(), "Failed to set position for motor %s", motor_name_.c_str());
+            }
+            break;
+        case starq::ControlMode::VELOCITY:
+            if (!motor_controller_->setVelocity(input_velocity, input_torque))
+            {
+                RCLCPP_ERROR(node_->get_logger(), "Failed to set velocity for motor %s", motor_name_.c_str());
+            }
+            break;
+        case starq::ControlMode::TORQUE:
+            if (!motor_controller_->setTorque(input_torque))
+            {
+                RCLCPP_ERROR(node_->get_logger(), "Failed to set torque for motor %s", motor_name_.c_str());
+            }
+            break;
+        default:
+            break;
         }
     }
 

@@ -1,14 +1,14 @@
-#include "starq/dynamics/starq_fivebar2d.hpp"
+#include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
 #include <cmath>
 
-namespace starq::dynamics
+namespace starq
 {
 
-    STARQ_FiveBar2D::STARQ_FiveBar2D(Float L1, Float L2)
+    STARQFiveBar2DLegDynamics::STARQFiveBar2DLegDynamics(Float L1, Float L2)
         : L1_(L1), L2_(L2) {}
 
-    bool STARQ_FiveBar2D::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
+    bool STARQFiveBar2DLegDynamics::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
     {
         const Float thetaA = joint_angles(0);
         const Float thetaB = joint_angles(1);
@@ -28,7 +28,7 @@ namespace starq::dynamics
         return true;
     }
 
-    bool STARQ_FiveBar2D::getInverseKinematics(const Vector3 &foot_position, Vector3 &joint_angles)
+    bool STARQFiveBar2DLegDynamics::getInverseKinematics(const Vector3 &foot_position, Vector3 &joint_angles)
     {
 
         const Float X = foot_position(0);
@@ -47,7 +47,7 @@ namespace starq::dynamics
         return true;
     }
 
-    bool STARQ_FiveBar2D::getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian)
+    bool STARQFiveBar2DLegDynamics::getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian)
     {
 
         const Float thetaA = joint_angles(0);

@@ -55,8 +55,9 @@ add_library(starqlib SHARED
   src/lib/can/can_socket.cpp
   src/lib/odrive/odrive_socket.cpp
   src/lib/odrive/odrive_controller.cpp
-  src/lib/dynamics/starq_fivebar2d.cpp
-  src/lib/dynamics/unitree_rrr.cpp
+  src/lib/starq/starq_fivebar2d_leg_dynamics.cpp
+  src/lib/unitree/unitree_a1_leg_dynamics.cpp
+  src/lib/unitree/unitree_a1_robot_dynamics.cpp
   src/lib/leg_controller.cpp
   src/lib/leg_command_publisher.cpp
   src/lib/trajectory_file_reader.cpp 
@@ -70,7 +71,6 @@ add_library(starqlib SHARED
   src/lib/mpc/mpc_problem.cpp
   src/lib/mpc/qp_problem.cpp
   src/lib/mpc/mpc_controller.cpp
-  src/lib/dynamics/unitree_a1_robot.cpp
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/motor_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/odrive_controller.cpp>
   $<$<BOOL:${WITH_ROS2}>:src/lib/ros2/leg_controller.cpp>
@@ -78,7 +78,7 @@ add_library(starqlib SHARED
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_controller.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_localization.cpp>
   $<$<BOOL:${WITH_MUJOCO}>:src/lib/mujoco/mujoco_robot.cpp>
-  $<$<BOOL:${WITH_MUJOCO}>:src/lib/robots/unitree_a1_mujoco.cpp>
+  $<$<BOOL:${WITH_MUJOCO}>:src/lib/unitree/unitree_a1_mujoco_robot.cpp>
   $<$<BOOL:${WITH_OSQP}>:src/lib/osqp/osqp.cpp>
 )
 

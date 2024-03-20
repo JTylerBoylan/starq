@@ -21,9 +21,11 @@ namespace starq::ros2
         /// @brief Create a new ODriveControllerROS2 object
         /// @param node ROS2 node
         /// @param odrive_controller ODriveController object
+        /// @param ns Namespace for the motor
         /// @param motor_name Name of the motor
         ODriveControllerROS2(rclcpp::Node::SharedPtr node,
                              starq::odrive::ODriveController::Ptr odrive_controller,
+                             const std::string &ns,
                              const std::string &motor_name);
 
     private:

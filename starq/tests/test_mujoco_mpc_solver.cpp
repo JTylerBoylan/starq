@@ -1,16 +1,17 @@
 #include <stdio.h>
 
-#include "starq/robots/unitree_a1_mujoco.hpp"
+#include "starq/unitree/unitree_a1_mujoco_robot.hpp"
 #include "starq/osqp/osqp.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
 using namespace starq::osqp;
+using namespace starq::unitree;
 
 int main()
 {
 
-    auto robot = std::make_shared<robots::UnitreeA1MuJoCoRobot>();
+    auto robot = std::make_shared<UnitreeA1MuJoCoRobot>();
     printf("UnitreeA1MuJoCoRobot created\n");
 
     Gait::Ptr gait = std::make_shared<Gait>();

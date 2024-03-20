@@ -1,9 +1,10 @@
 #include <stdio.h>
 
-#include "starq/robots/unitree_a1_mujoco.hpp"
+#include "starq/unitree/unitree_a1_mujoco_robot.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
+using namespace starq::unitree;
 
 int main()
 {
@@ -19,7 +20,7 @@ int main()
     stand_gait->setFrequency(10.0);
     printf("Stand Gait loaded\n");
 
-    robots::UnitreeA1MuJoCoRobot robot;
+    UnitreeA1MuJoCoRobot robot;
     printf("UnitreeA1MuJoCoRobot created\n");
 
     robot.startSimulation();

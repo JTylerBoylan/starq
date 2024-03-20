@@ -1,8 +1,8 @@
-#include "starq/robots/unitree_a1_mujoco.hpp"
+#include "starq/unitree/unitree_a1_mujoco_robot.hpp"
 
 #include <iostream>
 
-namespace starq::robots
+namespace starq::unitree
 {
 
     UnitreeA1MuJoCoRobot::UnitreeA1MuJoCoRobot()
@@ -36,12 +36,12 @@ namespace starq::robots
 
     void UnitreeA1MuJoCoRobot::setupLegs()
     {
-        unitree_RRR_L_ = std::make_shared<Unitree_RRR>(UNITREE_A1_LENGTH_D,
-                                                       UNITREE_A1_LENGTH_LT,
-                                                       UNITREE_A1_LENGTH_LC);
-        unitree_RRR_R_ = std::make_shared<Unitree_RRR>(UNITREE_A1_LENGTH_D,
-                                                       UNITREE_A1_LENGTH_LT,
-                                                       UNITREE_A1_LENGTH_LC);
+        unitree_RRR_L_ = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
+                                                                UNITREE_A1_LENGTH_LT,
+                                                                UNITREE_A1_LENGTH_LC);
+        unitree_RRR_R_ = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
+                                                                UNITREE_A1_LENGTH_LT,
+                                                                UNITREE_A1_LENGTH_LC);
         unitree_RRR_R_->flipYAxis();
 
         auto leg_FR = std::make_shared<LegController>(unitree_RRR_R_,
@@ -58,14 +58,14 @@ namespace starq::robots
 
     void UnitreeA1MuJoCoRobot::setupRobotDynamics()
     {
-        robot_dynamics_ = std::make_shared<dynamics::UnitreeA1RobotDynamics>();
+        robot_dynamics_ = std::make_shared<UnitreeA1RobotDynamics>();
     }
 
     void UnitreeA1MuJoCoRobot::setupMPCSolver()
     {
         osqp_ = std::make_shared<osqp::OSQP>();
         mpc_solver_ = osqp_;
-        
+
         osqp_->getSettings()->verbose = false;
         osqp_->getSettings()->max_iter = 2000;
         osqp_->getSettings()->polishing = true;

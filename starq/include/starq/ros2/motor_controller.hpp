@@ -25,14 +25,17 @@ namespace starq::ros2
         /// @brief Create a new MotorControllerROS2 object
         /// @param node ROS2 node
         /// @param motor_controller MotorController object
+        /// @param ns Namespace for the motor
         /// @param motor_name Name of the motor
         MotorControllerROS2(rclcpp::Node::SharedPtr node,
                             MotorController::Ptr motor_controller,
+                            const std::string &ns,
                             const std::string &motor_name);
 
     protected:
         rclcpp::Node::SharedPtr node_;
         MotorController::Ptr motor_controller_;
+        std::string ns_;
         std::string motor_name_;
 
     private:
