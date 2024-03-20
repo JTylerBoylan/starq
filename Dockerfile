@@ -34,6 +34,7 @@ RUN mkdir ${OSQP_PATH}/build && \
 # Switch to the new non-root user
 USER nvidia
 
+RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # Set the default command to execute when creating a new container
