@@ -26,6 +26,10 @@ namespace starq::mpc
         /// @brief Destroy the MPC controller
         ~MPCController();
 
+        /// @brief Get the frequency of the MPC controller.
+        /// @return Frequency.
+        Float getFrequency();
+
         /// @brief Set the stop on fail flag.
         /// @param stop_on_fail Stop on fail flag.
         void setStopOnFail(const bool stop_on_fail) { stop_on_fail_ = stop_on_fail; }
@@ -67,6 +71,9 @@ namespace starq::mpc
         float step_height_;
         size_t swing_resolution_;
         float swing_duration_factor_;
+
+        std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+        size_t run_count_;
 
         FootForceState last_force_state_;
     };

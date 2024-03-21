@@ -37,9 +37,9 @@ namespace starq::slam
         inline Matrix3 toRotationMatrix(const Vector3 &orientation)
         {
             Matrix3 rotation;
-            rotation = Eigen::AngleAxis<Float>(orientation.x(), Vector3::UnitX()) *
+            rotation = Eigen::AngleAxis<Float>(orientation.z(), Vector3::UnitZ()) *
                        Eigen::AngleAxis<Float>(orientation.y(), Vector3::UnitY()) *
-                       Eigen::AngleAxis<Float>(orientation.z(), Vector3::UnitZ());
+                       Eigen::AngleAxis<Float>(orientation.x(), Vector3::UnitX());
             return rotation;
         }
 

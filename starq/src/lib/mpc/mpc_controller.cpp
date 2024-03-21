@@ -36,8 +36,18 @@ namespace starq::mpc
             stop();
     }
 
+    Float MPCController::getFrequency()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        const auto end_time = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<Float> duration = end_time - start_time_;
+        return static_cast<Float>(run_count_) / duration.count();
+    }
+
     void MPCController::run()
     {
+        start_time_ = std::chrono::high_resolution_clock::now();
+        run_count_ = 0;
         while (isRunning())
         {
             std::this_thread::sleep_for(sleep_duration_us_);
@@ -78,6 +88,7 @@ namespace starq::mpc
             }
 
             last_force_state_ = force_state;
+            run_count_++;
         }
 
         stop();

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <thread>
 
 #include "starq/ros2/ros2_joystick.hpp"
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
@@ -25,21 +26,30 @@ int main(int argc, char **argv)
     {
         robot->setFootPosition(id, robot->getRobotDynamics()->getDefaultFootLocations()[id]);
     }
-    printf("Holding foot position for 5 seconds...\n");
+    RCLCPP_INFO(node->get_logger(), "Holding foot position for 5 seconds...\n");
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    printf("Starting MPC...\n");
+    RCLCPP_INFO(node->get_logger(), "Starting MPC");
     if (!robot->startMPC())
     {
-        printf("Failed to start MPC.\n");
+        RCLCPP_INFO(node->get_logger(), "Failed to start MPC.\n");
         return 1;
     }
 
-    printf("Starting joystick...\n");
-    rclcpp::spin_until_future_complete(node, sim);
-    rclcpp::shutdown();
+    RCLCPP_INFO(node->get_logger(), "Starting spin thread");
+    std::thread spin_thread([&]()
+                            { rclcpp::spin_until_future_complete(node, sim); });
 
+    while (robot->isSimulationOpen())
+    {
+        Float freq = robot->getMPCController()->getFrequency();
+        RCLCPP_INFO(node->get_logger(), "MPC frequency: %f", freq);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    // Wait for the spin thread to finish
+    spin_thread.join();
     robot->stopMPC();
-
+    rclcpp::shutdown();
     return 0;
 }

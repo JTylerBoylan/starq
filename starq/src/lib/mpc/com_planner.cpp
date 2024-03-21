@@ -24,12 +24,8 @@ namespace starq::mpc
         ref_traj[0].position = localization_->getCurrentPosition();
         ref_traj[0].orientation = localization_->getCurrentOrientation();
         ref_traj[0].linear_velocity = localization_->getCurrentLinearVelocity();
-        ref_traj[0].angular_velocity = localization_->getCurrentAngularVelocity();
-
-        // std::cout << "ref_traj[" << 0 << "].position: " << ref_traj[0].position.transpose() << std::endl;
-        // std::cout << "ref_traj[" << 0 << "].orientation: " << ref_traj[0].orientation.transpose() << std::endl;
-        // std::cout << "ref_traj[" << 0 << "].linear_velocity: " << ref_traj[0].linear_velocity.transpose() << std::endl;
-        // std::cout << "ref_traj[" << 0 << "].angular_velocity: " << ref_traj[0].angular_velocity.transpose() << std::endl;
+        ref_traj[0].angular_velocity = getWorldAngularVelocity(ref_traj[0].orientation,
+                                                               localization_->getCurrentAngularVelocity());
 
         const Float dT = dt.count() / 1000.0;
         for (size_t i = 1; i < N; i++)
@@ -55,7 +51,7 @@ namespace starq::mpc
                         linear_velocity[j] = delta_p[j] / dT;
                     }
                 }
-                
+
                 Vector3 delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
                 for (int j = 0; j < 3; j++)
                 {
@@ -121,14 +117,18 @@ namespace starq::mpc
             ref_traj[i].position = ref_traj[i - 1].position + linear_velocity * dT;
             ref_traj[i].orientation = ref_traj[i - 1].orientation + angular_velocity * dT;
             ref_traj[i].linear_velocity = linear_velocity;
-            ref_traj[i].angular_velocity = angular_velocity;
-
-            // std::cout << "ref_traj[" << i << "].position: " << ref_traj[i].position.transpose() << std::endl;
-            // std::cout << "ref_traj[" << i << "].orientation: " << ref_traj[i].orientation.transpose() << std::endl;
-            // std::cout << "ref_traj[" << i << "].linear_velocity: " << ref_traj[i].linear_velocity.transpose() << std::endl;
-            // std::cout << "ref_traj[" << i << "].angular_velocity: " << ref_traj[i].angular_velocity.transpose() << std::endl;
+            ref_traj[i].angular_velocity = getWorldAngularVelocity(ref_traj[i].orientation, angular_velocity);
         }
         return true;
+    }
+
+    Vector3 CenterOfMassPlanner::getWorldAngularVelocity(const Vector3 &orientation, const Vector3 &angular_velocity) const
+    {
+        Matrix3 R;
+        R << cos(orientation.y()) * cos(orientation.z()), -sin(orientation.z()), 0,
+            cos(orientation.y()) * sin(orientation.z()), cos(orientation.z()), 0,
+            0, 0, 1;
+        return R * angular_velocity;
     }
 
 }

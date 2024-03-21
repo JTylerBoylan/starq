@@ -138,8 +138,8 @@ namespace starq::mpc
         A_.resize(Nn - 1);
         for (size_t k = 0; k < Nn - 1; k++)
         {
-            const Vector3 orientation = config_->getReferenceState(k).orientation;
-            const Matrix3 R = config_->getLocalization()->toRotationMatrix(orientation);
+            const Float yaw = config_->getReferenceState(k).orientation.z();
+            const Matrix3 R = Eigen::AngleAxis<Float>(yaw, Vector3::UnitZ()).toRotationMatrix();
             const Vector3 g = config_->getGravity();
 
             MatrixX A = MatrixX::Zero(13, 13);
@@ -158,8 +158,8 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn - 1; k++)
         {
             const Float inv_m = 1.0 / config_->getMass();
-            const Vector3 orientation = config_->getReferenceState(k).orientation;
-            const Matrix3 R = config_->getLocalization()->toRotationMatrix(orientation);
+            const Float yaw = config_->getReferenceState(k).orientation.z();
+            const Matrix3 R = Eigen::AngleAxis<Float>(yaw, Vector3::UnitZ()).toRotationMatrix();
             const Matrix3 I = R * config_->getInertia() * R.transpose();
             const Matrix3 inv_I = I.inverse();
 

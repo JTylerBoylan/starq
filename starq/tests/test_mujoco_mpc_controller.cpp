@@ -21,13 +21,13 @@ int main(void)
     walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
     //walk_gait->setControlMode(GaitControlMode::GAIT_POSITION_CONTROL);
     //walk_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, M_PI));
-    walk_gait->setVelocity(Vector3(-1.0, 0.0, 0), Vector3(0, 0, 0));
+    walk_gait->setVelocity(Vector3(0.5, 0.0, 0), Vector3(0, 0, 0));
     walk_gait->setFrequency(3.0);
     printf("Walk Gait loaded\n");
 
     Gait::Ptr stand_gait = std::make_shared<Gait>();
     stand_gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
-    stand_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, M_PI));
+    stand_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
     stand_gait->setFrequency(10.0);
     printf("Stand Gait loaded\n");
 

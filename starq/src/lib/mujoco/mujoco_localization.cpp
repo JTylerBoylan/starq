@@ -1,15 +1,15 @@
 #include "starq/mujoco/mujoco_localization.hpp"
 
+#include <iostream>
+
 namespace starq::mujoco
 {
 
     MuJoCoLocalization::MuJoCoLocalization(MuJoCo::Ptr mujoco)
     {
+        time_ = 0;
         position_ = Vector3::Zero();
         orientation_ = Vector3::Zero();
-        last_position_ = Vector3::Zero();
-        last_orientation_ = Vector3::Zero();
-        last_time_ = 0;
 
         mujoco->addMotorControlFunction(std::bind(&MuJoCoLocalization::localizationCallback, this,
                                                   std::placeholders::_1, std::placeholders::_2));
@@ -17,7 +17,7 @@ namespace starq::mujoco
 
     milliseconds MuJoCoLocalization::getCurrentTime()
     {
-        return milliseconds(time_t(last_time_ * 1E3));
+        return milliseconds(time_t(time_ * 1E3));
     }
 
     Vector3 MuJoCoLocalization::getCurrentPosition()
@@ -44,20 +44,14 @@ namespace starq::mujoco
     {
         (void)model; // Unused
 
-        last_position_ = position_;
-        last_orientation_ = orientation_;
-
-        auto now = data->time;
-        auto elapsed_time = now - last_time_;
-        last_time_ = now;
+        time_ = data->time;
 
         position_ = Vector3(data->qpos[0], data->qpos[1], data->qpos[2]);
-
         Eigen::Quaternion<Float> q(data->qpos[3], data->qpos[4], data->qpos[5], data->qpos[6]);
         quat2eul(q, orientation_);
 
-        linear_velocity_ = (position_ - last_position_) / elapsed_time;
-        angular_velocity_ = (orientation_ - last_orientation_) / elapsed_time;
+        linear_velocity_ = Vector3(data->qvel[0], data->qvel[1], data->qvel[2]);
+        angular_velocity_ = Vector3(data->qvel[3], data->qvel[4], data->qvel[5]);
     }
 
     void MuJoCoLocalization::quat2eul(const Eigen::Quaternion<Float> &q, Vector3 &eul)

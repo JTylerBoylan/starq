@@ -43,14 +43,11 @@ namespace starq::mujoco
         /// @brief Convert quaternion to euler angles
         void quat2eul(const Eigen::Quaternion<Float> &q, Vector3 &eul);
 
+        mjtNum time_;
         Vector3 position_;
         Vector3 orientation_;
         Vector3 linear_velocity_;
         Vector3 angular_velocity_;
-
-        Vector3 last_position_;
-        Vector3 last_orientation_;
-        mjtNum last_time_;
     };
 
 }
