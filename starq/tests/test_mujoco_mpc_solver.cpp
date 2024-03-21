@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
 #include "starq/osqp/osqp.hpp"
@@ -65,9 +66,9 @@ int main()
         float offset_y = 0; // 0.025 * std::sin(2 * 1E-3 * global_time.count());
         float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
 
-        float offset_roll = 0.1;    // 0.1 * std::sin(2 * 1E-3 * global_time.count());
-        float offset_pitch = 0.1; // 0.2 * std::cos(2 * 1E-3 * global_time.count());
-        float offset_yaw = 0.1;     // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_roll = 0.0;    // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_pitch = 0.0; // 0.2 * std::cos(2 * 1E-3 * global_time.count());
+        float offset_yaw = M_PI;     // 0.1 * std::sin(2 * 1E-3 * global_time.count());
 
         gait->setPose(Vector3(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z),
                       Vector3(offset_roll, offset_pitch, offset_yaw));

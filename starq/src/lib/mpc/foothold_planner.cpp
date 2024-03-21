@@ -63,10 +63,10 @@ namespace starq::mpc
                 else if (curr_stance && !last_stance)
                 {
                     const Vector3 hip_position_i = position_i + rotation_i * hip_locations[j];
-                    const Vector3 body_velocity = rotation_i * ref_traj[i].linear_velocity;
+                    const Vector3 body_velocity_i = ref_traj[i].linear_velocity;
                     const milliseconds stance_duration = gait_seq[i]->getStanceDuration();
 
-                    Vector3 leg_position_world = hip_position_i + 0.5f * body_velocity * stance_duration.count() * 1E-3f;
+                    Vector3 leg_position_world = hip_position_i + 0.5f * body_velocity_i * stance_duration.count() * 1E-3f;
                     leg_position_world.z() = 0.0;
 
                     foothold_traj[i][j] = leg_position_world;

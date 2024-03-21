@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
     auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
 
-    robot->startSimulation();
+    auto &sim = robot->startSimulation();
 
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
@@ -36,7 +36,10 @@ int main(int argc, char **argv)
     }
 
     printf("Starting joystick...\n");
-    rclcpp::spin(node);
+    rclcpp::spin_until_future_complete(node, sim);
+    rclcpp::shutdown();
+
+    robot->stopMPC();
 
     return 0;
 }

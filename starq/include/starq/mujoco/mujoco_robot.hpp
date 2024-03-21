@@ -25,7 +25,7 @@ namespace starq::mujoco
         void setSceneFile(const std::string &scene_file);
 
         /// @brief Start the simulation
-        void startSimulation();
+        std::future<void> &startSimulation();
 
         /// @brief Wait for the simulation to finish
         void waitForSimulation();
@@ -35,7 +35,6 @@ namespace starq::mujoco
         bool isSimulationOpen();
 
     protected:
-
         /// @brief Setup the localization
         void setupLocalization() override;
 

@@ -29,6 +29,10 @@ namespace starq::osqp
         /// @return If the problem was solved successfully
         bool solve() override;
 
+        /// @brief Get the QP problem
+        /// @return The QP problem
+        starq::mpc::QPProblem::Ptr getQPProblem() const;
+
         /// @brief Get the solution
         /// @return The solution
         starq::mpc::MPCSolution::Ptr getSolution() const override;

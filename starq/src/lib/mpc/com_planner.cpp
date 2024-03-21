@@ -55,7 +55,19 @@ namespace starq::mpc
                         linear_velocity[j] = delta_p[j] / dT;
                     }
                 }
-                const Vector3 delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
+                
+                Vector3 delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
+                for (int j = 0; j < 3; j++)
+                {
+                    if (delta_o[j] > M_PI)
+                    {
+                        delta_o[j] -= 2 * M_PI;
+                    }
+                    else if (delta_o[j] < -M_PI)
+                    {
+                        delta_o[j] += 2 * M_PI;
+                    }
+                }
                 const Vector3 max_w = gait_seq[i - 1]->getMaxAngularVelocity();
                 const Vector3 max_delta_o = max_w * dT;
                 for (int j = 0; j < 3; j++)
@@ -73,10 +85,8 @@ namespace starq::mpc
             }
             case GAIT_VELOCITY_CONTROL:
             {
-                Matrix3 rotation;
-                rotation = Eigen::AngleAxis<Float>(ref_traj[i - 1].orientation.z(), Vector3::UnitZ());
-                linear_velocity = rotation * gait_seq[i - 1]->getLinearVelocity();
-                angular_velocity = rotation * gait_seq[i - 1]->getAngularVelocity();
+                linear_velocity = gait_seq[i - 1]->getLinearVelocity();
+                angular_velocity = gait_seq[i - 1]->getAngularVelocity();
 
                 const Float delta_z = robot_dynamics_->getStandingHeight() - ref_traj[i - 1].position.z();
                 const Float max_vz = gait_seq[i - 1]->getMaxLinearVelocity().z();

@@ -65,7 +65,7 @@
 
   <worldbody>
     <light name="spotlight" mode="targetbodycom" target="trunk" pos="0 -1 2"/>
-    <body name="trunk" pos="0 0 0.43" childclass="a1">
+    <body name="trunk" pos="0 0 0.43" quat="0.0 0.0 0.0 1.0" childclass="a1">
       <freejoint/>
       <inertial mass="4.713" pos="0 0.0041 -0.0005"
         fullinertia="0.0158533 0.0377999 0.0456542 -3.66e-05 -6.11e-05 -2.75e-05"/>

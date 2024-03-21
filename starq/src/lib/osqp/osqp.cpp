@@ -84,6 +84,11 @@ namespace starq::osqp
         return true;
     }
 
+    starq::mpc::QPProblem::Ptr OSQP::getQPProblem() const
+    {
+        return qp_problem_;
+    }
+
     starq::mpc::MPCSolution::Ptr OSQP::getSolution() const
     {
         return solution_;

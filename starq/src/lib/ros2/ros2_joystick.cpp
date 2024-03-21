@@ -48,7 +48,8 @@ namespace starq::ros2
 
         const int8_t left_axis_x = msg->axes[1] * 127;
         const int8_t left_axis_y = msg->axes[0] * 127;
-        const int8_t right_axis_x = msg->axes[2] * 127;
+        // const int8_t right_axis_x = msg->axes[2] * 127; // logitech
+        const int8_t right_axis_x = msg->axes[3] * 127; // xbox
 
         if (current_gait_ == walk_gait_)
         {
