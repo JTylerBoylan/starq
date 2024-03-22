@@ -33,12 +33,12 @@ namespace starq::mpc
 
             Vector3 linear_velocity;
             Vector3 angular_velocity;
-            switch (gait_seq[i - 1]->getControlMode())
+            switch (gait_seq[i]->getControlMode())
             {
             case GAIT_POSITION_CONTROL:
             {
                 const Vector3 delta_p = gait_seq[i]->getPosition() - ref_traj[i - 1].position;
-                const Vector3 max_v = gait_seq[i - 1]->getMaxLinearVelocity();
+                const Vector3 max_v = gait_seq[i]->getMaxLinearVelocity();
                 const Vector3 max_delta_p = max_v * dT;
                 for (int j = 0; j < 3; j++)
                 {
@@ -64,7 +64,7 @@ namespace starq::mpc
                         delta_o[j] += 2 * M_PI;
                     }
                 }
-                const Vector3 max_w = gait_seq[i - 1]->getMaxAngularVelocity();
+                const Vector3 max_w = gait_seq[i]->getMaxAngularVelocity();
                 const Vector3 max_delta_o = max_w * dT;
                 for (int j = 0; j < 3; j++)
                 {
@@ -81,11 +81,11 @@ namespace starq::mpc
             }
             case GAIT_VELOCITY_CONTROL:
             {
-                linear_velocity = gait_seq[i - 1]->getLinearVelocity();
-                angular_velocity = gait_seq[i - 1]->getAngularVelocity();
+                linear_velocity = gait_seq[i]->getLinearVelocity();
+                angular_velocity = gait_seq[i]->getAngularVelocity();
 
                 const Float delta_z = robot_dynamics_->getStandingHeight() - ref_traj[i - 1].position.z();
-                const Float max_vz = gait_seq[i - 1]->getMaxLinearVelocity().z();
+                const Float max_vz = gait_seq[i]->getMaxLinearVelocity().z();
                 const Float max_delta_z = max_vz * dT;
                 if (std::abs(delta_z) > max_delta_z)
                 {
@@ -97,7 +97,7 @@ namespace starq::mpc
                 }
 
                 const Eigen::Vector2<Float> delta_o = -ref_traj[i - 1].orientation.head(2);
-                const Eigen::Vector2<Float> max_w = gait_seq[i - 1]->getMaxAngularVelocity().head(2);
+                const Eigen::Vector2<Float> max_w = gait_seq[i]->getMaxAngularVelocity().head(2);
                 const Eigen::Vector2<Float> max_delta_o = max_w * dT;
                 for (int j = 0; j < 2; j++)
                 {
@@ -125,8 +125,8 @@ namespace starq::mpc
     Vector3 CenterOfMassPlanner::getWorldAngularVelocity(const Vector3 &orientation, const Vector3 &angular_velocity) const
     {
         Matrix3 R;
-        R << cos(orientation.y()) * cos(orientation.z()), -sin(orientation.z()), 0,
-            cos(orientation.y()) * sin(orientation.z()), cos(orientation.z()), 0,
+        R << cos(orientation.z()), -sin(orientation.z()), 0,
+            sin(orientation.z()), cos(orientation.z()), 0,
             0, 0, 1;
         return R * angular_velocity;
     }

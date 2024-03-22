@@ -133,20 +133,19 @@ namespace starq::mpc
         const Vector3 w_vel_body = w_state_body.linear_velocity;
 
         const Vector3 w_pos_N_hip = w_pos_N_body + w_R_b * b_pos_body_hip;
-        Vector3 w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_body * stance_duration.count() * 1E-3f;
+        const Vector3 w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_body * stance_duration.count() * 1E-3f;
 
         const Vector3 w_pos_hip_foot = w_pos_N_foot - w_pos_N_hip;
         const Vector3 b_pos_hip_foot_f = w_R_b.transpose() * w_pos_hip_foot;
 
-        const Vector3 start_position = b_pos_hip_foot_0.head(3);
+        const Vector3 start_position = b_pos_hip_foot_0;
         const Vector3 end_position = b_pos_hip_foot_f + robot_dynamics_->getDefaultFootLocations()[leg_id];
 
         const Vector3 delta = end_position - start_position;
         const float radius = 0.5f * delta.norm();
 
         const float angle = std::atan2(delta.y(), delta.x());
-        Matrix3 rotation;
-        rotation = Eigen::AngleAxis<Float>(angle, Vector3::UnitZ());
+        const Matrix3 rotation = Eigen::AngleAxis<Float>(angle, Vector3::UnitZ()).toRotationMatrix();
 
         std::vector<LegCommand::Ptr> trajectory;
         for (size_t i = 0; i <= swing_resolution_; i++)

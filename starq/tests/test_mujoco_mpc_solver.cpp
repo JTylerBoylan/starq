@@ -33,7 +33,7 @@ int main()
     MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
                                                                           robot->getRobotDynamics(),
                                                                           robot->getLocalization());
-    mpc_config->setTimeStep(milliseconds(50));
+    mpc_config->setTimeStep(milliseconds(20));
     mpc_config->setWindowSize(21);
     mpc_config->setNextGait(gait);
     printf("MPCConfiguration created\n");
@@ -66,9 +66,9 @@ int main()
         float offset_y = 0; // 0.025 * std::sin(2 * 1E-3 * global_time.count());
         float offset_z = 0; // 0.05 * std::sin(2 * 1E-3 * global_time.count());
 
-        float offset_roll = 0.0;    // 0.1 * std::sin(2 * 1E-3 * global_time.count());
-        float offset_pitch = 0.0; // 0.2 * std::cos(2 * 1E-3 * global_time.count());
-        float offset_yaw = M_PI;     // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_roll = 0.0;     // 0.1 * std::sin(2 * 1E-3 * global_time.count());
+        float offset_pitch = 0.0;    // 0.2 * std::cos(2 * 1E-3 * global_time.count());
+        float offset_yaw = 0.0; // 0.1 * std::sin(2 * 1E-3 * global_time.count());
 
         gait->setPose(Vector3(offset_x, offset_y, UNITREE_A1_STAND_HEIGHT + offset_z),
                       Vector3(offset_roll, offset_pitch, offset_yaw));

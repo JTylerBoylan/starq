@@ -44,7 +44,7 @@ namespace starq::mujoco
         while (!glfwWindowShouldClose(window_))
         {
             const mjtNum simstart = data_->time;
-            while (data_->time - simstart < 1.0 / 30.0)
+            while (data_->time - simstart < 1.0 / 20.0)
             {
                 mj_step(model_, data_);
             }
