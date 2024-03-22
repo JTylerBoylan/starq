@@ -46,6 +46,10 @@ namespace starq::mujoco
         /// @param control_function Motor control function
         void addMotorControlFunction(const MuJoCoControlFunction &control_function);
 
+        /// @brief Set the simulation frame rate
+        /// @param frame_rate Frame rate
+        void setFrameRate(double frame_rate) { frame_rate_ = frame_rate; }
+
         /// @brief Get the MuJoCo model
         /// @return The MuJoCo model
         mjModel *getModel() const { return model_; }
@@ -75,6 +79,7 @@ namespace starq::mujoco
 
         bool is_open_ = false;
         GLFWwindow *window_ = nullptr;
+        double frame_rate_ = 60.0;
 
         mjModel *model_ = nullptr;
         mjData *data_ = nullptr;

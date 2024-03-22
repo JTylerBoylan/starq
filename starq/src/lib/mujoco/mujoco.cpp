@@ -43,8 +43,8 @@ namespace starq::mujoco
         is_open_ = true;
         while (!glfwWindowShouldClose(window_))
         {
-            const mjtNum simstart = data_->time;
-            while (data_->time - simstart < 1.0 / 60.0)
+            const mjtNum simend = data_->time + 1.0 / frame_rate_;
+            while (data_->time < simend)
             {
                 mj_step(model_, data_);
             }

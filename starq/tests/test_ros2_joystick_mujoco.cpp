@@ -20,6 +20,8 @@ int main(int argc, char **argv)
 
     auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
 
+    MuJoCo::getInstance()->setFrameRate(30.0);
+
     auto &sim = robot->startSimulation();
 
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)

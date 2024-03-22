@@ -84,8 +84,24 @@ namespace starq::mpc
                 linear_velocity = gait_seq[i]->getLinearVelocity();
                 angular_velocity = gait_seq[i]->getAngularVelocity();
 
+                const Vector3 max_linear_velocity = gait_seq[i]->getMaxLinearVelocity();
+                const Vector3 max_angular_velocity = gait_seq[i]->getMaxAngularVelocity();
+
+                for (int j = 0; j < 3; j++)
+                {
+                    if (std::abs(linear_velocity[j]) > max_linear_velocity[j])
+                    {
+                        linear_velocity[j] = linear_velocity[j] > 0 ? max_linear_velocity[j] : -max_linear_velocity[j];
+                    }
+
+                    if (std::abs(angular_velocity[j]) > max_angular_velocity[j])
+                    {
+                        angular_velocity[j] = angular_velocity[j] > 0 ? max_angular_velocity[j] : -max_angular_velocity[j];
+                    }
+                }
+
                 const Float delta_z = robot_dynamics_->getStandingHeight() - ref_traj[i - 1].position.z();
-                const Float max_vz = gait_seq[i]->getMaxLinearVelocity().z();
+                const Float max_vz = max_linear_velocity.z();
                 const Float max_delta_z = max_vz * dT;
                 if (std::abs(delta_z) > max_delta_z)
                 {
@@ -97,7 +113,7 @@ namespace starq::mpc
                 }
 
                 const Eigen::Vector2<Float> delta_o = -ref_traj[i - 1].orientation.head(2);
-                const Eigen::Vector2<Float> max_w = gait_seq[i]->getMaxAngularVelocity().head(2);
+                const Eigen::Vector2<Float> max_w = max_angular_velocity.head(2);
                 const Eigen::Vector2<Float> max_delta_o = max_w * dT;
                 for (int j = 0; j < 2; j++)
                 {

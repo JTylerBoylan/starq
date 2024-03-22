@@ -45,6 +45,8 @@ int main()
     osqp->getSettings()->warm_starting = true;
     printf("OSQP created\n");
 
+    MuJoCo::getInstance()->setFrameRate(60.0);
+
     robot->startSimulation();
     printf("Simulation started\n");
 
