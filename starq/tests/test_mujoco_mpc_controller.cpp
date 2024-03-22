@@ -21,7 +21,7 @@ int main(void)
     walk_gait->load("/home/nvidia/starq_ws/src/starq/gaits/walk.txt");
     //walk_gait->setControlMode(GaitControlMode::GAIT_POSITION_CONTROL);
     //walk_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, M_PI));
-    walk_gait->setVelocity(Vector3(0.5, 0.0, 0), Vector3(0, 0, 0));
+    walk_gait->setVelocity(Vector3(0.25, 0.0, 0), Vector3(0, 0, 0));
     walk_gait->setFrequency(3.0);
     printf("Walk Gait loaded\n");
 
