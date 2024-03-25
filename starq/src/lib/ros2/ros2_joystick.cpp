@@ -17,6 +17,11 @@ namespace starq::ros2
         stand_gait_->setPose(Vector3(0, 0, stand_height), Vector3(0, 0, 0));
         stand_gait_->setFrequency(10.0);
 
+        crawl_gait_ = std::make_shared<mpc::Gait>();
+        crawl_gait_->load("/home/nvidia/starq_ws/src/starq/gaits/crawl.txt");
+        crawl_gait_->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
+        crawl_gait_->setFrequency(3.0);
+
         current_gait_ = stand_gait_;
         mpc_configuration_->setNextGait(stand_gait_);
 
@@ -43,6 +48,13 @@ namespace starq::ros2
             mpc_configuration_->setNextGait(walk_gait_);
             current_gait_ = walk_gait_;
             RCLCPP_INFO(node_->get_logger(), "Walk Gait selected");
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        else if (msg->buttons[2] == 1)
+        {
+            mpc_configuration_->setNextGait(crawl_gait_);
+            current_gait_ = crawl_gait_;
+            RCLCPP_INFO(node_->get_logger(), "Crawl Gait selected");
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
@@ -81,6 +93,16 @@ namespace starq::ros2
             // printf("Orientation: %f %f %f\n", orientation.x(), orientation.y(), orientation.z());
 
             stand_gait_->setPose(position, orientation);
+        }
+        else if (current_gait_ == crawl_gait_)
+        {
+            const Vector3 max_linear_velocity = crawl_gait_->getMaxLinearVelocity();
+            const Vector3 max_angular_velocity = crawl_gait_->getMaxAngularVelocity();
+
+            const Vector3 linear_velocity = (Vector3(left_axis_x, left_axis_y, 0) / 128.0).cwiseProduct(max_linear_velocity);
+            const Vector3 angular_velocity = (Vector3(0, 0, right_axis_x) / 128.0).cwiseProduct(max_angular_velocity);
+
+            crawl_gait_->setVelocity(linear_velocity, angular_velocity);
         }
     }
 

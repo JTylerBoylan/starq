@@ -27,6 +27,7 @@ namespace starq::ros2
 
         mpc::Gait::Ptr stand_gait_;
         mpc::Gait::Ptr walk_gait_;
+        mpc::Gait::Ptr crawl_gait_;
 
         mpc::Gait::Ptr current_gait_;
 
