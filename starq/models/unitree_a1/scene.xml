@@ -19,5 +19,13 @@
   <worldbody>
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- Adding obstacles -->
+    <!--
+    <geom name="obstacle1" type="box" size="0.1 0.2 0.05" pos="0.5 0.5 0.05" material="groundplane"/>
+    <geom name="obstacle2" type="cylinder" size="0.1 0.05" pos="-0.5 0.2 0.05" material="groundplane"/>
+    <geom name="obstacle3" type="sphere" size="0.1" pos="0 -0.5 0.1" material="groundplane"/>
+    -->
+
   </worldbody>
 </mujoco>
