@@ -131,9 +131,10 @@ namespace starq::mpc
         const Vector3 w_ori_body = w_state_body.orientation;
         const Matrix3 w_R_b = localization_->toRotationMatrix(w_ori_body);
         const Vector3 w_vel_body = w_state_body.linear_velocity;
+        const Vector3 w_vel_hip = w_vel_body + w_state_body.angular_velocity.cross(b_pos_body_hip);
 
         const Vector3 w_pos_N_hip = w_pos_N_body + w_R_b * b_pos_body_hip;
-        const Vector3 w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_body * stance_duration.count() * 1E-3f;
+        const Vector3 w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_hip * stance_duration.count() * 1E-3f;
 
         const Vector3 w_pos_hip_foot = w_pos_N_foot - w_pos_N_hip;
         const Vector3 b_pos_hip_foot_f = w_R_b.transpose() * w_pos_hip_foot;
