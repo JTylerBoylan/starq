@@ -17,6 +17,8 @@ int main(int argc, char **argv)
     auto robot = std::make_shared<UnitreeA1MuJoCoRobot>();
 
     auto mpc_config = robot->getMPCConfiguration();
+    mpc_config->setTimeStep(milliseconds(50));
+    mpc_config->setWindowSize(21);
 
     auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
 
