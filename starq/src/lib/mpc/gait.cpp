@@ -124,28 +124,6 @@ namespace starq::mpc
         std::getline(file, line);
         iss = std::istringstream(line);
         if (!(iss >>
-              reference_weights_.position.x() >>
-              reference_weights_.position.y() >>
-              reference_weights_.position.z()))
-        {
-            std::cerr << "Error reading position weights " << line << std::endl;
-            return false;
-        }
-
-        std::getline(file, line);
-        iss = std::istringstream(line);
-        if (!(iss >>
-              reference_weights_.orientation.x() >>
-              reference_weights_.orientation.y() >>
-              reference_weights_.orientation.z()))
-        {
-            std::cerr << "Error reading orientation weights " << line << std::endl;
-            return false;
-        }
-
-        std::getline(file, line);
-        iss = std::istringstream(line);
-        if (!(iss >>
               reference_weights_.linear_velocity.x() >>
               reference_weights_.linear_velocity.y() >>
               reference_weights_.linear_velocity.z()))

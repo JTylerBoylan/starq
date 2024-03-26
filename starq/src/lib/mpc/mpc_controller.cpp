@@ -94,12 +94,8 @@ namespace starq::mpc
         stop();
     }
 
-    void MPCController::sendFootForce(const uint8_t leg_id, const Vector3 &force_world)
+    void MPCController::sendFootForce(const uint8_t leg_id, const Vector3 &force_body)
     {
-        const Vector3 orientation = localization_->getCurrentOrientation();
-        const Matrix3 rotation = localization_->toRotationMatrix(orientation);
-        const Vector3 force_body = rotation.transpose() * force_world;
-
         LegCommand::Ptr command = std::make_shared<LegCommand>();
         command->control_mode = ControlMode::TORQUE;
         command->target_force = force_body;
@@ -121,26 +117,18 @@ namespace starq::mpc
             return;
         }
 
-        const Vector3 b_pos_body_hip = robot_dynamics_->getHipLocations()[leg_id];
+        const Vector3 pos_body_hip = robot_dynamics_->getHipLocations()[leg_id];
 
-        Vector3 b_pos_hip_foot_0;
-        legs_[leg_id]->getFootPositionEstimate(b_pos_hip_foot_0);
+        Vector3 pos_hip_foot_0;
+        legs_[leg_id]->getFootPositionEstimate(pos_hip_foot_0);
 
-        const ReferenceState w_state_body = config_->getReferenceState(std::round(node_span));
-        const Vector3 w_pos_N_body = w_state_body.position;
-        const Vector3 w_ori_body = w_state_body.orientation;
-        const Matrix3 w_R_b = localization_->toRotationMatrix(w_ori_body);
-        const Vector3 w_vel_body = w_state_body.linear_velocity;
-        const Vector3 w_vel_hip = w_vel_body + w_state_body.angular_velocity.cross(b_pos_body_hip);
+        const ReferenceState ref_state = config_->getReferenceState(std::round(node_span));
+        const Vector3 vel_hip = ref_state.linear_velocity + ref_state.angular_velocity.cross(pos_body_hip);
 
-        const Vector3 w_pos_N_hip = w_pos_N_body + w_R_b * b_pos_body_hip;
-        const Vector3 w_pos_N_foot = w_pos_N_hip + 0.5f * w_vel_hip * stance_duration.count() * 1E-3f;
+        const Vector3 delta_pos_hip = 0.5f * vel_hip * stance_duration.count() * 1E-3f;
 
-        const Vector3 w_pos_hip_foot = w_pos_N_foot - w_pos_N_hip;
-        const Vector3 b_pos_hip_foot_f = w_R_b.transpose() * w_pos_hip_foot;
-
-        const Vector3 start_position = b_pos_hip_foot_0;
-        const Vector3 end_position = b_pos_hip_foot_f + robot_dynamics_->getDefaultFootLocations()[leg_id];
+        const Vector3 start_position = pos_hip_foot_0;
+        const Vector3 end_position = robot_dynamics_->getDefaultFootLocations()[leg_id] + delta_pos_hip;
 
         const Vector3 delta = end_position - start_position;
         const float radius = 0.5f * delta.norm();

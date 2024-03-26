@@ -52,7 +52,7 @@ namespace starq::mpc
         }
 
         const size_t Nn = mpc_problem_->getConfig()->getWindowSize();
-        nx_ = 13 * Nn;
+        nx_ = 7 * Nn;
         nu_ = 0;
         for (size_t k = 0; k < Nn - 1; k++)
         {
@@ -101,7 +101,7 @@ namespace starq::mpc
         H_.resize(n_, n_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
-        const int Nx = 13;
+        const int Nx = 7;
         std::vector<Eigen::Triplet<Float>> triplets;
 
         for (int i = 0; i < Nn; i++)
@@ -140,7 +140,7 @@ namespace starq::mpc
         g_.resize(n_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
-        const int Nx = 13;
+        const int Nx = 7;
 
         for (int i = 0; i < Nn; i++)
         {
@@ -164,7 +164,7 @@ namespace starq::mpc
         Ac_.resize(m_, n_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
-        const int Nx = 13;
+        const int Nx = 7;
 
         std::vector<Eigen::Triplet<Float>> triplets;
         for (int i = 0; i < Nx * Nn; i++)
@@ -229,7 +229,7 @@ namespace starq::mpc
         lc_.resize(m_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
-        const int Nx = 13;
+        const int Nx = 7;
         const int Neq = nx_;
         const int Nineq = 2 * nu_;
 
@@ -251,7 +251,7 @@ namespace starq::mpc
         uc_.resize(m_);
 
         const int Nn = mpc_problem_->getConfig()->getWindowSize();
-        const int Nx = 13;
+        const int Nx = 7;
         const int Neq = nx_;
         const int Nineq = 2 * nu_;
 

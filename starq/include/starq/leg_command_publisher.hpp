@@ -26,7 +26,7 @@ namespace starq
         Vector3 target_velocity = Vector3::Zero();
         Vector3 target_force = Vector3::Zero();
 
-        milliseconds release_time;
+        milliseconds release_time = milliseconds(0);
         void stamp(const milliseconds &clock)
         {
             release_time = clock + delay;

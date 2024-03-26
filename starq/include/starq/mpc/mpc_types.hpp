@@ -19,8 +19,6 @@ namespace starq::mpc
 
     struct ReferenceWeights
     {
-        Vector3 position;
-        Vector3 orientation;
         Vector3 linear_velocity;
         Vector3 angular_velocity;
     };

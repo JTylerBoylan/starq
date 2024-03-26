@@ -23,21 +23,24 @@ namespace starq::mpc
 
         ref_traj[0].position = localization_->getCurrentPosition();
         ref_traj[0].orientation = localization_->getCurrentOrientation();
-        ref_traj[0].linear_velocity = localization_->getCurrentLinearVelocity();
-        ref_traj[0].angular_velocity = getWorldAngularVelocity(ref_traj[0].orientation,
-                                                               localization_->getCurrentAngularVelocity());
+
+        Matrix3 R = localization_->toRotationMatrix(ref_traj[0].orientation);
+        ref_traj[0].linear_velocity = R.transpose() * localization_->getCurrentLinearVelocity();
+        ref_traj[0].angular_velocity = localization_->getCurrentAngularVelocity();
 
         const Float dT = dt.count() / 1000.0;
         for (size_t i = 1; i < N; i++)
         {
+            Vector3 linear_velocity;
+            Vector3 angular_velocity;
+
+            R = localization_->toRotationMatrix(ref_traj[i - 1].orientation);
+
             switch (gait_seq[i]->getControlMode())
             {
             case GAIT_POSITION_CONTROL:
             {
-                Vector3 linear_velocity;
-                Vector3 angular_velocity;
-
-                const Vector3 delta_p = gait_seq[i]->getPosition() - ref_traj[i - 1].position;
+                const Vector3 delta_p = R.transpose() * (gait_seq[i]->getPosition() - ref_traj[i - 1].position);
                 const Vector3 max_v = gait_seq[i]->getMaxLinearVelocity();
                 const Vector3 max_delta_p = max_v * dT;
                 for (int j = 0; j < 3; j++)
@@ -77,17 +80,12 @@ namespace starq::mpc
                         angular_velocity[j] = delta_o[j] / dT;
                     }
                 }
-
-                ref_traj[i].position = gait_seq[i]->getPosition();
-                ref_traj[i].orientation = gait_seq[i]->getOrientation();
-                ref_traj[i].linear_velocity = linear_velocity;
-                ref_traj[i].angular_velocity = getWorldAngularVelocity(ref_traj[i].orientation, angular_velocity);
                 break;
             }
             case GAIT_VELOCITY_CONTROL:
             {
-                Vector3 linear_velocity = gait_seq[i]->getLinearVelocity();
-                Vector3 angular_velocity = gait_seq[i]->getAngularVelocity();
+                linear_velocity = gait_seq[i]->getLinearVelocity();
+                angular_velocity = gait_seq[i]->getAngularVelocity();
 
                 const Vector3 max_linear_velocity = gait_seq[i]->getMaxLinearVelocity();
                 const Vector3 max_angular_velocity = gait_seq[i]->getMaxAngularVelocity();
@@ -131,29 +129,16 @@ namespace starq::mpc
                         angular_velocity[j] = delta_o[j] / dT;
                     }
                 }
-
-                ref_traj[i].position = ref_traj[i - 1].position + linear_velocity * dT;
-                ref_traj[i].position.z() = robot_dynamics_->getStandingHeight();
-
-                ref_traj[i].orientation = ref_traj[i - 1].orientation + angular_velocity * dT;
-                ref_traj[i].orientation.head(2) = Eigen::Vector2<Float>::Zero();
-
-                ref_traj[i].linear_velocity = linear_velocity;
-                ref_traj[i].angular_velocity = getWorldAngularVelocity(ref_traj[i].orientation, angular_velocity);
                 break;
             }
             }
+
+            ref_traj[i].position = ref_traj[i - 1].position + R * linear_velocity * dT;
+            ref_traj[i].orientation = ref_traj[i - 1].orientation + angular_velocity * dT;
+            ref_traj[i].linear_velocity = linear_velocity;
+            ref_traj[i].angular_velocity = angular_velocity;
         }
         return true;
-    }
-
-    Vector3 CenterOfMassPlanner::getWorldAngularVelocity(const Vector3 &orientation, const Vector3 &angular_velocity) const
-    {
-        Matrix3 R;
-        R << cos(orientation.z()), -sin(orientation.z()), 0,
-            sin(orientation.z()), cos(orientation.z()), 0,
-            0, 0, 1;
-        return R * angular_velocity;
     }
 
 }

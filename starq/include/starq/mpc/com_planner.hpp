@@ -33,9 +33,6 @@ namespace starq::mpc
                        const GaitSequence &gait_seq, ReferenceTrajectory &ref_traj) const;
 
     private:
-
-        Vector3 getWorldAngularVelocity(const Vector3 &orientation, const Vector3 &angular_velocity) const;
-
         starq::slam::Localization::Ptr localization_;
         starq::RobotDynamics::Ptr robot_dynamics_;
     };

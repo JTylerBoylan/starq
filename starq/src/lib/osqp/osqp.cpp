@@ -150,12 +150,10 @@ namespace starq::osqp
         const auto x = solver_->solution->x;
         for (size_t i = 0; i < window_size; i++)
         {
-            const int ox = 13 * i;
-            Vector3 orientation(x[ox], x[ox + 1], x[ox + 2]);
-            Vector3 position(x[ox + 3], x[ox + 4], x[ox + 5]);
-            Vector3 angular_velocity(x[ox + 6], x[ox + 7], x[ox + 8]);
-            Vector3 linear_velocity(x[ox + 9], x[ox + 10], x[ox + 11]);
-            starq::mpc::ReferenceState state = {position, orientation, linear_velocity, angular_velocity};
+            const int ox = 7 * i;
+            Vector3 angular_velocity(x[ox], x[ox + 1], x[ox + 2]);
+            Vector3 linear_velocity(x[ox + 3], x[ox + 4], x[ox + 5]);
+            starq::mpc::ReferenceState state = {Vector3::Zero(), Vector3::Zero(), linear_velocity, angular_velocity};
             solution_->x_star[i] = state;
         }
 

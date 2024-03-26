@@ -88,12 +88,10 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn; k++)
         {
             const ReferenceState &state = config_->getReferenceState(k);
-            VectorX xref = VectorX::Zero(13);
-            xref.block<3, 1>(0, 0) = state.orientation;
-            xref.block<3, 1>(3, 0) = state.position;
-            xref.block<3, 1>(6, 0) = state.angular_velocity;
-            xref.block<3, 1>(9, 0) = state.linear_velocity;
-            xref(12) = 1.0;
+            VectorX xref = VectorX::Zero(7);
+            xref.block<3, 1>(0, 0) = state.angular_velocity;
+            xref.block<3, 1>(3, 0) = state.linear_velocity;
+            xref(6) = 1.0;
             xref_[k] = xref;
         }
     }
@@ -105,12 +103,10 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn; k++)
         {
             const ReferenceWeights &weights = config_->getReferenceWeights(k);
-            MatrixX Q = MatrixX::Zero(13, 13);
-            Q.block<3, 3>(0, 0) = weights.orientation.asDiagonal();
-            Q.block<3, 3>(3, 3) = weights.position.asDiagonal();
-            Q.block<3, 3>(6, 6) = weights.angular_velocity.asDiagonal();
-            Q.block<3, 3>(9, 9) = weights.linear_velocity.asDiagonal();
-            Q(12, 12) = 0.0;
+            MatrixX Q = MatrixX::Zero(7, 7);
+            Q.block<3, 3>(0, 0) = weights.angular_velocity.asDiagonal();
+            Q.block<3, 3>(3, 3) = weights.linear_velocity.asDiagonal();
+            Q(6, 6) = 0.0;
             Q_[k] = Q;
         }
     }
@@ -138,15 +134,9 @@ namespace starq::mpc
         A_.resize(Nn - 1);
         for (size_t k = 0; k < Nn - 1; k++)
         {
-            const Float yaw = config_->getReferenceState(k).orientation.z();
-            const Matrix3 R = Eigen::AngleAxis<Float>(yaw, Vector3::UnitZ()).toRotationMatrix().transpose();
-            const Vector3 g = config_->getGravity();
-
-            MatrixX A = MatrixX::Zero(13, 13);
-            A.block<3, 3>(0, 6) = R;
-            A.block<3, 3>(3, 9) = Matrix3::Identity();
-            A.block<3, 1>(9, 12) = g;
-            A = A * config_->getTimeStep() + MatrixX::Identity(13, 13);
+            MatrixX A = MatrixX::Zero(7, 7);
+            A.block<3, 1>(3, 6) = config_->getGravity();
+            A = A * config_->getTimeStep() + MatrixX::Identity(7, 7);
             A_[k] = A;
         }
     }
@@ -158,26 +148,23 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn - 1; k++)
         {
             const Float inv_m = 1.0 / config_->getMass();
-            const Vector3 orientation = config_->getReferenceState(k).orientation;
-            const Matrix3 R = config_->getLocalization()->toRotationMatrix(orientation);
-            const Matrix3 I = R * config_->getInertia() * R.transpose();
+            const Matrix3 I = config_->getInertia();
             const Matrix3 inv_I = I.inverse();
 
             const size_t n_legs = config_->getNumberOfLegs(k);
             const StanceState &stance = config_->getStanceState(k);
 
-            MatrixX B = MatrixX::Zero(13, 3 * n_legs);
+            MatrixX B = MatrixX::Zero(7, 3 * n_legs);
             int l = 0;
             for (size_t j = 0; j < stance.size(); j++)
             {
                 if (stance[j])
                 {
-                    const Vector3 foot_position = config_->getFootholdState(k)[j];
-                    const Vector3 r = foot_position - config_->getReferenceState(k).position;
+                    const Vector3 r = config_->getFootholdState(k)[j];
                     const Matrix3 skew_r = getSkewSymmetricMatrix(r);
                     const Matrix3 inv_I_skew_r = inv_I * skew_r;
-                    B.block<3, 3>(6, 3 * l) = inv_I_skew_r;
-                    B.block<3, 3>(9, 3 * l) = inv_m * Matrix3::Identity();
+                    B.block<3, 3>(0, 3 * l) = inv_I_skew_r;
+                    B.block<3, 3>(3, 3 * l) = inv_m * Matrix3::Identity();
                     l++;
                 }
             }
