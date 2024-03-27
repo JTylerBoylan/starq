@@ -57,11 +57,11 @@ add_library(starqlib SHARED
   src/lib/odrive/odrive_controller.cpp
   src/lib/starq/starq_fivebar2d_leg_dynamics.cpp
   src/lib/unitree/unitree_a1_leg_dynamics.cpp
-  src/lib/unitree/unitree_a1_robot_dynamics.cpp
+  src/lib/unitree/unitree_a1_robot_parameters.cpp
   src/lib/unitree/unitree_a1_mujoco_robot.cpp
   src/lib/mpc/gait.cpp 
   src/lib/mpc/gait_sequencer.cpp 
-  src/lib/mpc/com_planner.cpp 
+  src/lib/mpc/reference_planner.cpp 
   src/lib/mpc/foothold_planner.cpp
   src/lib/mpc/mpc_configuration.cpp 
   src/lib/mpc/mpc_problem.cpp

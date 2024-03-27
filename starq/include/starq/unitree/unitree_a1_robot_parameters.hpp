@@ -1,7 +1,7 @@
-#ifndef STARQ_DYNAMICS__UNITREE_A1_ROBOT_DYNAMICS_HPP_
-#define STARQ_DYNAMICS__UNITREE_A1_ROBOT_DYNAMICS_HPP_
+#ifndef STARQ_UNITREE__UNITREE_A1_ROBOT_PARAMETERS_HPP_
+#define STARQ_UNITREE__UNITREE_A1_ROBOT_PARAMETERS_HPP_
 
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 
 #define UNITREE_A1_MASS 10.75
 #define UNITREE_A1_INERTIA 0.25, 0, 0, 0, 1.0, 0, 0, 0, 0.5
@@ -24,17 +24,17 @@
 namespace starq::unitree
 {
 
-    /// @brief UnitreeA1RobotDynamics class
-    class UnitreeA1RobotDynamics : public RobotDynamics
+    /// @brief UnitreeA1RobotParameters class
+    class UnitreeA1RobotParameters : public RobotParameters
     {
     public:
-        using Ptr = std::shared_ptr<UnitreeA1RobotDynamics>;
+        using Ptr = std::shared_ptr<UnitreeA1RobotParameters>;
 
-        /// @brief Create a new UnitreeA1RobotDynamics object
-        UnitreeA1RobotDynamics();
+        /// @brief Create a new UnitreeA1RobotParameters object
+        UnitreeA1RobotParameters();
 
-        /// @brief Destroy the UnitreeA1RobotDynamics object
-        ~UnitreeA1RobotDynamics();
+        /// @brief Destroy the UnitreeA1RobotParameters object
+        ~UnitreeA1RobotParameters();
 
         /// @brief Get the body mass
         /// @return The body mass

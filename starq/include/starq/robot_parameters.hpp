@@ -1,5 +1,5 @@
-#ifndef STARQ__ROBOT_DYNAMICS_HPP_
-#define STARQ__ROBOT_DYNAMICS_HPP_
+#ifndef STARQ__ROBOT_PARAMETERS_HPP_
+#define STARQ__ROBOT_PARAMETERS_HPP_
 
 #include <memory>
 #include <vector>
@@ -9,11 +9,11 @@ namespace starq
 {
 
     /// @brief RobotDynamics class
-    class RobotDynamics
+    class RobotParameters
     {
 
     public:
-        using Ptr = std::shared_ptr<RobotDynamics>;
+        using Ptr = std::shared_ptr<RobotParameters>;
 
         /// @brief Get the body mass
         /// @return The body mass

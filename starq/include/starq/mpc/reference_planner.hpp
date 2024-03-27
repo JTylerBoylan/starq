@@ -1,27 +1,27 @@
-#ifndef STARQ_MPC__COM_PLANNER_HPP_
-#define STARQ_MPC__COM_PLANNER_HPP_
+#ifndef STARQ_MPC__REFERENCE_PLANNER_HPP_
+#define STARQ_MPC__REFERENCE_PLANNER_HPP_
 
 #include <memory>
 #include "starq/mpc/mpc_types.hpp"
 #include "starq/mpc/gait.hpp"
 #include "starq/slam/localization.hpp"
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 
 namespace starq::mpc
 {
-    /// @brief CenterOfMassPlanner class
-    class CenterOfMassPlanner
+    /// @brief ReferencePlanner class
+    class ReferencePlanner
     {
     public:
-        using Ptr = std::shared_ptr<CenterOfMassPlanner>;
+        using Ptr = std::shared_ptr<ReferencePlanner>;
 
-        /// @brief Create a new CenterOfMassPlanner object
+        /// @brief Create a new ReferencePlanner object
         /// @param localization The localization object
-        CenterOfMassPlanner(starq::slam::Localization::Ptr localization,
-                            starq::RobotDynamics::Ptr robot_dynamics);
+        ReferencePlanner(starq::slam::Localization::Ptr localization,
+                            starq::RobotParameters::Ptr robot_dynamics);
 
-        /// @brief Destroy the CenterOfMassPlanner object
-        ~CenterOfMassPlanner();
+        /// @brief Destroy the ReferencePlanner object
+        ~ReferencePlanner();
 
         /// @brief Configure the MPC
         /// @param N The mpc horizon
@@ -34,7 +34,7 @@ namespace starq::mpc
 
     private:
         starq::slam::Localization::Ptr localization_;
-        starq::RobotDynamics::Ptr robot_dynamics_;
+        starq::RobotParameters::Ptr robot_parameters_;
     };
 }
 

@@ -4,10 +4,10 @@ namespace starq::mpc
 {
 
     FootholdPlanner::FootholdPlanner(std::vector<LegController::Ptr> legs,
-                                     starq::RobotDynamics::Ptr robot_dynamics,
+                                     starq::RobotParameters::Ptr robot_parameters,
                                      starq::slam::Localization::Ptr localization)
         : legs_(legs),
-          robot_dynamics_(robot_dynamics),
+          robot_parameters_(robot_parameters),
           localization_(localization)
     {
     }
@@ -22,8 +22,8 @@ namespace starq::mpc
     {
         foothold_traj.resize(N);
 
-        const auto hip_locations = robot_dynamics_->getHipLocations();
-        const auto def_foot_positions = robot_dynamics_->getDefaultFootLocations();
+        const auto hip_locations = robot_parameters_->getHipLocations();
+        const auto def_foot_positions = robot_parameters_->getDefaultFootLocations();
 
         const size_t num_legs = legs_.size();
         foothold_traj[0].resize(num_legs);

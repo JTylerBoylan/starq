@@ -4,12 +4,12 @@
 #include "starq/mpc/mpc_types.hpp"
 #include "starq/mpc/gait.hpp"
 
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 #include "starq/slam/localization.hpp"
 #include "starq/leg_controller.hpp"
 
 #include "starq/mpc/gait_sequencer.hpp"
-#include "starq/mpc/com_planner.hpp"
+#include "starq/mpc/reference_planner.hpp"
 #include "starq/mpc/foothold_planner.hpp"
 
 namespace starq::mpc
@@ -23,10 +23,10 @@ namespace starq::mpc
 
         /// @brief Create a new MPCConfiguration object
         /// @param leg_controllers The leg controllers
-        /// @param robot_dynamics The robot dynamics
+        /// @param robot_parameters The robot parameters
         /// @param localization The localization
         MPCConfiguration(const std::vector<LegController::Ptr> &leg_controllers,
-                         const RobotDynamics::Ptr &robot_dynamics,
+                         const RobotParameters::Ptr &robot_parameters,
                          const slam::Localization::Ptr &localization);
 
         /// @brief Destroy the MPCConfiguration object
@@ -36,9 +36,9 @@ namespace starq::mpc
         /// @return The leg controllers
         std::vector<LegController::Ptr> getLegControllers() const;
 
-        /// @brief Get the robot dynamics
-        /// @return The robot dynamics
-        RobotDynamics::Ptr getRobotDynamics() const;
+        /// @brief Get the robot parameters
+        /// @return The robot parameters
+        RobotParameters::Ptr getRobotParameters() const;
 
         /// @brief Get the localization
         /// @return The localization
@@ -133,13 +133,13 @@ namespace starq::mpc
 
     private:
         const std::vector<LegController::Ptr> leg_controllers_;
-        const RobotDynamics::Ptr robot_dynamics_;
+        const RobotParameters::Ptr robot_parameters_;
         const slam::Localization::Ptr localization_;
 
         bool is_ready_;
 
         GaitSequencer::Ptr gait_sequencer_;
-        CenterOfMassPlanner::Ptr com_planner_;
+        ReferencePlanner::Ptr reference_planner_;
         FootholdPlanner::Ptr foothold_planner_;
 
         milliseconds time_step_;

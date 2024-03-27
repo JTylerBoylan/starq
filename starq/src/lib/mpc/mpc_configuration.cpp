@@ -6,15 +6,15 @@ namespace starq::mpc
 {
 
     MPCConfiguration::MPCConfiguration(const std::vector<LegController::Ptr> &leg_controllers,
-                                       const RobotDynamics::Ptr &robot_dynamics,
+                                       const RobotParameters::Ptr &robot_parameters,
                                        const slam::Localization::Ptr &localization)
         : leg_controllers_(leg_controllers),
-          robot_dynamics_(robot_dynamics),
+          robot_parameters_(robot_parameters),
           localization_(localization),
           is_ready_(false),
           gait_sequencer_(std::make_shared<GaitSequencer>(localization)),
-          com_planner_(std::make_shared<CenterOfMassPlanner>(localization, robot_dynamics)),
-          foothold_planner_(std::make_shared<FootholdPlanner>(leg_controllers, robot_dynamics, localization))
+          reference_planner_(std::make_shared<ReferencePlanner>(localization, robot_parameters)),
+          foothold_planner_(std::make_shared<FootholdPlanner>(leg_controllers, robot_parameters, localization))
     {
         window_size_ = 11;
         time_step_ = milliseconds(100);
@@ -29,9 +29,9 @@ namespace starq::mpc
         return leg_controllers_;
     }
 
-    RobotDynamics::Ptr MPCConfiguration::getRobotDynamics() const
+    RobotParameters::Ptr MPCConfiguration::getRobotParameters() const
     {
-        return robot_dynamics_;
+        return robot_parameters_;
     }
 
     slam::Localization::Ptr MPCConfiguration::getLocalization() const
@@ -74,7 +74,7 @@ namespace starq::mpc
             return false;
         }
 
-        if (!com_planner_->configure(window_size_, time_step_, gait_sequence_, reference_trajectory_))
+        if (!reference_planner_->configure(window_size_, time_step_, gait_sequence_, reference_trajectory_))
         {
             std::cerr << "Could not configure center of mass planner" << std::endl;
             return false;
@@ -147,32 +147,32 @@ namespace starq::mpc
 
     Vector3 MPCConfiguration::getGravity() const
     {
-        return robot_dynamics_->getGravity();
+        return robot_parameters_->getGravity();
     }
 
     Float MPCConfiguration::getFrictionCoefficient() const
     {
-        return robot_dynamics_->getFootFriction();
+        return robot_parameters_->getFootFriction();
     }
 
     Float MPCConfiguration::getForceZMin() const
     {
-        return robot_dynamics_->getForceZMin();
+        return robot_parameters_->getForceZMin();
     }
 
     Float MPCConfiguration::getForceZMax() const
     {
-        return robot_dynamics_->getForceZMax();
+        return robot_parameters_->getForceZMax();
     }
 
     Float MPCConfiguration::getMass() const
     {
-        return robot_dynamics_->getBodyMass();
+        return robot_parameters_->getBodyMass();
     }
 
     Matrix3 MPCConfiguration::getInertia() const
     {
-        return robot_dynamics_->getBodyInertia();
+        return robot_parameters_->getBodyInertia();
     }
 
 }

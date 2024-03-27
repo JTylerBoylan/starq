@@ -7,7 +7,7 @@
 #include "starq/trajectory_file_reader.hpp"
 #include "starq/trajectory_publisher.hpp"
 #include "starq/slam/localization.hpp"
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 #include "starq/mpc/mpc_controller.hpp"
 
 namespace starq
@@ -78,9 +78,9 @@ namespace starq
         /// @return The localization
         slam::Localization::Ptr getLocalization() const { return localization_; }
 
-        /// @brief Get the robot dynamics
-        /// @return The robot dynamics
-        RobotDynamics::Ptr getRobotDynamics() const { return robot_dynamics_; }
+        /// @brief Get the robot parameters
+        /// @return The robot parameters
+        RobotParameters::Ptr getRobotParameters() const { return robot_parameters_; }
 
         /// @brief Get the model predictive control solver
         /// @return The model predictive control solver
@@ -141,7 +141,7 @@ namespace starq
         std::vector<MotorController::Ptr> motors_;
         std::vector<LegController::Ptr> legs_;
         slam::Localization::Ptr localization_;
-        RobotDynamics::Ptr robot_dynamics_;
+        RobotParameters::Ptr robot_parameters_;
         mpc::MPCSolver::Ptr mpc_solver_;
 
         LegCommandPublisher::Ptr publisher_;

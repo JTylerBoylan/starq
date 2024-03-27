@@ -11,7 +11,7 @@ namespace starq::ros2
         walk_gait_->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
         walk_gait_->setFrequency(3.0);
 
-        const Float stand_height = mpc_configuration->getRobotDynamics()->getStandingHeight();
+        const Float stand_height = mpc_configuration->getRobotParameters()->getStandingHeight();
         stand_gait_ = std::make_shared<mpc::Gait>();
         stand_gait_->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
         stand_gait_->setPose(Vector3(0, 0, stand_height), Vector3(0, 0, 0));
@@ -81,7 +81,7 @@ namespace starq::ros2
             const Vector3 max_position(0.05, 0.05, 0.05);
             const Vector3 max_orientation(0.1, 0.1, 0.1);
 
-            const Float stand_height = mpc_configuration_->getRobotDynamics()->getStandingHeight();
+            const Float stand_height = mpc_configuration_->getRobotParameters()->getStandingHeight();
 
             Vector3 position = (Vector3(left_axis_x, left_axis_y, 0) / 128.0).cwiseProduct(max_position);
             Vector3 orientation = (Vector3(0, 0, right_axis_x) / 128.0).cwiseProduct(max_orientation);

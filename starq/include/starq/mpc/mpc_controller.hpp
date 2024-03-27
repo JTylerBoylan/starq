@@ -5,7 +5,7 @@
 #include "starq/mpc/mpc_configuration.hpp"
 #include "starq/mpc/mpc_solver.hpp"
 #include "starq/slam/localization.hpp"
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 #include "starq/leg_command_publisher.hpp"
 #include "starq/trajectory_publisher.hpp"
 
@@ -62,7 +62,7 @@ namespace starq::mpc
         LegCommandPublisher::Ptr leg_command_publisher_;
         std::vector<LegController::Ptr> legs_;
         slam::Localization::Ptr localization_;
-        RobotDynamics::Ptr robot_dynamics_;
+        RobotParameters::Ptr robot_parameters_;
 
         std::vector<TrajectoryPublisher::Ptr> trajectory_publishers_;
 

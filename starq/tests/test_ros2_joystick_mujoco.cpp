@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-        robot->setFootPosition(id, robot->getRobotDynamics()->getDefaultFootLocations()[id]);
+        robot->setFootPosition(id, robot->getRobotParameters()->getDefaultFootLocations()[id]);
     }
     RCLCPP_INFO(node->get_logger(), "Holding foot position for 5 seconds...\n");
     std::this_thread::sleep_for(std::chrono::seconds(5));

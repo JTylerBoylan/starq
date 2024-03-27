@@ -1,22 +1,22 @@
-#include "starq/mpc/com_planner.hpp"
+#include "starq/mpc/reference_planner.hpp"
 
 #include <iostream>
 
 namespace starq::mpc
 {
 
-    CenterOfMassPlanner::CenterOfMassPlanner(starq::slam::Localization::Ptr localization,
-                                             starq::RobotDynamics::Ptr robot_dynamics)
+    ReferencePlanner::ReferencePlanner(starq::slam::Localization::Ptr localization,
+                                             starq::RobotParameters::Ptr robot_parameters)
         : localization_(localization),
-          robot_dynamics_(robot_dynamics)
+          robot_parameters_(robot_parameters)
     {
     }
 
-    CenterOfMassPlanner::~CenterOfMassPlanner()
+    ReferencePlanner::~ReferencePlanner()
     {
     }
 
-    bool CenterOfMassPlanner::configure(const size_t N, const milliseconds dt,
+    bool ReferencePlanner::configure(const size_t N, const milliseconds dt,
                                         const GaitSequence &gait_seq, ReferenceTrajectory &ref_traj) const
     {
         ref_traj.resize(N);
@@ -103,7 +103,7 @@ namespace starq::mpc
                     }
                 }
 
-                const Float delta_z = robot_dynamics_->getStandingHeight() - ref_traj[i - 1].position.z();
+                const Float delta_z = robot_parameters_->getStandingHeight() - ref_traj[i - 1].position.z();
                 const Float max_vz = max_linear_velocity.z();
                 const Float max_delta_z = max_vz * dT;
                 if (std::abs(delta_z) > max_delta_z)

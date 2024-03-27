@@ -35,7 +35,7 @@ namespace starq
 
     void Robot::setupMPCConfiguration()
     {
-        mpc_configuration_ = std::make_shared<mpc::MPCConfiguration>(legs_, robot_dynamics_, localization_);
+        mpc_configuration_ = std::make_shared<mpc::MPCConfiguration>(legs_, robot_parameters_, localization_);
         mpc_configuration_->setTimeStep(milliseconds(50));
         mpc_configuration_->setWindowSize(21);
     }

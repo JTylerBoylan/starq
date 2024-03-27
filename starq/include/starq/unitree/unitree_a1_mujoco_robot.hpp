@@ -3,7 +3,7 @@
 
 #include "starq/mujoco/mujoco_robot.hpp"
 #include "starq/unitree/unitree_a1_leg_dynamics.hpp"
-#include "starq/unitree/unitree_a1_robot_dynamics.hpp"
+#include "starq/unitree/unitree_a1_robot_parameters.hpp"
 #include "starq/osqp/osqp.hpp"
 
 #define UNITREE_A1_MUJOCO_SCENE_FILE "/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"

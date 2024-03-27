@@ -1,9 +1,9 @@
-#include "starq/unitree/unitree_a1_robot_dynamics.hpp"
+#include "starq/unitree/unitree_a1_robot_parameters.hpp"
 
 namespace starq::unitree
 {
 
-    UnitreeA1RobotDynamics::UnitreeA1RobotDynamics()
+    UnitreeA1RobotParameters::UnitreeA1RobotParameters()
     {
         body_mass_ = UNITREE_A1_MASS;
         body_inertia_ << UNITREE_A1_INERTIA;
@@ -22,51 +22,51 @@ namespace starq::unitree
         force_z_max_ = UNITREE_A1_Z_FORCE_MAX;
     }
 
-    UnitreeA1RobotDynamics::~UnitreeA1RobotDynamics()
+    UnitreeA1RobotParameters::~UnitreeA1RobotParameters()
     {
     }
 
-    Float UnitreeA1RobotDynamics::getBodyMass() const
+    Float UnitreeA1RobotParameters::getBodyMass() const
     {
         return body_mass_;
     }
 
-    Matrix3 UnitreeA1RobotDynamics::getBodyInertia() const
+    Matrix3 UnitreeA1RobotParameters::getBodyInertia() const
     {
         return body_inertia_;
     }
 
-    Vector3 UnitreeA1RobotDynamics::getGravity() const
+    Vector3 UnitreeA1RobotParameters::getGravity() const
     {
         return gravity_;
     }
 
-    Float UnitreeA1RobotDynamics::getFootFriction() const
+    Float UnitreeA1RobotParameters::getFootFriction() const
     {
         return foot_friction_;
     }
 
-    Float UnitreeA1RobotDynamics::getStandingHeight() const
+    Float UnitreeA1RobotParameters::getStandingHeight() const
     {
         return standing_height_;
     }
 
-    std::vector<Vector3> UnitreeA1RobotDynamics::getHipLocations() const
+    std::vector<Vector3> UnitreeA1RobotParameters::getHipLocations() const
     {
         return hip_locations_;
     }
 
-    std::vector<Vector3> UnitreeA1RobotDynamics::getDefaultFootLocations() const
+    std::vector<Vector3> UnitreeA1RobotParameters::getDefaultFootLocations() const
     {
         return default_foot_locations_;
     }
 
-    Float UnitreeA1RobotDynamics::getForceZMin() const
+    Float UnitreeA1RobotParameters::getForceZMin() const
     {
         return force_z_min_;
     }
 
-    Float UnitreeA1RobotDynamics::getForceZMax() const
+    Float UnitreeA1RobotParameters::getForceZMax() const
     {
         return force_z_max_;
     }

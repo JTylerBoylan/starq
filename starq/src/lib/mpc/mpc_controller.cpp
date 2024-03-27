@@ -13,7 +13,7 @@ namespace starq::mpc
           leg_command_publisher_(leg_command_publisher),
           legs_(config->getLegControllers()),
           localization_(config->getLocalization()),
-          robot_dynamics_(config->getRobotDynamics()),
+          robot_parameters_(config->getRobotParameters()),
           stop_on_fail_(false),
           sleep_duration_us_(1000),
           step_height_(0.075f),
@@ -117,7 +117,7 @@ namespace starq::mpc
             return;
         }
 
-        const Vector3 pos_body_hip = robot_dynamics_->getHipLocations()[leg_id];
+        const Vector3 pos_body_hip = robot_parameters_->getHipLocations()[leg_id];
 
         Vector3 pos_hip_foot_0;
         legs_[leg_id]->getFootPositionEstimate(pos_hip_foot_0);
@@ -128,7 +128,7 @@ namespace starq::mpc
         const Vector3 delta_pos_hip = 0.5f * vel_hip * stance_duration.count() * 1E-3f;
 
         const Vector3 start_position = pos_hip_foot_0;
-        const Vector3 end_position = robot_dynamics_->getDefaultFootLocations()[leg_id] + delta_pos_hip;
+        const Vector3 end_position = robot_parameters_->getDefaultFootLocations()[leg_id] + delta_pos_hip;
 
         const Vector3 delta = end_position - start_position;
         const float radius = 0.5f * delta.norm();

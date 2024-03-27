@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
-#include "starq/unitree/unitree_a1_robot_dynamics.hpp"
+#include "starq/unitree/unitree_a1_robot_parameters.hpp"
 #include "starq/mpc/mpc_configuration.hpp"
 
 using namespace starq;
@@ -27,7 +27,7 @@ int main()
     printf("Stance duration: %d\n", int(stance_duration.count()));
     printf("Swing duration: %d\n", int(swing_duration.count()));
 
-    MPCConfiguration mpc_configuration(robot->getLegs(), robot->getRobotDynamics(), robot->getLocalization());
+    MPCConfiguration mpc_configuration(robot->getLegs(), robot->getRobotParameters(), robot->getLocalization());
     printf("MPCPlanner created\n");
 
     mpc_configuration.setTimeStep(milliseconds(50));
@@ -43,7 +43,7 @@ int main()
 
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
-        robot->setFootPosition(id, robot->getRobotDynamics()->getDefaultFootLocations()[id]);
+        robot->setFootPosition(id, robot->getRobotParameters()->getDefaultFootLocations()[id]);
     }
     std::this_thread::sleep_for(std::chrono::seconds(5));
 

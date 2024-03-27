@@ -58,7 +58,7 @@ namespace starq::unitree
 
     void UnitreeA1MuJoCoRobot::setupRobotDynamics()
     {
-        robot_dynamics_ = std::make_shared<UnitreeA1RobotDynamics>();
+        robot_parameters_ = std::make_shared<UnitreeA1RobotParameters>();
     }
 
     void UnitreeA1MuJoCoRobot::setupMPCSolver()

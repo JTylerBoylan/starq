@@ -5,7 +5,7 @@
 #include "starq/mpc/mpc_types.hpp"
 #include "starq/mpc/gait.hpp"
 #include "starq/leg_controller.hpp"
-#include "starq/robot_dynamics.hpp"
+#include "starq/robot_parameters.hpp"
 #include "starq/slam/localization.hpp"
 
 namespace starq::mpc
@@ -19,7 +19,7 @@ namespace starq::mpc
 
         /// @brief Create a new FootholdPlanner object
         FootholdPlanner(std::vector<LegController::Ptr> legs,
-                        starq::RobotDynamics::Ptr robot_dynamics,
+                        starq::RobotParameters::Ptr robot_parameters,
                         starq::slam::Localization::Ptr localization);
 
         /// @brief Destroy the FootholdPlanner object
@@ -38,7 +38,7 @@ namespace starq::mpc
 
     private:
         std::vector<LegController::Ptr> legs_;
-        starq::RobotDynamics::Ptr robot_dynamics_;
+        starq::RobotParameters::Ptr robot_parameters_;
         starq::slam::Localization::Ptr localization_;
     };
 
