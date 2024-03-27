@@ -24,7 +24,7 @@ namespace starq::ros2
             mujoco_camera_->initialize();
         }
 
-        if (mujoco_camera_->isInitialized() && !glfwWindowShouldClose(mujoco_camera_->getWindow()))
+        if (mujoco_camera_->isInitialized())
         {
             const auto mujoco = mujoco::MuJoCo::getInstance();
 
@@ -43,12 +43,21 @@ namespace starq::ros2
             std::vector<uint8_t> image_data(viewport.width * viewport.height * 3);
             mjr_readPixels(image_data.data(), NULL, viewport, mujoco_camera_->getContext());
 
+            // Flip the image vertically
+            std::vector<uint8_t> flipped_image_data(viewport.width * viewport.height * 3);
+            for (int y = 0; y < viewport.height; y++)
+            {
+                std::memcpy(&flipped_image_data[y * viewport.width * 3],
+                            &image_data[(viewport.height - 1 - y) * viewport.width * 3],
+                            viewport.width * 3);
+            }
+
             auto image_msg = sensor_msgs::msg::Image();
             image_msg.width = viewport.width;
             image_msg.height = viewport.height;
             image_msg.encoding = "rgb8";
             image_msg.step = viewport.width * 3;
-            image_msg.data = image_data;
+            image_msg.data = flipped_image_data;
 
             image_pub_->publish(image_msg);
 
