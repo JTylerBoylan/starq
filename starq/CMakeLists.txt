@@ -72,6 +72,7 @@ add_library(starqlib SHARED
   src/lib/ros2/leg_controller.cpp
   src/lib/ros2/leg_command_publisher.cpp
   src/lib/ros2/ros2_joystick.cpp
+  src/lib/ros2/ros2_mujoco_camera.cpp
   src/lib/mujoco/mujoco.cpp
   src/lib/mujoco/mujoco_controller.cpp
   src/lib/mujoco/mujoco_localization.cpp

@@ -8,7 +8,8 @@ RUN apt-get update && \
         libsocketcan-dev can-utils \
         libeigen3-dev \
         libx11-dev xorg-dev libglfw3 libglfw3-dev \
-        ros-humble-joy
+        ros-humble-joy \
+        ros-humble-rviz2
 
 # Create a new user with a specific UID and GID, and set up the workspace
 RUN useradd -m -u 1000 -s /bin/bash nvidia && \
@@ -21,7 +22,7 @@ ENV MUJOCO_PATH /home/nvidia/MuJoCo
 RUN git clone https://github.com/google-deepmind/mujoco ${MUJOCO_PATH}
 RUN mkdir ${MUJOCO_PATH}/build && \ 
     cd ${MUJOCO_PATH}/build && \
-    cmake .. && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
     cmake --build . --target install
 
 # Install OSQP
@@ -29,7 +30,7 @@ ENV OSQP_PATH /home/nvidia/osqp
 RUN git clone https://github.com/osqp/osqp ${OSQP_PATH}
 RUN mkdir ${OSQP_PATH}/build && \
     cd ${OSQP_PATH}/build && \
-    cmake -G "Unix Makefiles" .. && \
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .. && \
     cmake --build . --target install
 
 # Give the user input group permissions

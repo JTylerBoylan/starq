@@ -11,11 +11,11 @@ namespace starq::mujoco
     {
     }
 
-    void MuJoCoCamera::open()
+    void MuJoCoCamera::initialize()
     {
-        if (is_open_)
+        if (initialized_)
         {
-            std::cerr << "Camera is already open" << std::endl;
+            std::cerr << "Camera is already initialized" << std::endl;
             return;
         }
 
@@ -25,6 +25,17 @@ namespace starq::mujoco
             return;
         }
 
+        window_ = glfwCreateWindow(1200, 800, (camera_name_ + " Video").c_str(), NULL, NULL);
+
+        if (!window_)
+        {
+            std::cerr << "Error creating GLFW window" << std::endl;
+            return;
+        }
+
+        glfwMakeContextCurrent(window_);
+        glfwSwapInterval(1);
+
         camera_.type = mjCAMERA_FIXED;
         camera_.fixedcamid = mj_name2id(mujoco_->getModel(), mjOBJ_CAMERA, camera_name_.c_str());
 
@@ -33,12 +44,26 @@ namespace starq::mujoco
         mjv_defaultScene(&scene_);
         mjr_defaultContext(&context_);
 
-        window_ = glfwCreateWindow(1200, 800, (camera_name_ + " Video").c_str(), NULL, NULL);
-        glfwMakeContextCurrent(window_);
-        glfwSwapInterval(1);
-
         mjv_makeScene(mujoco_->getModel(), &scene_, 1000);
         mjr_makeContext(mujoco_->getModel(), &context_, mjFONTSCALE_150);
+
+        initialized_ = true;
+    }
+
+    void MuJoCoCamera::open()
+    {
+
+        if (!initialized_)
+        {
+            std::cerr << "Camera is not initialized" << std::endl;
+            return;
+        }
+
+        if (is_open_)
+        {
+            std::cerr << "Camera is already open" << std::endl;
+            return;
+        }
 
         is_open_ = true;
         while (!glfwWindowShouldClose(window_))
@@ -46,7 +71,7 @@ namespace starq::mujoco
             mjrRect viewport = {0, 0, 0, 0};
             glfwGetFramebufferSize(window_, &viewport.width, &viewport.height);
 
-            mjv_updateScene(mujoco_->getModel(), mujoco_->getData(), &option_, NULL, &camera_, mjCAT_ALL, &scene_);
+            mjv_updateScene(mujoco_->getModel(), mujoco_->getData(), &option_, &perturb_, &camera_, mjCAT_ALL, &scene_);
             mjr_render(viewport, &scene_, &context_);
 
             // Swap OpenGL buffers
@@ -56,26 +81,23 @@ namespace starq::mujoco
             glfwPollEvents();
         }
         is_open_ = false;
-
-        glfwDestroyWindow(window_);
-        mjv_freeScene(&scene_);
-        mjr_freeContext(&context_);
     }
 
     void MuJoCoCamera::close()
     {
-        if (!is_open_)
-        {
-            std::cerr << "Camera is already closed" << std::endl;
-            return;
-        }
-
-        is_open_ = false;
+        glfwSetWindowShouldClose(window_, GLFW_TRUE);
     }
 
-    bool MuJoCoCamera::isOpen()
+    void MuJoCoCamera::cleanup()
     {
-        return is_open_;
+        if (is_open_)
+        {
+            close();
+        }
+
+        glfwDestroyWindow(window_);
+        mjv_freeScene(&scene_);
+        mjr_freeContext(&context_);
     }
 
 }

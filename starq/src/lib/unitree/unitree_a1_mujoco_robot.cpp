@@ -16,6 +16,11 @@ namespace starq::unitree
 
     std::future<void> &UnitreeA1MuJoCoRobot::openCamera()
     {
+        if (!front_camera_->isInitialized())
+        {
+            front_camera_->initialize();
+        }
+        
         camera_future_ = std::async(std::launch::async, [this]() {
             front_camera_->open();
         });

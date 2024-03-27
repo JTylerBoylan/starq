@@ -58,6 +58,26 @@ namespace starq::mujoco
         /// @return The MuJoCo data
         mjData *getData() const { return data_; }
 
+        /// @brief Get GLFW window
+        /// @return GLFW window
+        GLFWwindow *getWindow() { return window_; }
+
+        /// @brief Get MuJoCo camera
+        /// @return MuJoCo camera
+        mjvCamera *getCamera() { return &camera_; }
+
+        /// @brief Get MuJoCo option
+        /// @return MuJoCo option
+        mjvOption *getOption() { return &option_; }
+
+        /// @brief Get MuJoCo perturb
+        /// @return MuJoCo perturb
+        mjvPerturb *getPerturb() { return &perturb_; }
+
+        /// @brief Get MuJoCo context
+        /// @return MuJoCo context
+        mjrContext *getContext() { return &context_; }
+
         /// @brief [Deleted]
         MuJoCo(const MuJoCo &) = delete;
 
@@ -117,7 +137,7 @@ namespace starq::mujoco
 
         static MuJoCo::Ptr instance_;
     };
-    
+
 }
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "starq/ros2/ros2_joystick.hpp"
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
+#include "starq/ros2/ros2_mujoco_camera.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
@@ -22,11 +23,11 @@ int main(int argc, char **argv)
 
     auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
 
+    auto front_camera = std::make_shared<ros2::ROS2MuJoCoCamera>(node, robot->getFrontCamera(), "/front_camera/image_raw");
+
     MuJoCo::getInstance()->setFrameRate(30.0);
 
     auto &sim = robot->startSimulation();
-
-    auto &cam = robot->openCamera();
 
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
@@ -56,7 +57,6 @@ int main(int argc, char **argv)
     // Wait for the spin thread to finish
     spin_thread.join();
     robot->stopMPC();
-    cam.wait();
     rclcpp::shutdown();
     return 0;
 }

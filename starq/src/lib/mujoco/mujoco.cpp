@@ -23,6 +23,17 @@ namespace starq::mujoco
 
     MuJoCo::~MuJoCo()
     {
+        if (data_)
+        {
+            mj_deleteData(data_);
+            data_ = nullptr;
+        }
+
+        if (model_)
+        {
+            mj_deleteModel(model_);
+            model_ = nullptr;
+        }
     }
 
     void MuJoCo::open(const std::string &model_path)
@@ -140,18 +151,6 @@ namespace starq::mujoco
             return;
 
         glfwDestroyWindow(window_);
-
-        if (data_)
-        {
-            mj_deleteData(data_);
-            data_ = nullptr;
-        }
-
-        if (model_)
-        {
-            mj_deleteModel(model_);
-            model_ = nullptr;
-        }
 
         mjv_freeScene(&scene_);
         mjr_freeContext(&context_);
