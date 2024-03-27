@@ -11,6 +11,15 @@ namespace starq::unitree
         scene_file_ = UNITREE_A1_MUJOCO_SCENE_FILE;
 
         setup();
+        setupCamera();
+    }
+
+    std::future<void> &UnitreeA1MuJoCoRobot::openCamera()
+    {
+        camera_future_ = std::async(std::launch::async, [this]() {
+            front_camera_->open();
+        });
+        return camera_future_;
     }
 
     void UnitreeA1MuJoCoRobot::setupMotors()
@@ -70,6 +79,11 @@ namespace starq::unitree
         osqp_->getSettings()->max_iter = 2000;
         osqp_->getSettings()->polishing = true;
         osqp_->getSettings()->warm_starting = true;
+    }
+
+    void UnitreeA1MuJoCoRobot::setupCamera()
+    {
+        front_camera_ = std::make_shared<MuJoCoCamera>(mujoco_, "front_camera");
     }
 
 }

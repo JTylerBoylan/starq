@@ -76,6 +76,7 @@ add_library(starqlib SHARED
   src/lib/mujoco/mujoco_controller.cpp
   src/lib/mujoco/mujoco_localization.cpp
   src/lib/mujoco/mujoco_robot.cpp
+  src/lib/mujoco/mujoco_camera.cpp
   src/lib/osqp/osqp.cpp
 )
 
@@ -206,6 +207,10 @@ target_link_libraries(test_mujoco_mpc_solver PUBLIC starqlib)
 add_executable(test_mujoco_mpc_controller tests/test_mujoco_mpc_controller.cpp)
 target_include_directories(test_mujoco_mpc_controller PUBLIC include)
 target_link_libraries(test_mujoco_mpc_controller PUBLIC starqlib)
+
+add_executable(test_mujoco_camera tests/test_mujoco_camera.cpp)
+target_include_directories(test_mujoco_camera PUBLIC include)
+target_link_libraries(test_mujoco_camera PUBLIC starqlib)
 
 # Finalize the ament package
 ament_package()

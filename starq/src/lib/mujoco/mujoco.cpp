@@ -139,7 +139,7 @@ namespace starq::mujoco
         if (!is_open_)
             return;
 
-        glfwTerminate();
+        glfwDestroyWindow(window_);
 
         if (data_)
         {

@@ -26,6 +26,8 @@ int main(int argc, char **argv)
 
     auto &sim = robot->startSimulation();
 
+    auto &cam = robot->openCamera();
+
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
     {
         robot->setFootPosition(id, robot->getRobotParameters()->getDefaultFootLocations()[id]);
@@ -54,6 +56,7 @@ int main(int argc, char **argv)
     // Wait for the spin thread to finish
     spin_thread.join();
     robot->stopMPC();
+    cam.wait();
     rclcpp::shutdown();
     return 0;
 }

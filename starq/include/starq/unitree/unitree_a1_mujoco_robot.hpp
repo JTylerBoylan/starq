@@ -2,6 +2,7 @@
 #define STARQ_UNITREE__UNITREE_A1_MUJOCO_ROBOT_HPP_
 
 #include "starq/mujoco/mujoco_robot.hpp"
+#include "starq/mujoco/mujoco_camera.hpp"
 #include "starq/unitree/unitree_a1_leg_dynamics.hpp"
 #include "starq/unitree/unitree_a1_robot_parameters.hpp"
 #include "starq/osqp/osqp.hpp"
@@ -41,9 +42,17 @@ namespace starq::unitree
         /// @return The right leg dynamics
         UnitreeA1LegDynamics::Ptr getRightLegDynamics() const { return unitree_RRR_R_; }
 
+        /// @brief Get the front camera
+        /// @return The front camera
+        MuJoCoCamera::Ptr getFrontCamera() const { return front_camera_; }
+
         /// @brief Get the OSQP solver
         /// @return The OSQP solver
         OSQP::Ptr getOSQPSolver() const { return osqp_; }
+
+        /// @brief Open the camera
+        /// @return The future object
+        std::future<void> &openCamera();
 
     private:
 
@@ -59,9 +68,15 @@ namespace starq::unitree
         /// @brief Setup the model predictive control solver
         void setupMPCSolver() override;
 
+        /// @brief Setup the camera
+        void setupCamera();
+
         UnitreeA1LegDynamics::Ptr unitree_RRR_L_;
         UnitreeA1LegDynamics::Ptr unitree_RRR_R_;
+        MuJoCoCamera::Ptr front_camera_;
         OSQP::Ptr osqp_;
+
+        std::future<void> camera_future_;
     };
 
 }
