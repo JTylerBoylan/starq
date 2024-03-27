@@ -42,44 +42,17 @@ namespace starq::mpc
             {
                 const Vector3 delta_p = R.transpose() * (gait_seq[i]->getPosition() - ref_traj[i - 1].position);
                 const Vector3 max_v = gait_seq[i]->getMaxLinearVelocity();
-                const Vector3 max_delta_p = max_v * dT;
-                for (int j = 0; j < 3; j++)
-                {
-                    if (std::abs(delta_p[j]) > max_delta_p[j])
-                    {
-                        linear_velocity[j] = delta_p[j] > 0 ? max_v[j] : -max_v[j];
-                    }
-                    else
-                    {
-                        linear_velocity[j] = delta_p[j] / dT;
-                    }
-                }
+                const Vector3 v = delta_p / dT;
+                linear_velocity = v.cwiseMin(max_v).cwiseMax(-max_v);
 
                 Vector3 delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
                 for (int j = 0; j < 3; j++)
                 {
-                    if (delta_o[j] > M_PI)
-                    {
-                        delta_o[j] -= 2 * M_PI;
-                    }
-                    else if (delta_o[j] < -M_PI)
-                    {
-                        delta_o[j] += 2 * M_PI;
-                    }
+                    delta_o[j] = delta_o[j] - 2 * M_PI * floor((delta_o[j] + M_PI) / (2 * M_PI));
                 }
                 const Vector3 max_w = gait_seq[i]->getMaxAngularVelocity();
-                const Vector3 max_delta_o = max_w * dT;
-                for (int j = 0; j < 3; j++)
-                {
-                    if (std::abs(delta_o[j]) > max_delta_o[j])
-                    {
-                        angular_velocity[j] = delta_o[j] > 0 ? max_w[j] : -max_w[j];
-                    }
-                    else
-                    {
-                        angular_velocity[j] = delta_o[j] / dT;
-                    }
-                }
+                const Vector3 w = delta_o / dT;
+                angular_velocity = w.cwiseMin(max_w).cwiseMax(-max_w);
                 break;
             }
             case GAIT_VELOCITY_CONTROL:
@@ -90,45 +63,18 @@ namespace starq::mpc
                 const Vector3 max_linear_velocity = gait_seq[i]->getMaxLinearVelocity();
                 const Vector3 max_angular_velocity = gait_seq[i]->getMaxAngularVelocity();
 
-                for (int j = 0; j < 3; j++)
-                {
-                    if (std::abs(linear_velocity[j]) > max_linear_velocity[j])
-                    {
-                        linear_velocity[j] = linear_velocity[j] > 0 ? max_linear_velocity[j] : -max_linear_velocity[j];
-                    }
-
-                    if (std::abs(angular_velocity[j]) > max_angular_velocity[j])
-                    {
-                        angular_velocity[j] = angular_velocity[j] > 0 ? max_angular_velocity[j] : -max_angular_velocity[j];
-                    }
-                }
+                linear_velocity = linear_velocity.cwiseMin(max_linear_velocity).cwiseMax(-max_linear_velocity);
+                angular_velocity = angular_velocity.cwiseMin(max_angular_velocity).cwiseMax(-max_angular_velocity);
 
                 const Float delta_z = robot_parameters_->getStandingHeight() - ref_traj[i - 1].position.z();
                 const Float max_vz = max_linear_velocity.z();
-                const Float max_delta_z = max_vz * dT;
-                if (std::abs(delta_z) > max_delta_z)
-                {
-                    linear_velocity.z() = delta_z > 0 ? max_vz : -max_vz;
-                }
-                else
-                {
-                    linear_velocity.z() = delta_z / dT;
-                }
+                const Float vz = delta_z / dT;
+                linear_velocity.z() = std::max(std::min(vz, max_vz), -max_vz);
 
                 const Eigen::Vector2<Float> delta_o = -ref_traj[i - 1].orientation.head(2);
                 const Eigen::Vector2<Float> max_w = max_angular_velocity.head(2);
-                const Eigen::Vector2<Float> max_delta_o = max_w * dT;
-                for (int j = 0; j < 2; j++)
-                {
-                    if (std::abs(delta_o[j]) > max_delta_o[j])
-                    {
-                        angular_velocity[j] = delta_o[j] > 0 ? max_w[j] : -max_w[j];
-                    }
-                    else
-                    {
-                        angular_velocity[j] = delta_o[j] / dT;
-                    }
-                }
+                const Eigen::Vector2<Float> vo = delta_o / dT;
+                angular_velocity.head(2) = vo.cwiseMin(max_w).cwiseMax(-max_w);
                 break;
             }
             }
