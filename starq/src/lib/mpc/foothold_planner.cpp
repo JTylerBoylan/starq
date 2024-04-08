@@ -16,7 +16,7 @@ namespace starq::mpc
     {
     }
 
-    bool FootholdPlanner::configure(const size_t N,
+    bool FootholdPlanner::configure(const size_t N, const milliseconds dt,
                                     const StanceTrajectory &stance_traj, const GaitSequence &gait_seq,
                                     const ReferenceTrajectory &ref_traj, FootholdTrajectory &foothold_traj) const
     {
@@ -53,7 +53,8 @@ namespace starq::mpc
 
                 if (curr_stance && last_stance)
                 {
-                    foothold_traj[i][j] = foothold_traj[i - 1][j];
+                    const Vector3 delta_foot_position = -ref_traj[i].linear_velocity * dt.count() * 1E-3f;
+                    foothold_traj[i][j] = foothold_traj[i - 1][j] + delta_foot_position;
                 }
                 else if (curr_stance && !last_stance)
                 {

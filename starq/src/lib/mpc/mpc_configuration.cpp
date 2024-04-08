@@ -80,7 +80,7 @@ namespace starq::mpc
             return false;
         }
 
-        if (!foothold_planner_->configure(window_size_, stance_trajectory_,
+        if (!foothold_planner_->configure(window_size_, time_step_, stance_trajectory_,
                                           gait_sequence_, reference_trajectory_, foothold_trajectory_))
         {
             std::cerr << "Could not configure foothold planner" << std::endl;
