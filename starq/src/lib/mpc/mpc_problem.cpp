@@ -130,15 +130,11 @@ namespace starq::mpc
 
     void MPCProblem::computeA()
     {
+        MatrixX A = MatrixX::Zero(7, 7);
+        A.block<3, 1>(3, 6) = config_->getGravity();
+        A = A * config_->getTimeStep() + MatrixX::Identity(7, 7);
         const size_t Nn = config_->getWindowSize();
-        A_.resize(Nn - 1);
-        for (size_t k = 0; k < Nn - 1; k++)
-        {
-            MatrixX A = MatrixX::Zero(7, 7);
-            A.block<3, 1>(3, 6) = config_->getGravity();
-            A = A * config_->getTimeStep() + MatrixX::Identity(7, 7);
-            A_[k] = A;
-        }
+        A_.resize(Nn - 1, A);
     }
 
     void MPCProblem::computeB()

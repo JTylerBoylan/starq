@@ -35,15 +35,11 @@ POSITION
 ---
 
 # THIRD SECTION: MPC Weights
-# Row 1: Position weights (x, y, z)
-# Row 2: Orientaion weights (roll, pitch, yaw)
-# Row 3: Linear velocity weights
-# Row 4: Angular velocity weights
-# Row 5: Force weights (fx, fy, fz)
+# Row 1: Linear velocity weights
+# Row 2: Angular velocity weights
+# Row 3: Force weights (fx, fy, fz)
 
 # Example:
-0.0 0.0 50.0     # Maintain Z height (Strong)
-0.0 0.0 10.0     # Maintain yaw
 10.0 10.0 10.0   # Maintain lin. velocity
 10.0 10.0 10.0   # Maintain ang. velocity
 1e-6 1e-6 1e-6   # Dampen control (Weak)
