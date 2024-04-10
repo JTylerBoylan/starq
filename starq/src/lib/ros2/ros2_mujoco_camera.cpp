@@ -53,6 +53,8 @@ namespace starq::ros2
             }
 
             auto image_msg = sensor_msgs::msg::Image();
+            image_msg.header.stamp = node_->now();
+            image_msg.header.frame_id = "camera";
             image_msg.width = viewport.width;
             image_msg.height = viewport.height;
             image_msg.encoding = "rgb8";

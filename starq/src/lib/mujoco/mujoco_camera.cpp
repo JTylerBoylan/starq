@@ -26,6 +26,7 @@ namespace starq::mujoco
         }
 
         window_ = glfwCreateWindow(1200, 800, (camera_name_ + " Video").c_str(), NULL, NULL);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         if (!window_)
         {

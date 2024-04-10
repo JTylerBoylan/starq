@@ -3,6 +3,7 @@
 
 #include "starq/ros2/ros2_joystick.hpp"
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
+#include "starq/ros2/ros2_mujoco_camera.hpp"
 
 using namespace starq;
 using namespace starq::mpc;
@@ -21,6 +22,8 @@ int main(int argc, char **argv)
     mpc_config->setWindowSize(21);
 
     auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
+
+    auto front_camera = std::make_shared<ros2::ROS2MuJoCoCamera>(node, robot->getFrontCamera(), "/front_camera/image_raw");
 
     MuJoCo::getInstance()->setFrameRate(30.0);
 

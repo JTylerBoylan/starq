@@ -14,6 +14,7 @@
     <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
       markrgb="0.8 0.8 0.8" width="300" height="300"/>
     <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="obstacle" specular="0" shininess="0.25" rgba="0.5 0.0 0.0 1"/>
   </asset>
 
   <worldbody>
@@ -21,9 +22,10 @@
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
 
     <!-- Adding obstacles -->
-    <geom name="obstacle1" type="box" size="0.1 0.2 0.05" pos="0.5 0.5 0.05" material="groundplane"/>
-    <geom name="obstacle2" type="cylinder" size="0.1 0.05" pos="-0.5 0.2 0.05" material="groundplane"/>
-    <geom name="obstacle3" type="sphere" size="0.1" pos="0 -0.5 0.1" material="groundplane"/>
+    <geom name="obstacle1" type="box" size="0.1 0.2 0.05" pos="0.5 0.5 0.05" material="obstacle"/>
+    <geom name="obstacle2" type="cylinder" size="0.1 0.05" pos="-0.5 0.2 0.05" material="obstacle"/>
+    <geom name="obstacle3" type="sphere" size="0.1" pos="0 -0.5 0.1" material="obstacle"/>
 
   </worldbody>
+
 </mujoco>

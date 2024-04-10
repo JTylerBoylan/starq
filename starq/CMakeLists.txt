@@ -161,10 +161,14 @@ target_link_libraries(starq_node starqlib)
 add_executable(test_ros2_joystick_mujoco tests/test_ros2_joystick_mujoco.cpp)
 target_link_libraries(test_ros2_joystick_mujoco starqlib)
 
+add_executable(test_ros2_camera_mujoco tests/test_ros2_camera_mujoco.cpp)
+target_link_libraries(test_ros2_camera_mujoco starqlib)
+
 # Install the ROS executables to the appropriate directory
 install(TARGETS 
   starq_node
   test_ros2_joystick_mujoco
+  test_ros2_camera_mujoco
   DESTINATION lib/${PROJECT_NAME}
 )
 
