@@ -38,7 +38,7 @@ Data Sheet: https://www.vishay.com/doc?29051
 ### MJ5208 ODrive Auto-Configuration Script
 1. Plug in USB from the Jetson to the ODrive controller 
 2. Open the Terminal on the the Jetson
-3. Go to the `docs` folder: $`cd ~/starq-lib/docs`
+3. Go to the `docs` folder: $`cd ~/starq_ws/docs`
 4. Run the auto-configuration script: $`python3 configure_odrive.py <CAN_ID>`
 5. Let the script complete before unplugging
 
@@ -82,27 +82,107 @@ Instructions on how to enable CAN on the Jetson.
 1. Open the Terminal on the Jetson
 2. Go to the `docs` folder: $`cd ~/starq_ws/docs`
 3. Run the command: $`sudo ./loadcan_jetson.sh` \
-*Note: This needs to be run every time the Jetson is booted.*
+*Note: This is run automatically with `./run_dev.sh`.*
+
+## C++ Quick Notes
+
+### Overview
+- C++ is used on this project over other languages for it's performance and embedded programming capabilities
+- C++ is an object-oriented programming language, meaning that the code is organized into 'objects', or classes, with specific purposes and functions
+
+### Pointers
+- The objects in the code are usually single instance, meaning they only exist once in memory, and are shared to other objects using its pointer, or memory address
+- Typically, using pointers requires allocating and deallocating space in memory (using `free` and `delete`), but it makes the code prone to memory-leaks (when memory is repeatedly allocated, but never de-allocated), which fills up the memory with useless objects
+- To combat this, we use the STL's (C++ Standard Library) implementation of 'special pointers', namely `shared_ptr`, which automatically de-allocates pointers when they go out-of-scope
+- We use the method `std::make_shared<ObjectType>(param1, param2, ...)` to construct a new `shared_ptr` of type `ObjectType`
+- In the code, the shortcut `ObjectType::Ptr` is defined to be used instead of `shared_ptr<ObjectType>`
+
+### Abstraction
+- Object-oriented code also allows for the use of abstracted classes, or outlines, that other classes can derive from
+- This is useful if there is some common structure for a set of objects used by another object, but each with their own implementation
+- For example, we have a `MotorController` abstract class that defines the set of functions for all motor controller types and is used by the `LegController` class to control the motors, but the actual method of control is determined by how the `MotorController` class functions are overwritten by say the `ODriveController` or `MuJoCoController` classes, both of which are motor controller instances
+- This enables us to have custom definitions/implementations for certain parts of the code, without having to edit the code at a higher level
 
 ## STARQ C++ Library
 
 ### Installation
 1. Open the Terminal
-2. Go to workspace folder: $`cd ~/starq_ws`
-3. Clone the project into the `src` folder: `git clone https://github.com/JTylerBoylan/starq src`
-4. Build the project: $`colcon build`
-6. Test executables will be generated in the `build/starq` folder
+2. Go to user directoy: $`cd ~`
+3. Clone the project into the `starq_ws` folder: `git clone https://github.com/JTylerBoylan/starq starq_ws`
+
+### Docker
+1. Go to the workspace folder: `cd ~/starq_ws`
+2. Run the Development docker container if you're on an external computer: `./run_dev.sh`
+3. Open VSCode
+4. Press `F1` key > `Dev Containers: Attach to running container` > `starq`
+5. `Open Folder` > `/home/nvidia/starq_ws/src/`
+
+### Building
+1. Open a Terminal in the docker container
+2. Go to `starq_ws` folder: `cd ~/starq_ws`
+3. Run: `colcon build`
+4. Go to `build/starq` folder: `cd build/starq`
+5. Run `ls` to see all test executables
+
+## Jetson Test Executables
+
+- Run from the `build/starq` directory on the Jetson AGX Orin
+
+### 1. Test CAN Communication
+- Source: `starq/tests/test_can_communication.cpp`
+- Executable: `./test_can_communication`
+- This test makes sure the "can0" interface is up and able to communicate messages
+- It can be used to verify that the ODrives are successfully sending messages and/or to view the IDs of the CAN messages that are being recieved
+- Troubleshooting:
+  - Use `ifconfig` on the host to see that the "can0" interface exists and is in state "UP"
+  - If not, try running the `./docs/loadcan_jetson.sh` script and try again
+
+### 2. Test ODrive Control
+- Source: `starq/tests/test_odrive_control.cpp`
+- Executable: `./test_odrive_control`
+- This test is used for controlling a single ODrive controller. It should incrementally set the position to higher angles, and print the ODrive info at each position
+- It can be used to verify that the ODrive is correctly positioning itself based on a given command
+- Troubleshooting:
+  - Make sure the ODrive is configured correctly and you are using the correct CAN ID
+  - Use the `odrivetool` on the host with a USB connection to verify the ODrive can connect
+  - Use an oscilliscope on the CAN wires to verify that messages are being transfered
+
+### 3. Test Clear Errors
+- Source: `starq/test/test_clear_errors.cpp`
+- Executable: `./test_clear_errors`
+- This test is used to clear the errors on all connected ODrives
+- Useful for resetting ODrive errors if one occurs
+
+### 4. Test Five-bar 2D Position Control
+- Source: `starq/test/test_fivebar2d_position_control.cpp`
+- Executable: `./test_fivebar2d_position_control.cpp`
+- This test is used to set a fivebar-2d leg to a specific position. It should follow a circular trajectory
+- Useful for testing the inverse kinematics of the `STARQFiveBar2DLegDynamics` class
+- Troubleshooting:
+  - Make sure the inverse kinematics is correctly reaching a solution (can be NaN if the foot position is out of range)
+  - Make sure the link lengths given to the leg dynamics are accurate
+
+### 5. Test Five-bar 2D Force Control
+- Source: `starq/test/test_fivebar2d_force_control.cpp`
+- Executable: `./test_fivebar2d_force_control.cpp`
+- This test is used to set a fivebar-2d leg to a specific force
+- Useful for testing the Jacobian of the `STARQFiveBar2DLegDynamics` class, as well as measuring the force loss due to friction in the gears
+- Troubleshooting:
+  - Make sure the Jacobian is reaching a solution (can be NaN as singular points)
+  - Make sure the link lengths given to the leg dynamics are accurate
+
+## Custom Executables
 
 ### Creating an executable (Not in ROS)
-1. Open `~/starq_ws/src/starq/CMakeLists.txt`
+1. Open `starq/CMakeLists.txt`
 2. Add the lines near the bottom:
 ```
 add_executable(my_executable examples/my_executable.cpp)
 target_include_directories(my_executable PUBLIC include)
-target_link_libraries(my_executable PUBLIC stdc++ stdc++fs m pthread starqlib)
+target_link_libraries(my_executable PUBLIC starqlib)
 ```
 - *Replace `my_executable` with your executable name*
-3. Create the file: `~/starq_ws/src/starq/examples/my_executable.cpp`
+3. Create the file: `starq/examples/my_executable.cpp`
 4. Add the lines:
 ```
 #include <stdio.h>
@@ -121,344 +201,4 @@ int main()
 2. Go to `~/starq_ws`
 3. Run the command: $`colcon build`
 4. Go to the executable location: $`cd build/starq`
-4. Run the executable: $`./my_executable`
-
-### Classes
-
-#### CANSocket
-
-* Read and write frames to a CAN interface
-* Source: `~/starq_ws/src/starq/src/lib/can/can_socket.hpp`
-* Include: `#include "starq/can/can_socket.hpp"`
-* Namespace `starq::can`
-* Functions:
-```
-// Constructor
-CANSocket(const std::string &interface);
-
-bool connect();
-
-bool send(const uint8_t can_id, const uint8_t *data, const uint8_t size);
-
-ssize_t receive(struct can_frame &frame);
-```
-*Note: The functions returning a boolean indicate if it was successful or not*
-
-#### ODriveSocket
-
-* Convert ODrive commands to CAN frames
-* Source: `~/starq_ws/src/starq/src/lib/odrive/odrive_socket.hpp`
-* Include: `#include "starq/odrive/odrive_socket.hpp`
-* Namespace: `starq::odrive`
-* Constructor:
-```
-ODriveSocket(const starq::can::CANSocket::Ptr socket);
-```
-
-*Note: ODriveSocket contains all the same functions as ODriveController, but requires the CAN ID.*
-
-#### MotorController
-
-* Abstract class for motor controllers. Used as a template for derived classes.
-* Include: `#include "starq/motor_controller.hpp`
-* Namespace: `starq`
-* Functions:
-```
-bool setGearRatio(const float gear_ratio);
-
-bool setState(const uint32_t state);
-
-bool setControlMode(const uint32_t control_mode, const uint32_t input_mode = 0x1);
-
-bool setPosition(const float pos, const float vel_ff = 0, const float torque_ff = 0);
-
-bool setVelocity(const float vel, const float torque_ff = 0);
-
-bool setTorque(const float torque);
-
-float getPositionEstimate();
-
-float getVelocityEstimate();
-
-float getTorqueEstimate();
-```
-
-#### ODriveController
-
-* Implementation of MotorController for ODrive controllers
-* Source: `~/starq_ws/src/starq/src/lib/odrive/odrive_controller.hpp`
-* Include: `#include "starq/odrive/odrive_controller.hpp`
-* Namespace: `starq::odrive`
-* Functions:
-  * Same as MotorController, but includes:
-```
-// Constructor
-ODriveController(const ODriveSocket::Ptr socket, const uint8_t can_id);
-
-bool setPosGain(const float pos_gain);
-
-bool setVelGains(const float vel_gain, const float integrator_gain);
-
-bool setLimits(const float velocity_limit, const float current_limit);
-
-uint8_t getCANID() const;
-
-uint32_t getAxisError();
-
-uint8_t getAxisState();
-
-float getIqSetpoint();
-
-float getIqMeasured();
-
-float getFETTemperature();
-
-float getMotorTemperature();
-
-float getBusVoltage();
-
-float getBusCurrent();
-
-bool clearErrors();
-
-void printInfo();
-
-std::string getErrorName();
-```
-
-#### LegDynamics
-
-* Abstract class for leg dynamics
-* Include: `#include "starq/leg_dynamics.hpp`
-* Namespace: `starq`
-* Functions:
-```
-bool getForwardKinematics(const VectorXf &joint_angles, VectorXf &foot_position);
-
-bool getInverseKinematics(const VectorXf &foot_position, VectorXf &joint_angles);
-
-getJacobian(const VectorXf &joint_angles, MatrixXf &jacobian);
-```
-
-#### STARQ_FiveBar2D
-
-* Implementation of LegDynamics for the 2D symmetric five-bar leg
-* Source: `~/starq_ws/src/starq/src/lib/dynamics/starq_fivebar2d.hpp`
-* Include: `#include "starq/dynamics/starq_fivebar2d.hpp`
-* Namespace: `starq::dynamics`
-* Functions:
-    * Same as LegDynamics
-```
-// Constructor
-STARQ_FiveBar2D(float L1, float L2);
-```
-
-#### LegController
-
-* Uses LegDynamics to convert leg commands into motor commands
-* Include: `#include "starq/leg_controller.hpp`
-* Namespace: `starq`
-* Functions:
-```
-// Constructor
-LegController(const starq::LegDynamics::Ptr dynamics, const std::vector<MotorController::Ptr> motor_controllers);
-
-bool setState(const uint32_t state);
-
-bool setControlMode(const uint32_t control_mode, const uint32_t input_mode = 0x1);
-
-bool setFootPosition(const VectorXf &foot_position, const VectorXf &foot_velocity_ff, const VectorXf &foot_torque_ff);
-
-bool setFootVelocity(const VectorXf &foot_velocity, const VectorXf &foot_torque_ff);
-
-bool setFootForce(const VectorXf &foot_force);
-
-bool getFootPositionEstimate(VectorXf &foot_position);
-
-bool getFootVelocityEstimate(VectorXf &foot_velocity);
-
-bool getFootForceEstimate(VectorXf &foot_force);
-```
-
-#### LegCommandPublisher
-
-* Handles leg commands from multiple processes and republishes them at a fixed rate
-* Include: `#include "starq/leg_command_publisher.hpp`
-* Namespace: `starq`
-* Functions:
-```
-// Constructor
-LegCommandPublisher(const std::vector<LegController::Ptr> leg_controllers);
-
-void sendCommand(const LegCommand &leg_command);
-
-void clear();
-
-void setStopOnFail(const bool stop_on_fail);
-
-void setSleepDuration(const time_t sleep_duration_us);
-```
-* Advantages:
-  * Ability to use ODrive's timeout function to shut off the motors if no messages are recieved within some time limit.
-  * Leg force/velocity commands are constantly recomputed with the latest Jacobian, so they will stay in the correct direction.
-  * Multiple processes can send commands to the leg controller without interfering with one another (race conditions)
-
-* LegCommandPublisher also holds the definition of a LegCommand:
-```
-struct LegCommand
-{
-    uint8_t leg_id = 0;
-    uint32_t control_mode = 0;
-    uint32_t input_mode = 0x1;
-    VectorXf target_position = VectorXf();
-    VectorXf target_velocity = VectorXf();
-    VectorXf target_force = VectorXf();
-};
-```
-#### TrajectoryFileReader
-
-* Reads leg trajectories from text files
-* Include: `#include "starq/trajectory_file_reader.hpp`
-* Namespace: `starq`
-* Functions:
-```
-// Constructor
-TrajectoryFileReader();
-
-bool load(const std::string &file_path);
-
-std::vector<LegCommand::Ptr> getTrajectory();
-```
-
-#### TrajectoryPublisher
-
-* Publishes a leg trajectory at a fixed frequency
-* Include: `#include "starq/trajectory_publisher.hpp`
-* Namespace: `starq`
-* Functions:
-```
-// Constructor
-TrajectoryPublisher(LegCommandPublisher::Ptr leg_command_publisher);
-
-bool setTrajectory(const std::vector<LegCommand::Ptr> &trajectory);
-
-bool setFrequency(int frequency);
-
-void start();
-
-void stop();
-```
-
-#### MPCController (TODO)
-
-* Formulate plan into a QP problem to solve for leg forces
-* QP Solver: OSQP or qpOASIS
-* Reference: \
-*Di Carlo, J., Wensing, P. M., Katz, B., Bledt, G., & Kim, S. (2018). Dynamic locomotion in the MIT Cheetah 3 through Convex Model-predictive control. 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). https://doi.org/10.1109/iros.2018.8594448*
-
-#### Localization
-
-* Abstract class for localization methods
-* Functions:
-```
-Vector3f getCurrentPosition();
-
-Vector3f getCurrentOrientation();
-
-Vector3f getCurrentVelocity();
-
-Vector3f getCurrentAngularVelocity();
-```
-
-#### TerrainMap
-
-* Abstract class for mapping methods
-* Functions:
-```
-double getDistanceToObstacle(const Vector3f &position);
-```
-
-### ROS Interface (TODO)
-* Library written as a ROS node so it can interface with other ROS packages
-* ROS Packages:
-  * cuVSLAM (NVIDIA's SLAM)
-  * joy (joystick control)
-  * rviz (visualization tools)
-  * MATLAB ROS Toolbox
-
-### Example Code
-```
-#include <stdio.h>
-
-#include "starq/can/can_socket.hpp"
-using namespace starq::can;
-
-#include "starq/odrive/odrive_socket.hpp"
-#include "starq/odrive/odrive_controller.hpp"
-using namespace starq::odrive;
-
-#include "starq/dynamics/starq_fivebar2d.hpp"
-using namespace starq::dynamics;
-
-#include "starq/leg_controller.hpp"
-using namespace starq;
-
-#define CAN_ID_A 0
-#define CAN_ID_B 1
-
-#define GEAR_RATIO_A 6.0
-#define GEAR_RATIO_B 6.0
-
-#define LINK_LENGTH_1 0.05
-#define LINK_LENGTH_2 0.15
-
-int main() {
-
-  printf("Hello, World!\n");
-
-  // Connect to CAN Interface
-  CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can0");
-  if (!can_socket->connect())
-  {
-      printf("Failed to connect to CAN interface.\n");
-      return 1;
-  }
-
-  // Connect to ODrive controllers
-  ODriveSocket::Ptr odrive_socket = std::make_shared<ODriveSocket>(can_socket);
-
-  // Create a ODrive controllers
-  ODriveController::Ptr odrive_A = std::make_shared<ODriveController>(odrive_socket, CAN_ID_A);
-  ODriveController::Ptr odrive_B = std::make_shared<ODriveController>(odrive_socket, CAN_ID_B);
-  std::vector<MotorController::Ptr> motors = {odrive_A, odrive_B};
-
-  // Set gear ratios
-  odrive_A->setGearRatio(GEAR_RATIO_A);
-  odrive_B->setGearRatio(GEAR_RATIO_B);
-
-  // Create FiveBar2D Dynamics
-  STARQ_FiveBar2D::Ptr fivebar = std::make_shared<STARQ_FiveBar2D>(LINK_LENGTH_1, LINK_LENGTH_2);
-
-  // Create Leg Controller
-  LegController::Ptr leg_controller = std::make_shared<LegController>(fivebar, motors);
-
-  // Move foot to center
-  Eigen::Vector2f foot_center(0.0, -0.15);
-  leg_controller->setState(AxisState::CLOSED_LOOP_CONTROL);
-  leg_controller->setControlMode(ControlMode::POSITION);
-  leg_controller->setFootPosition(foot_center);
-  sleep(1); // Wait 1 second for foot to move
-
-  leg_controller->setState(AxisState::IDLE);
-
-  return 0;
-} 
-```
-
-### STARQ Test Executables
-Executables located in the `build/starq` folder:
-* `test_can_connection`: Prints 10 CAN frames to the console.
-* `test_odrive_control`: Moves ODrive motors to a few set positions.
-* `test_clear_errors`: Clears errors for all connected ODrives.
-* `test_fivebar2d_position_control`:  Moves end effector position in a circle of a set radius.
-* `test_fivebar2d_force_control`: Applies a constant end effector force in a set direction.
+5. Run the executable: $`./my_executable`
