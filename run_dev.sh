@@ -12,7 +12,7 @@ xhost +local:root
 ARCH=$(uname -i)
 if [ "$ARCH" == "aarch64" ]; then
     # Load the CAN interface
-    sudo . ${SCRIPT_DIR}/docs/loadcan_jetson.sh
+    sudo /bin/bash ${SCRIPT_DIR}/docs/loadcan_jetson.sh
 fi
 
 # Build the Docker image
