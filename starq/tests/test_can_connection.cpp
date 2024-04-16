@@ -22,15 +22,17 @@ int main(void)
         return 1;
     }
 
-    printf("Publishing %d can frames...\n", NUM_FRAMES);
-
     // Receive CAN frames
+    printf("Receiving %d can frames...\n", NUM_FRAMES);
     struct can_frame frame;
     for (int i = 0; i < NUM_FRAMES; i++)
     {
-        socket.receive(frame);
-        printf("[%d] CAN Recieved: ID: %d, Size: %d\n", i, frame.can_id, frame.can_dlc);
+        const ssize_t size = socket.receive(frame);
+        printf("[%d] CAN Recieived: ID: %d, Size: %d\n", i, frame.can_id, size);
     }
 
+    // CAN socket closes automatically when it goes out of scope
+
+    printf("Done.\n");
     return 0;
 }

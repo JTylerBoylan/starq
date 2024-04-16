@@ -46,7 +46,7 @@ int main()
     UnitreeA1LegDynamics::Ptr unitree_RRR_R = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
                                                                                      UNITREE_A1_LENGTH_LT,
                                                                                      UNITREE_A1_LENGTH_LC);
-    
+
     // Flip the Y axis for the right leg
     unitree_RRR_R->flipYAxis();
     printf("Dynamics created\n");

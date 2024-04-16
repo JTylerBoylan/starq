@@ -15,6 +15,7 @@ namespace starq::can
         if (socket_ >= 0)
         {
             close(socket_);
+            std::cout << "CAN socket closed." << std::endl;
         }
     }
 

@@ -26,10 +26,12 @@ int main(void)
         return 1;
     }
 
-    // Create an ODrive socket object using the CAN socket
+    // Create an ODriveSocket object using the CAN socket
+    // This object converts ODrive commands to CAN frames and listens for ODrive information on the CAN bus
     ODriveSocket::Ptr odrive_socket = std::make_shared<ODriveSocket>(can_socket);
 
-    // Create an ODrive controller object for CAN_ID
+    // Create an ODriveController object for motor with id CAN_ID
+    // Instance of a MotorController, which can be used for higher level control of the motor
     ODriveController::Ptr odrive = std::make_shared<ODriveController>(odrive_socket, CAN_ID);
 
     // Switch the state to closed loop control

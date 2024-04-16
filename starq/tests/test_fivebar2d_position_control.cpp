@@ -66,7 +66,6 @@ int main(void)
         return 1;
     printf("Set control mode.\n");
 
-
     // Circular Trajectory
     // Center position of the leg space range
     const float center_x = 0.0f;
@@ -90,7 +89,6 @@ int main(void)
         // Print current joint angles
         const Vector3 joint_angles = leg->getCurrentJointAngles();
         printf("Joint angles: (%f, %f)\n", joint_angles(0), joint_angles(1));
-
 
         // Get point on circle
         const float x_off = radius * std::cos(t);

@@ -105,6 +105,7 @@ int main()
     for (uint32_t id = 0; id < 4; id++)
     {
         // Set leg ID and send command
+        // ID depends on the order of the legs in the LegCommandPublisher constructor
         leg_command.leg_id = id;
         leg_command_publisher->sendCommand(std::make_shared<LegCommand>(leg_command));
     }

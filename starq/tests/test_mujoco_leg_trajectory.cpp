@@ -86,6 +86,7 @@ int main()
     MuJoCoLocalization::Ptr localization = std::make_shared<MuJoCoLocalization>(mujoco);
 
     // Create leg command publisher to send commands to the legs at a fixed rate
+    // The localization is used for timing (sim vs. real). If no localization is provided, the system/real time is used.
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
         LegList{leg_FL, leg_RL, leg_RR, leg_FR},
         localization);
@@ -118,10 +119,10 @@ int main()
 
     while (mujoco->isOpen())
     {
-        // Run trajectory from file
+        // Repeatedly run trajectory from file
         trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
 
-        // Wait for trajectory to finish
+        // Wait for trajectory to finish before running it again
         while (trajectory_publisher->isRunning())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
