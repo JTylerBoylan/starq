@@ -8,8 +8,10 @@ int main(void)
 {
     printf("Hello world!\n");
 
+    // Create a CAN socket object on the can0 interface
     starq::can::CANSocket socket("can0");
 
+    // Connect to the CAN interface
     if (socket.connect())
     {
         printf("Connected to CAN interface.\n");
@@ -22,6 +24,7 @@ int main(void)
 
     printf("Publishing %d can frames...\n", NUM_FRAMES);
 
+    // Receive CAN frames
     struct can_frame frame;
     for (int i = 0; i < NUM_FRAMES; i++)
     {

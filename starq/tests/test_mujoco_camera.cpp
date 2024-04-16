@@ -9,19 +9,26 @@ using namespace starq::unitree;
 int main(void)
 {
 
+    // Get MuJoCo singleton instance
     MuJoCo::Ptr mujoco = MuJoCo::getInstance();
 
+    // Create Unitree A1 robot
     auto robot = std::make_shared<UnitreeA1MuJoCoRobot>();
 
-    auto front_camera = std::make_shared<MuJoCoCamera>(mujoco, "front_camera");
-
+    // Start simulation
     robot->startSimulation();
 
+    // Get camera
     auto &camera = robot->openCamera();
 
+    // Wait for camera to close
     camera.wait();
-    robot->waitForSimulation();
+    printf("Camera closed\n");
 
+    // Wait for simulation to close
+    robot->waitForSimulation();
     printf("Simulation closed\n");
+
+    printf("Done.\n");
     return 0;
 }

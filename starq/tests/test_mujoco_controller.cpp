@@ -7,8 +7,10 @@ using namespace starq::mujoco;
 
 int main()
 {
+    // Get MuJoCo singleton instance
     MuJoCo::Ptr mujoco = MuJoCo::getInstance();
 
+    // Create 12 motor controllers for the Unitree A1 robot
     MuJoCoController::Ptr controller0 = std::make_shared<MuJoCoController>(mujoco, 0);
     MuJoCoController::Ptr controller1 = std::make_shared<MuJoCoController>(mujoco, 1);
     MuJoCoController::Ptr controller2 = std::make_shared<MuJoCoController>(mujoco, 2);
@@ -21,12 +23,13 @@ int main()
     MuJoCoController::Ptr controller9 = std::make_shared<MuJoCoController>(mujoco, 9);
     MuJoCoController::Ptr controller10 = std::make_shared<MuJoCoController>(mujoco, 10);
     MuJoCoController::Ptr controller11 = std::make_shared<MuJoCoController>(mujoco, 11);
+    printf("Controllers created\n");
 
-    printf("Controller created\n");
-
+    // Launch simulation in a separate thread
     std::future<void> sim = std::async(std::launch::async, [&]
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
 
+    // Set control mode to position
     controller0->setControlMode(starq::ControlMode::POSITION);
     controller1->setControlMode(starq::ControlMode::POSITION);
     controller2->setControlMode(starq::ControlMode::POSITION);
@@ -40,6 +43,7 @@ int main()
     controller10->setControlMode(starq::ControlMode::POSITION);
     controller11->setControlMode(starq::ControlMode::POSITION);
 
+    // Go to key positions
     // positions: 0 0.9 -1.8 0 0.9 -1.8 0 0.9 -1.8 0 0.9 -1.8
     controller0->setPosition(0);
     controller1->setPosition(0.9);
@@ -53,10 +57,10 @@ int main()
     controller9->setPosition(0);
     controller10->setPosition(0.9);
     controller11->setPosition(-1.8);
-
+    
+    // Wait for the simulation to close
     sim.wait();
 
     printf("Done\n");
-
     return 0;
 }

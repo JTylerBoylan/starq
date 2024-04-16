@@ -13,15 +13,19 @@ using namespace starq;
 using namespace starq::mujoco;
 using namespace starq::unitree;
 
+// Unitree A1 leg link lengths in meters
 #define UNITREE_A1_LENGTH_D 0.08505
 #define UNITREE_A1_LENGTH_LT 0.2
 #define UNITREE_A1_LENGTH_LC 0.2
 
 int main()
 {
+
+    // Get MuJoCo singleton instance
     MuJoCo::Ptr mujoco = MuJoCo::getInstance();
     printf("MuJoCo created\n");
 
+    // Create 12 motor controllers for the Unitree A1 robot
     MuJoCoController::Ptr motor_FRA = std::make_shared<MuJoCoController>(mujoco, 0);
     MuJoCoController::Ptr motor_FRB = std::make_shared<MuJoCoController>(mujoco, 1);
     MuJoCoController::Ptr motor_FRC = std::make_shared<MuJoCoController>(mujoco, 2);
@@ -36,16 +40,19 @@ int main()
     MuJoCoController::Ptr motor_RLC = std::make_shared<MuJoCoController>(mujoco, 11);
     printf("Controllers created\n");
 
+    // Create Unitree A1 leg dynamics for left and right legs
     UnitreeA1LegDynamics::Ptr unitree_RRR_L = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
                                                                                      UNITREE_A1_LENGTH_LT,
                                                                                      UNITREE_A1_LENGTH_LC);
-
     UnitreeA1LegDynamics::Ptr unitree_RRR_R = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
                                                                                      UNITREE_A1_LENGTH_LT,
                                                                                      UNITREE_A1_LENGTH_LC);
+    
+    // Flip the Y axis for the right leg
     unitree_RRR_R->flipYAxis();
     printf("Dynamics created\n");
 
+    // Create 4 leg controllers for the Unitree A1 robot with the 12 motor controllers
     LegController::Ptr leg_FR = std::make_shared<LegController>(unitree_RRR_R,
                                                                 MotorList{motor_FRA, motor_FRB, motor_FRC});
     LegController::Ptr leg_FL = std::make_shared<LegController>(unitree_RRR_L,
@@ -56,13 +63,18 @@ int main()
                                                                 MotorList{motor_RLA, motor_RLB, motor_RLC});
     printf("Legs created\n");
 
+    // Set leg control modes to position
     leg_FR->setControlMode(ControlMode::POSITION);
     leg_FL->setControlMode(ControlMode::POSITION);
     leg_RR->setControlMode(ControlMode::POSITION);
     leg_RL->setControlMode(ControlMode::POSITION);
     printf("Control mode set\n");
 
+    // Create trajectory file reader object
     TrajectoryFileReader::Ptr trajectory_file_reader = std::make_shared<TrajectoryFileReader>();
+
+    // Load trajectory from file
+    // Trajectories are created in MATLAB and saved as text files
     if (!trajectory_file_reader->load("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt"))
     {
         printf("Failed to load trajectory\n");
@@ -70,45 +82,55 @@ int main()
     }
     printf("Trajectory loaded\n");
 
-    auto localization = std::make_shared<MuJoCoLocalization>(mujoco);
+    // Create localization object
+    MuJoCoLocalization::Ptr localization = std::make_shared<MuJoCoLocalization>(mujoco);
 
+    // Create leg command publisher to send commands to the legs at a fixed rate
     LegCommandPublisher::Ptr leg_command_publisher = std::make_shared<LegCommandPublisher>(
         LegList{leg_FL, leg_RL, leg_RR, leg_FR},
         localization);
     printf("Leg command publisher created\n");
 
+    // Create trajectory publisher to send trajectory commands to the legs
     TrajectoryPublisher::Ptr trajectory_publisher = std::make_shared<TrajectoryPublisher>(leg_command_publisher);
     printf("Trajectory publisher created\n");
 
+    // Launch simulation in a separate thread
     std::future<void> sim = std::async(std::launch::async, [&]
                                        { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
 
+    // Wait for simulation to start
     while (!mujoco->isOpen())
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     printf("Simulation started\n");
-
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+    // Go to base positions
     leg_FR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_FL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
     leg_RR->setFootPosition(Vector3(0, -UNITREE_A1_LENGTH_D, -0.2));
     leg_RL->setFootPosition(Vector3(0, UNITREE_A1_LENGTH_D, -0.2));
 
+    // Wait for 3 seconds to let the simulation settle
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     while (mujoco->isOpen())
     {
+        // Run trajectory from file
         trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
+
+        // Wait for trajectory to finish
         while (trajectory_publisher->isRunning())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 
+    // Wait for simulation to finish
     sim.wait();
-    printf("Done\n");
 
+    printf("Done\n");
     return 0;
 }
