@@ -172,9 +172,6 @@ int main()
         printf("Angular velocity: %f %f %f\n", angular_velocity.x(), angular_velocity.y(), angular_velocity.z());
         printf("\n");
 
-        // Get current rotation matrix
-        const Matrix3 current_rotation = robot->getLocalization()->toRotationMatrix(orientation);
-
         // Print leg commands
         for (size_t j = 0; j < solution->u_star[0].size(); j++)
         {

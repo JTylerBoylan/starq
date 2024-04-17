@@ -172,6 +172,12 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 # MuJoCo executables
 add_executable(test_mujoco tests/test_mujoco.cpp)
 target_include_directories(test_mujoco PUBLIC include)

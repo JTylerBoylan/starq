@@ -93,7 +93,7 @@ Instructions on how to enable CAN on the Jetson.
 ### Pointers
 - The objects in the code are usually single instance, meaning they only exist once in memory, and are shared to other objects using its pointer, or memory address
 - Typically, using pointers requires allocating and deallocating space in memory (using `free` and `delete`), but it makes the code prone to memory-leaks (when memory is repeatedly allocated, but never de-allocated), which fills up the memory with useless objects
-- To combat this, we use the STL's (C++ Standard Library) implementation of 'special pointers', namely `shared_ptr`, which automatically de-allocates pointers when they go out-of-scope
+- To combat this, we use the STL's (C++ Standard Library) implementation of 'special pointers', namely `shared_ptr`, which automatically de-allocate the memory when they go out-of-scope
 - We use the method `std::make_shared<ObjectType>(param1, param2, ...)` to construct a new `shared_ptr` of type `ObjectType`
 - In the code, the shortcut `ObjectType::Ptr` is defined to be used instead of `shared_ptr<ObjectType>`
 
@@ -108,21 +108,27 @@ Instructions on how to enable CAN on the Jetson.
 ### Installation
 1. Open the Terminal
 2. Go to user directoy: $`cd ~`
-3. Clone the project into the `starq_ws` folder: `git clone https://github.com/JTylerBoylan/starq starq_ws`
+3. Clone the project into the `starq_ws` folder: $`git clone https://github.com/JTylerBoylan/starq starq_ws`
 
-### Docker
-1. Go to the workspace folder: `cd ~/starq_ws`
-2. Run the Development docker container if you're on an external computer: `./run_dev.sh`
+### Docker + VSCode
+1. Go to the workspace folder: $`cd ~/starq_ws`
+2. Run the development enviroment: $`./run_dev.sh`
 3. Open VSCode
-4. Press `F1` key > `Dev Containers: Attach to running container` > `starq`
-5. `Open Folder` > `/home/nvidia/starq_ws/src/`
+4. Press the `F1` key > `Dev Containers: Attach to Running Container...` > `starq`
+5. `File` > `Open Folder` > `/home/nvidia/starq_ws/src/`
 
 ### Building
-1. Open a Terminal in the docker container
-2. Go to `starq_ws` folder: `cd ~/starq_ws`
-3. Run: `colcon build`
-4. Go to `build/starq` folder: `cd build/starq`
-5. Run `ls` to see all test executables
+1. Open Terminal in the container
+2. Go to `starq_ws` folder: $`cd ~/starq_ws`
+3. Build: $`colcon build`
+4. Source: $`source install/setup.bash`
+4. Go to the build folder: $`cd build/starq`
+5. Run $`ls` to see all test executables
+
+*Note: You can choose the build type using the command: `colcon build --cmake-args -DCMAKE_BUILD_TYPE=<Build Type>` where Build Type can be:*
+  - *`Release`: Maximum performance*
+  - *`Debug`: Slower, but with debugging information*
+  - *`RelWDebInfo`: Mix of the other two*
 
 ## Jetson Test Executables
 
@@ -130,16 +136,16 @@ Instructions on how to enable CAN on the Jetson.
 
 ### 1. Test CAN Communication
 - Source: `starq/tests/test_can_communication.cpp`
-- Executable: `./test_can_communication`
-- This test makes sure the "can0" interface is up and able to communicate messages
+- Executable: $`./test_can_communication`
+- This test makes sure the "can0" interface is UP and able to communicate messages
 - It can be used to verify that the ODrives are successfully sending messages and/or to view the IDs of the CAN messages that are being recieved
 - Troubleshooting:
-  - Use `ifconfig` on the host to see that the "can0" interface exists and is in state "UP"
-  - If not, try running the `./docs/loadcan_jetson.sh` script and try again
+  - Use $`ifconfig` on the host to see that the "can0" interface exists and is in state "UP"
+  - If not, try running the $`./docs/loadcan_jetson.sh` script and try again
 
 ### 2. Test ODrive Control
 - Source: `starq/tests/test_odrive_control.cpp`
-- Executable: `./test_odrive_control`
+- Executable: $`./test_odrive_control`
 - This test is used for controlling a single ODrive controller. It should incrementally set the position to higher angles, and print the ODrive info at each position
 - It can be used to verify that the ODrive is correctly positioning itself based on a given command
 - Troubleshooting:
@@ -149,13 +155,13 @@ Instructions on how to enable CAN on the Jetson.
 
 ### 3. Test Clear Errors
 - Source: `starq/test/test_clear_errors.cpp`
-- Executable: `./test_clear_errors`
+- Executable: $`./test_clear_errors`
 - This test is used to clear the errors on all connected ODrives
 - Useful for resetting ODrive errors if one occurs
 
 ### 4. Test Five-bar 2D Position Control
 - Source: `starq/test/test_fivebar2d_position_control.cpp`
-- Executable: `./test_fivebar2d_position_control.cpp`
+- Executable: $`./test_fivebar2d_position_control`
 - This test is used to set a fivebar-2d leg to a specific position. It should follow a circular trajectory
 - Useful for testing the inverse kinematics of the `STARQFiveBar2DLegDynamics` class
 - Troubleshooting:
@@ -164,26 +170,80 @@ Instructions on how to enable CAN on the Jetson.
 
 ### 5. Test Five-bar 2D Force Control
 - Source: `starq/test/test_fivebar2d_force_control.cpp`
-- Executable: `./test_fivebar2d_force_control.cpp`
+- Executable: $`./test_fivebar2d_force_control`
 - This test is used to set a fivebar-2d leg to a specific force
-- Useful for testing the Jacobian of the `STARQFiveBar2DLegDynamics` class, as well as measuring the force loss due to friction in the gears
+- Useful for testing the Jacobian of the `STARQFiveBar2DLegDynamics` class, as well as measuring the losses due to friction in the gears
 - Troubleshooting:
-  - Make sure the Jacobian is reaching a solution (can be NaN as singular points)
+  - Make sure the Jacobian is reaching a solution (can be NaN at singular points)
   - Make sure the link lengths given to the leg dynamics are accurate
 
-## Custom Executables
+## MuJoCo Test Executables
 
-### Creating an executable (Not in ROS)
-1. Open `starq/CMakeLists.txt`
-2. Add the lines near the bottom:
-```
-add_executable(my_executable examples/my_executable.cpp)
-target_include_directories(my_executable PUBLIC include)
-target_link_libraries(my_executable PUBLIC starqlib)
-```
-- *Replace `my_executable` with your executable name*
-3. Create the file: `starq/examples/my_executable.cpp`
-4. Add the lines:
+### 1. Test MuJoCo
+- Source: `starq/test/test_mujoco.cpp`
+- Executable: $`./test_mujoco`
+- Simplest script for starting a MuJoCo simulation with the base control function
+- Troubleshooting:
+  - [MuJoCo Docs](https://mujoco.readthedocs.io/en/stable/overview.html)
+
+### 2. Test MuJoCo Controller
+- Source: `starq/test/test_mujoco_controller.cpp`
+- Executable: $`./test_mujoco_controller`
+- Test the simulated PID control to keep the robot in a standing position
+
+### 3. Test MuJoCo Leg Control
+- Source: `starq/test/test_mujoco_leg_control.cpp`
+- Executable: $`./test_mujoco_leg_control`
+
+### 4. Test MuJoCo Leg Forces
+- Source: `starq/test/test_mujoco_leg_forces.cpp`
+- Executable: $`./test_mujoco_leg_forces`
+
+### 5. Test MuJoCo Leg Trajectory
+- Source: `starq/test/test_mujoco_leg_trajectory.cpp`
+- Executable: $`./test_mujoco_leg_trajectory`
+
+### 6. Test MuJoCo Localization
+- Source: `starq/test/test_mujoco_localization.cpp`
+- Executable: $`./test_mujoco_localization`
+
+## MuJoCo MPC Test Executables
+
+### 1. Test MuJoCo MPC Planner
+- Source: `starq/test/test_mujoco_mpc_planner.cpp`
+- Executable: $`./test_mujoco_mpc_planner`
+
+### 2. Test MuJoCo MPC Solver
+- Source: `starq/test/test_mujoco_mpc_solver.cpp`
+- Executable: $`./test_mujoco_mpc_solver`
+
+### 3. Test MuJoCo MPC Controller
+- Source: `starq/test/test_mujoco_mpc_controller.cpp`
+- Executable: $`./test_mujoco_mpc_controller`
+
+### 4. Test Unitree A1 MuJoCo Robot
+- Source: `starq/test/test_unitree_a1_mujoco_robot.cpp`
+- Executable: $`./test_unitree_a1_mujoco_robot`
+
+### 5. Test ROS2 Joystick MuJoCo
+- Source: `starq/test/test_ros2_joystick_mujoco.cpp`
+- Launch: $`ros2 launch starq test_joystick_mujoco.xml`
+
+## MuJoCo SLAM Test Executables
+
+### 1. Test MuJoco Camera
+- Source: `starq/test/test_mujoco_camera.cpp`
+- Executable: $`./test_mujoco_camera`
+
+### 2. Test ROS2 Camera MuJoCo
+- Source: `starq/test/test_ros2_camera_mujoco.cpp`
+- Executable: $`ros2 launch starq test_camera_mujoco.xml`
+
+## Creating Executables
+
+### Creating an Executable (Not in ROS)
+1. Create the file: `starq/tests/my_executable.cpp`
+2. Add the lines:
 ```
 #include <stdio.h>
 
@@ -194,11 +254,72 @@ int main()
     return 0;
 }
 ```
+3. Open `starq/CMakeLists.txt`
+4. Add the lines near the bottom:
+```
+add_executable(my_executable tests/my_executable.cpp)
+target_include_directories(my_executable PUBLIC include)
+target_link_libraries(my_executable PUBLIC starqlib)
+```
+- *Replace `my_executable` with your executable name*
+5. Open the Terminal
+6. Go to `~/starq_ws`
+7. Run the command: $`colcon build`
+8. Go to the executable location: $`cd build/starq`
+9. Run the executable: $`./my_executable`
 
-### Compiling and Running an executable
+### Creating an Executable (In ROS)
+1. Create the file: `starq/tests/my_ros_executable.cpp`
+2. Add the lines:
+```
+#include <stdio.h>
 
-1. Open the Terminal
-2. Go to `~/starq_ws`
-3. Run the command: $`colcon build`
-4. Go to the executable location: $`cd build/starq`
-5. Run the executable: $`./my_executable`
+#include <rclcpp/rclcpp.hpp>
+
+int main(int argc, char **argv)
+{
+  printf("Hello World!\n");
+
+  rclcpp::init(argc, argv);
+  
+  rclcpp::Node node;
+  rclcpp::spin(node);
+
+  rclcpp::shutdown();
+  return 0;
+}
+```
+3. Open `starq/CMakeLists.txt`
+4. Add the lines in the ROS executables section:
+```
+add_executable(my_executable tests/my_ros_executable.cpp)
+target_link_libraries(my_ros_executable PUBLIC starqlib)
+```
+5. Add executable to install
+```
+install(TARGETS 
+  starq_node
+  ... # Other ROS executables
+  my_ros_executable
+  DESTINATION lib/${PROJECT_NAME}
+)
+```
+5. Open the Terminal
+6. Go to `~/starq_ws`
+7. Build: $`colcon build`
+8. Source: $`source install/setup.bash`
+9. Run the executable: $`ros2 run starq my_ros_executable`
+
+## Creating a ROS Launch File
+1. Create the file: `starq/launch/my_ros_launch.xml`
+2. Add the lines:
+```
+<launch>
+
+    <node pkg="starq" exec="my_ros_executable" name="my_ros_executable"  output="screen"/>
+
+    <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen"/>
+
+</launch>
+```
+

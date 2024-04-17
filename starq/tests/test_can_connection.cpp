@@ -28,7 +28,7 @@ int main(void)
     for (int i = 0; i < NUM_FRAMES; i++)
     {
         const ssize_t size = socket.receive(frame);
-        printf("[%d] CAN Recieived: ID: %d, Size: %d\n", i, frame.can_id, size);
+        printf("[%d] CAN Recieived: ID: %d, Size: %ld\n", i, frame.can_id, size);
     }
 
     // CAN socket closes automatically when it goes out of scope
