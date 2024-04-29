@@ -116,15 +116,6 @@ install(TARGETS starqlib
 )
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
-# Example executables
-add_executable(example_control examples/example_control.cpp)
-target_include_directories(example_control PUBLIC include)
-target_link_libraries(example_control PUBLIC starqlib)
-
-add_executable(two_leg_control examples/two_leg_control.cpp)
-target_include_directories(two_leg_control PUBLIC include)
-target_link_libraries(two_leg_control PUBLIC starqlib)
-
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)
@@ -141,6 +132,10 @@ target_link_libraries(test_fivebar2d_position_control PUBLIC starqlib)
 add_executable(test_fivebar2d_force_control tests/test_fivebar2d_force_control.cpp)
 target_include_directories(test_fivebar2d_force_control PUBLIC include)
 target_link_libraries(test_fivebar2d_force_control PUBLIC starqlib)
+
+add_executable(test_fivebar2d_two_leg_control tests/test_fivebar2d_two_leg_control.cpp)
+target_include_directories(test_fivebar2d_two_leg_control PUBLIC include)
+target_link_libraries(test_fivebar2d_two_leg_control PUBLIC starqlib)
 
 add_executable(test_fivebar2d_dummy tests/test_fivebar2d_dummy.cpp)
 target_include_directories(test_fivebar2d_dummy PUBLIC include)

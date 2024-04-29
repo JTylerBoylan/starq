@@ -42,8 +42,8 @@ odrv0.axis0.config.can.torques_msg_rate_ms = 20
 print("Configuring power supply...")
 n_bats = 2
 bat_n_cells = 4
-odrv0.config.dc_bus_undervoltage_trip_level = n_bats * 3.3 * bat_n_cells
-odrv0.config.dc_bus_overvoltage_trip_level = n_bats * 4.25 * bat_n_cells
+odrv0.config.dc_bus_undervoltage_trip_level = 18 # n_bats * 3.3 * bat_n_cells
+odrv0.config.dc_bus_overvoltage_trip_level = 36 # n_bats * 4.25 * bat_n_cells
 odrv0.config.dc_max_positive_current = 500
 odrv0.config.dc_max_negative_current = -60
 
@@ -55,7 +55,7 @@ odrv0.axis0.config.motor.calibration_current = 5.0
 odrv0.axis0.config.calibration_lockin.current = 5.0
 
 print("Configuring thermistor...")
-odrv0.axis0.motor.motor_thermistor.config.enabled = True
+odrv0.axis0.motor.motor_thermistor.config.enabled = False # True
 odrv0.axis0.motor.motor_thermistor.config.temp_limit_lower = 80
 odrv0.axis0.motor.motor_thermistor.config.temp_limit_upper = 100
 odrv0.axis0.motor.motor_thermistor.config.r_ref = 5000
