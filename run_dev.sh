@@ -15,9 +15,6 @@ if [ "$ARCH" == "aarch64" ]; then
     sudo /bin/bash ${SCRIPT_DIR}/docs/loadcan_jetson.sh
 fi
 
-# Build the Docker image
-docker build -t ${PROJECT_NAME}:latest "${SCRIPT_DIR}"
-
 # Start the Docker container
 docker run -it \
     --rm \
@@ -27,5 +24,6 @@ docker run -it \
     -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/${SCRIPT_DIR}:${PROJECT_DIR}" \
+    -w "${PROJECT_DIR}/../" \
     ${PROJECT_NAME}:latest \
     bash

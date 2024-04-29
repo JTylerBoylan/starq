@@ -27,8 +27,11 @@ int main()
         STARQ->setFootPosition(i, center_position);
     }
 
-    // Wait for 1 second
-    usleep(1000000);
+    // Wait for 5 seconds
+    usleep(5E6);
+
+    // Set axis state to idle
+    STARQ->setState(AxisState::IDLE);
 
     printf("Done.\n");
     return 0;

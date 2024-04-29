@@ -15,7 +15,6 @@ RUN apt-get update && \
 RUN useradd -m -u 1000 -s /bin/bash nvidia && \
     mkdir -p /home/nvidia/starq_ws && \
     chown -R nvidia:nvidia /home/nvidia/starq_ws
-WORKDIR /home/nvidia/starq_ws/src/
 
 # Install MuJoCo
 ENV MUJOCO_PATH /home/nvidia/MuJoCo

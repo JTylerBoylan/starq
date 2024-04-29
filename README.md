@@ -93,8 +93,8 @@ Instructions on how to enable CAN on the Jetson.
 ### Pointers
 - The objects in the code are usually single instance, meaning they only exist once in memory, and are shared to other objects using its pointer, or memory address
 - Typically, using pointers requires allocating and deallocating space in memory (using `free` and `delete`), but it makes the code prone to memory-leaks (when memory is repeatedly allocated, but never de-allocated), which fills up the memory with useless objects
-- To combat this, we use the STL's (C++ Standard Library) implementation of 'special pointers', namely `shared_ptr`, which automatically de-allocate the memory when they go out-of-scope
-- We use the method `std::make_shared<ObjectType>(param1, param2, ...)` to construct a new `shared_ptr` of type `ObjectType`
+- To combat this, we use the STL's (C++ Standard Library) implementation of 'special pointers', namely `shared_ptr`, which automatically de-allocates the memory when there are no instances left
+- We use the method `std::make_shared<ObjectType>(param1, param2, ...)` to construct a new `shared_ptr` of type `ObjectType` with a constructor of parameters `param1`, `param2`, `...`
 - In the code, the shortcut `ObjectType::Ptr` is defined to be used instead of `shared_ptr<ObjectType>`
 
 ### Abstraction
@@ -112,10 +112,11 @@ Instructions on how to enable CAN on the Jetson.
 
 ### Docker + VSCode
 1. Go to the workspace folder: $`cd ~/starq_ws`
-2. Run the development enviroment: $`./run_dev.sh`
-3. Open VSCode
-4. Press the `F1` key > `Dev Containers: Attach to Running Container...` > `starq`
-5. `File` > `Open Folder` > `/home/nvidia/starq_ws/src/`
+2. Build the development environment *(if needed)*: $`./build_dev.sh`
+3. Run the development enviroment: $`./run_dev.sh`
+4. Open VSCode
+5. Press the `F1` key > `Dev Containers: Attach to Running Container...` > `starq`
+6. `File` > `Open Folder` > `/home/nvidia/starq_ws/src/`
 
 ### Building
 1. Open Terminal in the container
@@ -323,3 +324,12 @@ install(TARGETS
 </launch>
 ```
 
+## Debugging in VSCode
+1. Add breakout points in the code by selecting the red dot next to the line number
+2. Build in `Debug` mode (See `Building` section)
+3. Open the `.vscode/launch.json` file in the editor
+4. On the line for `program`, edit the path to the executable you want to debug
+5. Go to the debugging panel in VSCode (bug + play arrow icon)
+6. Press the green play arrow on `Launch Debugger`
+7. Use the debug panel to see local variable values
+8. Use the debug button window to continue to the next breakout point
