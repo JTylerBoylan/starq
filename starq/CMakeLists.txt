@@ -56,6 +56,7 @@ add_library(starqlib SHARED
   src/lib/odrive/odrive_socket.cpp
   src/lib/odrive/odrive_controller.cpp
   src/lib/starq/starq_fivebar2d_leg_dynamics.cpp
+  src/lib/starq/starq_robot.cpp
   src/lib/unitree/unitree_a1_leg_dynamics.cpp
   src/lib/unitree/unitree_a1_robot_parameters.cpp
   src/lib/unitree/unitree_a1_mujoco_robot.cpp
@@ -148,6 +149,10 @@ target_link_libraries(test_clear_errors PUBLIC starqlib)
 add_executable(test_command_publisher_dummy tests/test_command_publisher_dummy.cpp)
 target_include_directories(test_command_publisher_dummy PUBLIC include)
 target_link_libraries(test_command_publisher_dummy PUBLIC starqlib)
+
+add_executable(test_starq_robot tests/test_starq_robot.cpp)
+target_include_directories(test_starq_robot PUBLIC include)
+target_link_libraries(test_starq_robot PUBLIC starqlib)
 
 # ROS executables
 add_executable(starq_node src/starq_node.cpp)
