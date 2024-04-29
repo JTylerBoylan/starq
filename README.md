@@ -42,7 +42,7 @@ Data Sheet: https://www.vishay.com/doc?29051
 4. Run the auto-configuration script: $`python3 configure_odrive.py <CAN_ID>`
 5. Let the script complete before unplugging
 
-*Note: The thermistor needs to be plugged in before running this script*
+*Note: This script is for ODrive firmware v0.6.8*
 
 ## ODrive CAN Communication
 
