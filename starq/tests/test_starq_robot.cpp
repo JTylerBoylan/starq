@@ -30,23 +30,35 @@ int main()
     // Wait for 5 seconds
     usleep(5E6);
 
-    // Move legs in a circle
-    const float frequency = 0.5f;
-    const int resolution = 100;
-    const int num_cycles = 3;
-    const float radius = 0.025f;
-    for (int i = 0; i < num_cycles; i++)
+    // // Move legs in a circle
+    // const float frequency = 0.5f;
+    // const int resolution = 100;
+    // const int num_cycles = 3;
+    // const float radius = 0.025f;
+    // for (int i = 0; i < num_cycles; i++)
+    // {
+    //     for (int j = 0; j < resolution; j++)
+    //     {
+    //         const float angle = 2.0f * M_PI * j / resolution;
+    //         const Vector3 circle_position(radius * cos(angle), radius * sin(angle), 0.0f);
+    //         STARQ->setFootPosition(0, center_position + circle_position);
+    //         STARQ->setFootPosition(1, center_position - circle_position);
+    //         STARQ->setFootPosition(2, center_position + circle_position);
+    //         STARQ->setFootPosition(3, center_position - circle_position);
+    //         usleep(1E6 / frequency / resolution);
+    //     }
+    // }
+
+    // Load trajectory from file
+    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
+
+    // Start trajectory
+    STARQ->startTrajectory();
+
+    // Wait for trajectory to finish
+    while(STARQ->getTrajectoryPublisher()->isRunning())
     {
-        for (int j = 0; j < resolution; j++)
-        {
-            const float angle = 2.0f * M_PI * j / resolution;
-            const Vector3 circle_position(radius * cos(angle), radius * sin(angle), 0.0f);
-            STARQ->setFootPosition(0, center_position + circle_position);
-            STARQ->setFootPosition(1, center_position - circle_position);
-            STARQ->setFootPosition(2, center_position + circle_position);
-            STARQ->setFootPosition(3, center_position - circle_position);
-            usleep(1E6 / frequency / resolution);
-        }
+        usleep(1E4);
     }
 
     // Set axis state to idle
