@@ -34,17 +34,17 @@ int main()
     const float frequency = 0.5f;
     const int resolution = 100;
     const int num_cycles = 3;
-    const float radius = 0.05f;
+    const float radius = 0.025f;
     for (int i = 0; i < num_cycles; i++)
     {
         for (int j = 0; j < resolution; j++)
         {
             const float angle = 2.0f * M_PI * j / resolution;
-            const Vector3 position(radius * cos(angle), -0.150f + radius * sin(angle), 0.0f);
-            STARQ->setFootPosition(0, position);
-            STARQ->setFootPosition(1, position);
-            STARQ->setFootPosition(2, position);
-            STARQ->setFootPosition(3, position);
+            const Vector3 circle_position(radius * cos(angle), radius * sin(angle), 0.0f);
+            STARQ->setFootPosition(0, center_position + circle_position);
+            STARQ->setFootPosition(1, center_position - circle_position);
+            STARQ->setFootPosition(2, center_position + circle_position);
+            STARQ->setFootPosition(3, center_position - circle_position);
             usleep(1E6 / frequency / resolution);
         }
     }
