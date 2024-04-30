@@ -52,13 +52,17 @@ int main()
     // Load trajectory from file
     STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
 
-    // Start trajectory
-    STARQ->startTrajectory();
-
-    // Wait for trajectory to finish
-    while(STARQ->getTrajectoryPublisher()->isRunning())
+    const int traj_cycles = 5;
+    for (int i = 0; i < traj_cycles; i++)
     {
-        usleep(1E4);
+        // Start trajectory
+        STARQ->startTrajectory();
+
+        // Wait for trajectory to finish
+        while(STARQ->getTrajectoryPublisher()->isRunning())
+        {
+            usleep(1E4);
+        }
     }
 
     // Set axis state to idle
