@@ -57,15 +57,7 @@ namespace starq::mpc
                 continue;
             }
 
-            if (!solver_->update(config_))
-            {
-                if (stop_on_fail_)
-                    break;
-                else
-                    continue;
-            }
-
-            if (!solver_->solve())
+            if (!solver_->update(config_) || !solver_->solve())
             {
                 if (stop_on_fail_)
                     break;

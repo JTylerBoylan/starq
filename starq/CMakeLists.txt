@@ -47,39 +47,39 @@ include_directories(include)
 
 # Define and build the main library for the project
 add_library(starqlib SHARED
-  src/lib/leg_controller.cpp
-  src/lib/leg_command_publisher.cpp
-  src/lib/trajectory_file_reader.cpp 
-  src/lib/trajectory_publisher.cpp
-  src/lib/robot.cpp
-  src/lib/can/can_socket.cpp
-  src/lib/odrive/odrive_socket.cpp
-  src/lib/odrive/odrive_controller.cpp
-  src/lib/starq/starq_fivebar2d_leg_dynamics.cpp
-  src/lib/starq/starq_robot.cpp
-  src/lib/unitree/unitree_a1_leg_dynamics.cpp
-  src/lib/unitree/unitree_a1_robot_parameters.cpp
-  src/lib/unitree/unitree_a1_mujoco_robot.cpp
-  src/lib/mpc/gait.cpp 
-  src/lib/mpc/gait_sequencer.cpp 
-  src/lib/mpc/reference_planner.cpp 
-  src/lib/mpc/foothold_planner.cpp
-  src/lib/mpc/mpc_configuration.cpp 
-  src/lib/mpc/mpc_problem.cpp
-  src/lib/mpc/qp_problem.cpp
-  src/lib/mpc/mpc_controller.cpp
-  src/lib/ros2/motor_controller.cpp
-  src/lib/ros2/odrive_controller.cpp
-  src/lib/ros2/leg_controller.cpp
-  src/lib/ros2/leg_command_publisher.cpp
-  src/lib/ros2/ros2_joystick.cpp
-  src/lib/ros2/ros2_mujoco_camera.cpp
-  src/lib/mujoco/mujoco.cpp
-  src/lib/mujoco/mujoco_controller.cpp
-  src/lib/mujoco/mujoco_localization.cpp
-  src/lib/mujoco/mujoco_robot.cpp
-  src/lib/mujoco/mujoco_camera.cpp
-  src/lib/osqp/osqp.cpp
+  src/leg_controller.cpp
+  src/leg_command_publisher.cpp
+  src/trajectory_file_reader.cpp 
+  src/trajectory_publisher.cpp
+  src/robot.cpp
+  src/can/can_socket.cpp
+  src/odrive/odrive_socket.cpp
+  src/odrive/odrive_controller.cpp
+  src/starq/starq_fivebar2d_leg_dynamics.cpp
+  src/starq/starq_robot.cpp
+  src/unitree/unitree_a1_leg_dynamics.cpp
+  src/unitree/unitree_a1_robot_parameters.cpp
+  src/unitree/unitree_a1_mujoco_robot.cpp
+  src/mpc/gait.cpp 
+  src/mpc/gait_sequencer.cpp 
+  src/mpc/reference_planner.cpp 
+  src/mpc/foothold_planner.cpp
+  src/mpc/mpc_configuration.cpp 
+  src/mpc/mpc_problem.cpp
+  src/mpc/qp_problem.cpp
+  src/mpc/mpc_controller.cpp
+  src/ros2/motor_controller.cpp
+  src/ros2/odrive_controller.cpp
+  src/ros2/leg_controller.cpp
+  src/ros2/leg_command_publisher.cpp
+  src/ros2/ros2_joystick.cpp
+  src/ros2/ros2_mujoco_camera.cpp
+  src/mujoco/mujoco.cpp
+  src/mujoco/mujoco_controller.cpp
+  src/mujoco/mujoco_localization.cpp
+  src/mujoco/mujoco_robot.cpp
+  src/mujoco/mujoco_camera.cpp
+  src/osqp/osqp.cpp
 )
 
 # Link the library to the dependencies
@@ -155,9 +155,6 @@ target_include_directories(test_starq_robot PUBLIC include)
 target_link_libraries(test_starq_robot PUBLIC starqlib)
 
 # ROS executables
-add_executable(starq_node src/starq_node.cpp)
-target_link_libraries(starq_node starqlib)
-
 add_executable(test_ros2_joystick_mujoco tests/test_ros2_joystick_mujoco.cpp)
 target_link_libraries(test_ros2_joystick_mujoco starqlib)
 
@@ -166,7 +163,6 @@ target_link_libraries(test_ros2_camera_mujoco starqlib)
 
 # Install the ROS executables to the appropriate directory
 install(TARGETS 
-  starq_node
   test_ros2_joystick_mujoco
   test_ros2_camera_mujoco
   DESTINATION lib/${PROJECT_NAME}
