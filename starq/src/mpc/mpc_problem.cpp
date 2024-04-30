@@ -176,6 +176,7 @@ namespace starq::mpc
         for (size_t k = 0; k < Nn - 1; k++)
         {
             const Float mu = config_->getFrictionCoefficient();
+            const Float mu_y = config_->is2D() ? 0.0 : mu;
             const size_t n_legs = config_->getNumberOfLegs(k);
             MatrixX C = MatrixX::Zero(6 * n_legs, 3 * n_legs);
             for (size_t j = 0; j < n_legs; j++)
@@ -184,8 +185,8 @@ namespace starq::mpc
                     0, 0, 1,
                     -1, 0, -mu,
                     1, 0, -mu,
-                    0, -1, -mu,
-                    0, 1, -mu;
+                    0, -1, -mu_y,
+                    0, 1, -mu_y;
             }
             C_[k] = C;
         }
