@@ -3,6 +3,9 @@
 
 #include <thread>
 #include <mutex>
+#include <functional>
+#include <vector>
+#include <csignal>
 
 namespace starq
 {
@@ -11,30 +14,17 @@ namespace starq
     class ThreadRunner
     {
     public:
-        virtual bool start()
-        {
-            if (isRunning())
-                return false;
+        /// @brief Start the thread
+        /// @return If the thread was successfully started
+        virtual bool start();
 
-            running_ = true;
-            std::thread(&ThreadRunner::run, this).detach();
-            return true;
-        }
+        /// @brief Stop the thread
+        /// @return If the thread was successfully stopped
+        virtual bool stop();
 
-        virtual bool stop()
-        {
-            if (!isRunning())
-                return false;
-
-            running_ = false;
-            return true;
-        }
-
-        bool isRunning()
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            return running_;
-        }
+        /// @brief Check if the thread is running
+        /// @return If the thread is running
+        bool isRunning();
 
     protected:
         virtual void run() = 0;
@@ -43,6 +33,7 @@ namespace starq
     private:
         bool running_ = false;
     };
+
 }
 
 #endif

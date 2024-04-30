@@ -7,7 +7,8 @@ namespace starq::odrive
 {
 
     ODriveController::ODriveController(const ODriveSocket::Ptr socket, const uint8_t can_id)
-        : socket_(socket),
+        : Estop(),
+          socket_(socket),
           can_id_(can_id)
     {
     }
@@ -271,9 +272,9 @@ namespace starq::odrive
 
     void ODriveController::printInfo()
     {
-        std::cout << "  CAN ID: " << (int) getCANID() << std::endl;
+        std::cout << "  CAN ID: " << (int)getCANID() << std::endl;
         std::cout << "  Axis error: " << getAxisError() << " (" << getErrorName() << ")" << std::endl;
-        std::cout << "  Axis state: " << (int) getAxisState() << std::endl;
+        std::cout << "  Axis state: " << (int)getAxisState() << std::endl;
         std::cout << "  Iq setpoint: " << getIqSetpoint() << std::endl;
         std::cout << "  Iq measured: " << getIqMeasured() << std::endl;
         std::cout << "  FET temperature: " << getFETTemperature() << std::endl;
@@ -287,6 +288,7 @@ namespace starq::odrive
 
     std::string ODriveController::getErrorName()
     {
+        // Based on ODrive v0.6.8
         switch (getAxisError())
         {
         case 0x0:
@@ -338,6 +340,12 @@ namespace starq::odrive
         default:
             return "MULTIPLE_ERRORS";
         };
+    }
+
+    void ODriveController::estop(int sig)
+    {
+        this->setState(AxisState::IDLE);
+        std::cout << "Stopped motor " << (int)getCANID() << "(SIG " << sig << ")" << std::endl;
     }
 
 }

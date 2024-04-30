@@ -3,12 +3,13 @@
 
 #include "starq/odrive/odrive_socket.hpp"
 #include "starq/motor_controller.hpp"
+#include "starq/estop.hpp"
 
 namespace starq::odrive
 {
 
     /// @brief Implementation of MotorController for ODrive controllers
-    class ODriveController : public starq::MotorController
+    class ODriveController : public starq::MotorController, private starq::Estop
     {
     public:
         using Ptr = std::shared_ptr<ODriveController>;
@@ -132,6 +133,9 @@ namespace starq::odrive
         std::string getErrorName();
 
     private:
+        /// @brief E-stop callback
+        void estop(int sig) override;
+
         const ODriveSocket::Ptr socket_;
         const uint8_t can_id_;
 

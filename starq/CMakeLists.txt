@@ -51,6 +51,8 @@ add_library(starqlib SHARED
   src/leg_command_publisher.cpp
   src/trajectory_file_reader.cpp 
   src/trajectory_publisher.cpp
+  src/thread_runner.cpp
+  src/estop.cpp
   src/robot.cpp
   src/can/can_socket.cpp
   src/odrive/odrive_socket.cpp
@@ -153,6 +155,10 @@ target_link_libraries(test_command_publisher_dummy PUBLIC starqlib)
 add_executable(test_starq_robot tests/test_starq_robot.cpp)
 target_include_directories(test_starq_robot PUBLIC include)
 target_link_libraries(test_starq_robot PUBLIC starqlib)
+
+add_executable(test_estop tests/test_estop.cpp)
+target_include_directories(test_estop PUBLIC include)
+target_link_libraries(test_estop PUBLIC starqlib)
 
 # ROS executables
 add_executable(test_ros2_joystick_mujoco tests/test_ros2_joystick_mujoco.cpp)
