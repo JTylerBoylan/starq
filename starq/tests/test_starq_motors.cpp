@@ -11,6 +11,8 @@ int main()
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
     printf("STARQRobot created\n");
 
+    usleep(1E6);
+
     // Loop through all motors
     for (auto motor : STARQ->getMotors())
     {
