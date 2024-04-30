@@ -345,7 +345,7 @@ namespace starq::odrive
     void ODriveController::estop(int sig)
     {
         this->setState(AxisState::IDLE);
-        std::cout << "Stopped motor " << (int)getCANID() << "(SIG " << sig << ")" << std::endl;
+        std::cout << "Stopped motor " << (int)getCANID() << " (SIG " << sig << ")" << std::endl;
     }
 
 }

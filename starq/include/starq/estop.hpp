@@ -1,10 +1,10 @@
 #ifndef STARQ_ESTOP_HPP_
 #define STARQ_ESTOP_HPP_
 
-#include <memory>
+#include <csignal>
 #include <functional>
 #include <vector>
-#include <csignal>
+#include <mutex>
 
 namespace starq
 {
@@ -26,6 +26,7 @@ namespace starq
 
         static bool estop_init_;
         static std::vector<std::function<void(int)>> estop_functions_;
+        static std::mutex mutex_;
     };
 }
 

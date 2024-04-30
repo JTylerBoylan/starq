@@ -160,6 +160,10 @@ add_executable(test_estop tests/test_estop.cpp)
 target_include_directories(test_estop PUBLIC include)
 target_link_libraries(test_estop PUBLIC starqlib)
 
+add_executable(test_starq_motors tests/test_starq_motors.cpp)
+target_include_directories(test_starq_motors PUBLIC include)
+target_link_libraries(test_starq_motors PUBLIC starqlib)
+
 # ROS executables
 add_executable(test_ros2_joystick_mujoco tests/test_ros2_joystick_mujoco.cpp)
 target_link_libraries(test_ros2_joystick_mujoco starqlib)

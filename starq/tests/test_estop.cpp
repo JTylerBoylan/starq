@@ -1,17 +1,20 @@
 #include <stdio.h>
-#include <csignal>
 
-void my_handler(int sig)
-{
-    printf("Caught signal %d\n", sig);
-}
+#include "starq/starq/starq_robot.hpp"
+
+using namespace starq;
 
 int main()
 {
 
-    std::signal(SIGINT, my_handler);
+    // Create STARQ robot
+    STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
+    printf("STARQRobot created\n");
 
-    pause();
+    // Sleep for 5 seconds
+    // Ctrl+C to stop the program and test the emergency stop
+    usleep(5000000);
 
+    printf("Done.\n");
     return 0;
 }
