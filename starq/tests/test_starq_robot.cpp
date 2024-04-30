@@ -30,6 +30,25 @@ int main()
     // Wait for 5 seconds
     usleep(5E6);
 
+    // Move legs in a circle
+    const float frequency = 0.5f;
+    const int resolution = 100;
+    const int num_cycles = 3;
+    const float radius = 0.05f;
+    for (int i = 0; i < num_cycles; i++)
+    {
+        for (int j = 0; j < resolution; j++)
+        {
+            const float angle = 2.0f * M_PI * j / resolution;
+            const Vector3 position(radius * cos(angle), -0.150f + radius * sin(angle), 0.0f);
+            STARQ->setFootPosition(0, position);
+            STARQ->setFootPosition(1, position);
+            STARQ->setFootPosition(2, position);
+            STARQ->setFootPosition(3, position);
+            usleep(1E6 / frequency / resolution);
+        }
+    }
+
     // Set axis state to idle
     STARQ->setState(AxisState::IDLE);
 
