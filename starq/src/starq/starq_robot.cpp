@@ -95,8 +95,8 @@ namespace starq
         LegController::Ptr leg_FR = std::make_shared<LegController>(leg_dynamics_FR_,
                                                                     MotorList{motors_[6], motors_[7]});
 
-        leg_dynamics_FL_->flipZ();
-        leg_dynamics_RL_->flipZ();
+        //leg_dynamics_FL_->flipZ();
+        //leg_dynamics_RL_->flipZ();
 
         legs_ = {leg_FL, leg_RL, leg_RR, leg_FR};
     }

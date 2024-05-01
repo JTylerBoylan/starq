@@ -21,7 +21,7 @@ int main(void)
     printf("Hello world!\n");
 
     // Create a CAN socket object on the can0 interface
-    CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can0");
+    CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can1");
 
     // Connect to the CAN interface
     if (can_socket->connect())
@@ -38,8 +38,8 @@ int main(void)
     ODriveSocket::Ptr odrive_socket = std::make_shared<ODriveSocket>(can_socket);
 
     // Create two ODrive controllers for the hip motors
-    ODriveController::Ptr odrive_A = std::make_shared<ODriveController>(odrive_socket, 0);
-    ODriveController::Ptr odrive_B = std::make_shared<ODriveController>(odrive_socket, 1);
+    ODriveController::Ptr odrive_A = std::make_shared<ODriveController>(odrive_socket, 4);
+    ODriveController::Ptr odrive_B = std::make_shared<ODriveController>(odrive_socket, 5);
     printf("Created ODrive controllers.\n");
 
     // Set gear ratios
@@ -67,8 +67,8 @@ int main(void)
     printf("Set to force control mode.\n");
 
     // Apply a constant force at the end effector
-    const float force_x = 0.0f;
-    const float force_z = -20.0f;
+    const float force_x = 5.0f;
+    const float force_z = -5.0f;
     printf("Applying Force: %f, %f\n", force_x, force_z);
 
     // Get current joint torques

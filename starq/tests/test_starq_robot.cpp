@@ -21,7 +21,7 @@ int main()
     }
 
     // Send legs to center position
-    const Vector3 center_position(0.1, 0, -0.125);
+    const Vector3 center_position(0, 0, -std::sqrt(2) * 0.1f);
     for (uint32_t i = 0; i < 4; i++)
     {
         STARQ->setFootPosition(i, center_position);
@@ -30,40 +30,40 @@ int main()
     // Wait for 5 seconds
     usleep(5E6);
 
-    // // Move legs in a circle
-    // const float frequency = 0.5f;
-    // const int resolution = 100;
-    // const int num_cycles = 3;
-    // const float radius = 0.025f;
-    // for (int i = 0; i < num_cycles; i++)
-    // {
-    //     for (int j = 0; j < resolution; j++)
-    //     {
-    //         const float angle = 2.0f * M_PI * j / resolution;
-    //         const Vector3 circle_position(radius * cos(angle), 0, radius * sin(angle));
-    //         STARQ->setFootPosition(0, center_position + circle_position);
-    //         STARQ->setFootPosition(1, center_position - circle_position);
-    //         STARQ->setFootPosition(2, center_position + circle_position);
-    //         STARQ->setFootPosition(3, center_position - circle_position);
-    //         usleep(1E6 / frequency / resolution);
-    //     }
-    // }
-
-    // Load trajectory from file
-    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
-
-    const int traj_cycles = 5;
-    for (int i = 0; i < traj_cycles; i++)
+    // Move legs in a circle
+    const float frequency = 0.5f;
+    const int resolution = 100;
+    const int num_cycles = 3;
+    const float radius = 0.025f;
+    for (int i = 0; i < num_cycles; i++)
     {
-        // Start trajectory
-        STARQ->startTrajectory();
-
-        // Wait for trajectory to finish
-        while(STARQ->getTrajectoryPublisher()->isRunning())
+        for (int j = 0; j < resolution; j++)
         {
-            usleep(1E4);
+            const float angle = 2.0f * M_PI * j / resolution;
+            const Vector3 circle_position(radius * cos(angle), 0, radius * sin(angle));
+            STARQ->setFootPosition(0, center_position + circle_position);
+            STARQ->setFootPosition(1, center_position + circle_position);
+            STARQ->setFootPosition(2, center_position + circle_position);
+            STARQ->setFootPosition(3, center_position + circle_position);
+            usleep(1E6 / frequency / resolution);
         }
     }
+
+    // // Load trajectory from file
+    // STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
+
+    // const int traj_cycles = 5;
+    // for (int i = 0; i < traj_cycles; i++)
+    // {
+    //     // Start trajectory
+    //     STARQ->startTrajectory();
+
+    //     // Wait for trajectory to finish
+    //     while(STARQ->getTrajectoryPublisher()->isRunning())
+    //     {
+    //         usleep(1E4);
+    //     }
+    // }
 
     // Set axis state to idle
     STARQ->setState(AxisState::IDLE);
