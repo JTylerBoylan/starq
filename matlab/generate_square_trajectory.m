@@ -55,14 +55,11 @@ sz = size(t);
 leg_id = zeros(sz);
 control_mode = 3*ones(sz);
 input_mode = 1*ones(sz);
-pos_traj_2D = pos_traj([1 3], :);
-vel_traj_2D = vel_traj([1 3], :);
-force_traj_2D = force_traj([1 3], :);
 
 t = floor(t * 1E3);
 
 output = [t', leg_id', control_mode', input_mode', ...
-          pos_traj_2D', vel_traj_2D', force_traj_2D']
+          pos_traj', vel_traj', force_traj']
 
 writematrix(output, '../starq/trajectories/square.txt', 'Delimiter', ' ');
 

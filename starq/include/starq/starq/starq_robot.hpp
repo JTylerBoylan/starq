@@ -49,10 +49,6 @@ namespace starq
         /// @brief Setup the model predictive control solver
         void setupMPCSolver() override;
 
-        float link_length_1_ = 0.05f;
-        float link_length_2_ = 0.150f;
-        float gear_ratio_ = 6.0f;
-
         can::CANSocket::Ptr can_socket_0_;
         can::CANSocket::Ptr can_socket_1_;
 

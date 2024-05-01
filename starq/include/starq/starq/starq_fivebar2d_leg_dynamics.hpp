@@ -35,8 +35,15 @@ namespace starq
         /// @return If the Jacobian matrix was successful.
         bool getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian) override;
 
+        /// @brief Flip the leg in the x direction.
+        void flipX();
+
+        /// @brief  Flip the leg in the z direction.
+        void flipZ();
+
     private:
         Float L1_, L2_;
+        Float x_dir_, z_dir_;
     };
 
 }

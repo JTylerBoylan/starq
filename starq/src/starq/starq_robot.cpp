@@ -53,14 +53,15 @@ namespace starq
         ODriveController::Ptr odrive_6 = std::make_shared<ODriveController>(odrive_socket_1, 6);
         ODriveController::Ptr odrive_7 = std::make_shared<ODriveController>(odrive_socket_1, 7);
 
-        odrive_0->setGearRatio(gear_ratio_);
-        odrive_1->setGearRatio(gear_ratio_);
-        odrive_2->setGearRatio(gear_ratio_);
-        odrive_3->setGearRatio(gear_ratio_);
-        odrive_4->setGearRatio(gear_ratio_);
-        odrive_5->setGearRatio(gear_ratio_);
-        odrive_6->setGearRatio(gear_ratio_);
-        odrive_7->setGearRatio(gear_ratio_);
+        Float GR = 6.0;
+        odrive_0->setGearRatio(GR);
+        odrive_1->setGearRatio(GR);
+        odrive_2->setGearRatio(GR);
+        odrive_3->setGearRatio(GR);
+        odrive_4->setGearRatio(GR);
+        odrive_5->setGearRatio(GR);
+        odrive_6->setGearRatio(GR);
+        odrive_7->setGearRatio(GR);
 
         motors_ = {
             odrive_0,
@@ -75,7 +76,9 @@ namespace starq
 
     void STARQRobot::setupLegs()
     {
-        leg_dynamics_ = std::make_shared<STARQFiveBar2DLegDynamics>(link_length_1_, link_length_2_);
+        Float L1 = 0.05;
+        Float L2 = 0.150;
+        leg_dynamics_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
 
         LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_,
                                                                     MotorList{motors_[0], motors_[1]});

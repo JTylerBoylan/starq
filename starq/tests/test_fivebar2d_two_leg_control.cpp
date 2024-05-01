@@ -63,10 +63,10 @@ int main(void)
     printf("Set control modes.\n");
 
     const float center_x = 0.0f;
-    const float center_y = -0.150f;
+    const float center_z = -0.150f;
 
-    if (!leg_F->setFootPosition(Vector3(center_x, center_y, 0)) ||
-        !leg_B->setFootPosition(Vector3(center_x, center_y, 0)))
+    if (!leg_F->setFootPosition(Vector3(center_x, 0, center_z)) ||
+        !leg_B->setFootPosition(Vector3(center_x, 0, center_z)))
         return 1;
     printf("Centering foot positions...\n");
 
@@ -79,12 +79,12 @@ int main(void)
     for (float t = 0.0f; t <= revolutions * 2.0f * M_PI + 0.01; t += 0.01f)
     {
         const float x_off = radius * std::cos(t);
-        const float y_off = radius * std::sin(t);
+        const float z_off = radius * std::sin(t);
 
         Vector3 foot_position;
-        foot_position << center_x + x_off, center_y + y_off, 0;
+        foot_position << center_x + x_off, 0, center_z + z_off;
 
-        printf("Setting foot position to (%f, %f)\n", foot_position(0), foot_position(1));
+        printf("Setting foot position to (%f, %f)\n", foot_position.x(), foot_position.z());
         if (!leg_F->setFootPosition(foot_position) ||
             !leg_B->setFootPosition(foot_position))
             return 1;
@@ -99,8 +99,8 @@ int main(void)
                joint_angles_B(0), joint_angles_B(1));
     }
 
-    if (!leg_F->setFootPosition(Vector3(center_x, center_y, 0)) ||
-        !leg_B->setFootPosition(Vector3(center_x, center_y, 0)))
+    if (!leg_F->setFootPosition(Vector3(center_x, 0, center_z)) ||
+        !leg_B->setFootPosition(Vector3(center_x, 0, center_z)))
         return 1;
     printf("Centered foot positions.\n");
 

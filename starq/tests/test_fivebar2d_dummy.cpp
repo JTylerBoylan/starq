@@ -40,22 +40,22 @@ int main(void)
 
         // Move the foot in a circular path
         const float center_x = 0.0f;
-        const float center_y = -std::sqrt(2) * 0.1;
+        const float center_z = -std::sqrt(2) * 0.1;
         const float x_off = 0.025f * std::cos(t);
-        const float y_off = 0.025f * std::sin(t);
+        const float z_off = 0.025f * std::sin(t);
 
         // Create the foot position vector
         Vector3 foot_position;
-        foot_position << center_x + x_off, center_y + y_off, 0;
+        foot_position << center_x + x_off, 0, center_z + z_off;
 
         // Set the foot position
         leg->setFootPosition(foot_position);
-        printf("Setting foot position to (%f, %f)\n", foot_position(0), foot_position(1));
+        printf("Setting foot position to (%f, %f)\n", foot_position.x(), foot_position.z());
 
         // Print the current foot position estimate
         Vector3 pos_estimate;
         leg->getFootPositionEstimate(pos_estimate);
-        printf("Foot position estimate: (%f, %f)\n", pos_estimate(0), pos_estimate(1));
+        printf("Foot position estimate: (%f, %f)\n", pos_estimate.x(), pos_estimate.z());
 
         // Print the current motor positions
         Vector3 joint_angles = leg->getCurrentJointAngles();
@@ -66,7 +66,7 @@ int main(void)
         printf("Setting foot force to (%f, %f)\n", 0.0, force);
 
         // Set the foot force
-        leg->setFootForce(Vector3(0.0, force, 0.0));
+        leg->setFootForce(Vector3(0.0, 0.0, force));
 
         // Print the motor torques
         Vector3 motor_torques = leg->getCurrentJointTorques();

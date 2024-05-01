@@ -68,8 +68,8 @@ int main(void)
 
     // Apply a constant force at the end effector
     const float force_x = 0.0f;
-    const float force_y = -20.0f;
-    printf("Applying Force: %f, %f\n", force_x, force_y);
+    const float force_z = -20.0f;
+    printf("Applying Force: %f, %f\n", force_x, force_z);
 
     // Get current joint torques
     const Vector3 current_joint_angles = leg->getCurrentJointAngles();
@@ -78,7 +78,7 @@ int main(void)
     // Use Jacobian to convert force to joint torques (tau = J^T * F)
     Matrix3 jacobian;
     fivebar_dynamics->getJacobian(current_joint_angles, jacobian);
-    const Vector3 joint_torque = jacobian.transpose() * Vector3(force_x, force_y, 0);
+    const Vector3 joint_torque = jacobian.transpose() * Vector3(force_x, 0, force_z);
     printf("Joint torque: %f, %f\n", joint_torque(0), joint_torque(1));
 
     // Parameters
@@ -89,7 +89,7 @@ int main(void)
     for (float t = 0.0; t < duration; t += 1.0f / frequency)
     {
         // Set foot force
-        if (!leg->setFootForce(Vector3(force_x, force_y, 0)))
+        if (!leg->setFootForce(Vector3(force_x, 0, force_z)))
             return 1;
 
         // Match the loop frequency

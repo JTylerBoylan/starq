@@ -21,7 +21,7 @@ int main()
     }
 
     // Send legs to center position
-    const Vector3 center_position(0.0f, -0.150f, 0.0f);
+    const Vector3 center_position(0, 0, -0.15);
     for (uint32_t i = 0; i < 4; i++)
     {
         STARQ->setFootPosition(i, center_position);
@@ -40,7 +40,7 @@ int main()
     //     for (int j = 0; j < resolution; j++)
     //     {
     //         const float angle = 2.0f * M_PI * j / resolution;
-    //         const Vector3 circle_position(radius * cos(angle), radius * sin(angle), 0.0f);
+    //         const Vector3 circle_position(radius * cos(angle), 0, radius * sin(angle));
     //         STARQ->setFootPosition(0, center_position + circle_position);
     //         STARQ->setFootPosition(1, center_position - circle_position);
     //         STARQ->setFootPosition(2, center_position + circle_position);

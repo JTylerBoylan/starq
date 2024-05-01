@@ -12,8 +12,8 @@ id1 = 0*ones(sz);
 cm1 = 3*ones(sz);
 im1 = 1*ones(sz);
 x1 = traj_dat(:,2) * 1E-3;
-y1 = traj_dat(:,3) * 1E-3;
-z1 = zeros(sz);
+y1 = zeros(sz);
+z1 = traj_dat(:,3) * 1E-3;
 v1 = zeros(sz(1), 3);
 f1 = zeros(sz(1), 3);
 
@@ -22,8 +22,8 @@ id2 = 1*ones(sz);
 cm2 = 3*ones(sz);
 im2 = 1*ones(sz);
 x2 = [x1(1:50); x1(51:end)];
-y2 = [y1(1:50); y1(51:end)];
-z2 = zeros(sz);
+y2 = zeros(sz);
+z2 = [z1(1:50); z1(51:end)];
 v2 = zeros(sz(1), 3);
 f2 = zeros(sz(1), 3);
 
@@ -33,7 +33,7 @@ cm3 = 3*ones(sz);
 im3 = 1*ones(sz);
 x3 = x1;
 y3 = y1;
-z3 = zeros(sz);
+z3 = z1;
 v3 = zeros(sz(1), 3);
 f3 = zeros(sz(1), 3);
 
@@ -43,7 +43,7 @@ cm4 = 3*ones(sz);
 im4 = 1*ones(sz);
 x4 = x2;
 y4 = y2;
-z4 = zeros(sz);
+z4 = z2;
 v4 = zeros(sz(1), 3);
 f4 = zeros(sz(1), 3);
 

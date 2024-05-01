@@ -69,10 +69,10 @@ int main(void)
     // Circular Trajectory
     // Center position of the leg space range
     const float center_x = 0.0f;
-    const float center_y = -std::sqrt(2) * 0.1f;
+    const float center_z = -std::sqrt(2) * 0.1f;
 
     // Go to center position
-    if (!leg->setFootPosition(Vector3(center_x, center_y, 0)))
+    if (!leg->setFootPosition(Vector3(center_x, 0, center_z)))
         return 1;
     printf("Centered foot position.\n");
 
@@ -92,14 +92,14 @@ int main(void)
 
         // Get point on circle
         const float x_off = radius * std::cos(t);
-        const float y_off = radius * std::sin(t);
+        const float z_off = radius * std::sin(t);
 
         // Create foot position vector
         Vector3 foot_position;
-        foot_position << center_x + x_off, center_y + y_off, 0;
+        foot_position << center_x + x_off, 0, center_z + z_off;
 
         // Set foot position to point on circle
-        printf("Setting foot position to (%f, %f)\n", foot_position(0), foot_position(1));
+        printf("Setting foot position to (%f, %f)\n", foot_position.x(), foot_position.z());
         if (!leg->setFootPosition(foot_position))
             return 1;
 
@@ -108,7 +108,7 @@ int main(void)
     }
 
     // Go back to center position
-    if (!leg->setFootPosition(Vector3(center_x, center_y, 0)))
+    if (!leg->setFootPosition(Vector3(center_x, 0, center_z)))
         return 1;
     printf("Centered foot position.\n");
 
