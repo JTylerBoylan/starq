@@ -21,7 +21,7 @@ int main()
     }
 
     // Send legs to center position
-    const Vector3 center_position(0, 0, -0.15);
+    const Vector3 center_position(0.1, 0, -0.125);
     for (uint32_t i = 0; i < 4; i++)
     {
         STARQ->setFootPosition(i, center_position);

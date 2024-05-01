@@ -78,19 +78,25 @@ namespace starq
     {
         Float L1 = 0.05;
         Float L2 = 0.150;
-        leg_dynamics_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
+        leg_dynamics_FL_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
+        leg_dynamics_RL_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
+        leg_dynamics_RR_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
+        leg_dynamics_FR_ = std::make_shared<STARQFiveBar2DLegDynamics>(L1, L2);
 
-        LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_,
+        LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_FL_,
                                                                     MotorList{motors_[0], motors_[1]});
 
-        LegController::Ptr leg_RL = std::make_shared<LegController>(leg_dynamics_,
+        LegController::Ptr leg_RL = std::make_shared<LegController>(leg_dynamics_RL_,
                                                                     MotorList{motors_[2], motors_[3]});
 
-        LegController::Ptr leg_RR = std::make_shared<LegController>(leg_dynamics_,
+        LegController::Ptr leg_RR = std::make_shared<LegController>(leg_dynamics_RR_,
                                                                     MotorList{motors_[4], motors_[5]});
 
-        LegController::Ptr leg_FR = std::make_shared<LegController>(leg_dynamics_,
+        LegController::Ptr leg_FR = std::make_shared<LegController>(leg_dynamics_FR_,
                                                                     MotorList{motors_[6], motors_[7]});
+
+        leg_dynamics_FL_->flipZ();
+        leg_dynamics_RL_->flipZ();
 
         legs_ = {leg_FL, leg_RL, leg_RR, leg_FR};
     }

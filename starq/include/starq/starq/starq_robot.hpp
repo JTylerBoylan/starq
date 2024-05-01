@@ -29,9 +29,21 @@ namespace starq
         /// @return The CAN socket
         can::CANSocket::Ptr getCanSocket1() const { return can_socket_1_; }
 
-        /// @brief Get the leg dynamics
-        /// @return The leg dynamics
-        STARQFiveBar2DLegDynamics::Ptr getLegDynamics() const { return leg_dynamics_; }
+        /// @brief Get the leg dynamics of the front left leg
+        /// @return The leg dynamics of the front left leg
+        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsFL() const { return leg_dynamics_FL_; }
+
+        /// @brief Get the leg dynamics of the rear left leg
+        /// @return The leg dynamics of the rear left leg
+        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsRL() const { return leg_dynamics_RL_; }
+
+        /// @brief Get the leg dynamics of the rear right leg
+        /// @return The leg dynamics of the rear right leg
+        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsRR() const { return leg_dynamics_RR_; }
+
+        /// @brief Get the leg dynamics of the front right leg
+        /// @return The leg dynamics of the front right leg
+        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsFR() const { return leg_dynamics_FR_; }
 
     private:
         /// @brief Setup the motor controllers
@@ -52,7 +64,10 @@ namespace starq
         can::CANSocket::Ptr can_socket_0_;
         can::CANSocket::Ptr can_socket_1_;
 
-        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_;
+        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_FL_;
+        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_RL_;
+        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_RR_;
+        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_FR_;
     };
 }
 
