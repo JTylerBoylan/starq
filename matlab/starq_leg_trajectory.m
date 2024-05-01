@@ -21,9 +21,9 @@ t2 = traj_dat(:,1) * 10;
 id2 = 1*ones(sz);
 cm2 = 3*ones(sz);
 im2 = 1*ones(sz);
-x2 = [x1(1:50); x1(51:end)];
+x2 = [x1(51:end); x1(1:50)];
 y2 = zeros(sz);
-z2 = [z1(1:50); z1(51:end)];
+z2 = [z1(51:end); z1(1:50)];
 v2 = zeros(sz(1), 3);
 f2 = zeros(sz(1), 3);
 
