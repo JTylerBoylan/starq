@@ -116,12 +116,7 @@ namespace starq::mpc
 
         const ReferenceState ref_state = config_->getReferenceState(std::round(node_span));
         const Vector3 vel_hip = ref_state.linear_velocity + ref_state.angular_velocity.cross(pos_body_hip);
-
-        Vector3 delta_pos_hip = 0.5f * vel_hip * stance_duration.count() * 1E-3f;
-        if (robot_parameters_->is2D())
-        {
-            delta_pos_hip.y() = 0.0f;
-        }
+        const Vector3 delta_pos_hip = 0.5f * vel_hip * stance_duration.count() * 1E-3f;
 
         const Vector3 start_position = pos_hip_foot_0;
         const Vector3 end_position = robot_parameters_->getDefaultFootLocations()[leg_id] + delta_pos_hip;

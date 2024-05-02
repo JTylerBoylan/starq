@@ -44,10 +44,6 @@ namespace starq::mpc
                 const Vector3 max_v = gait_seq[i]->getMaxLinearVelocity();
                 const Vector3 v = delta_p / dT;
                 linear_velocity = v.cwiseMin(max_v).cwiseMax(-max_v);
-                if (robot_parameters_->is2D())
-                {
-                    linear_velocity.y() = 0;
-                }
 
                 Vector3 delta_o = gait_seq[i]->getOrientation() - ref_traj[i - 1].orientation;
                 for (int j = 0; j < 3; j++)
