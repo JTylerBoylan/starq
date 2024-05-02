@@ -22,7 +22,8 @@ int main()
     }
 
     // Send legs to center position
-    const Vector3 center_position(0, 0, -std::sqrt(2) * 0.1f);
+    const Float center_z = -std::sqrt(STARQ_LINK_LENGTH_2*STARQ_LINK_LENGTH_2 - STARQ_LINK_LENGTH_1*STARQ_LINK_LENGTH_1);
+    const Vector3 center_position(0, 0, center_z);
     for (uint32_t i = 0; i < 4; i++)
     {
         STARQ->setFootPosition(i, center_position);

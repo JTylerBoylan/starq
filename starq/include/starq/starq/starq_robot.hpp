@@ -5,6 +5,10 @@
 #include "starq/odrive/odrive_controller.hpp"
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
+#define STARQ_LINK_LENGTH_1 0.065
+#define STARQ_LINK_LENGTH_2 0.2
+#define STARQ_GEAR_RATIO 6.0
+
 namespace starq
 {
 
