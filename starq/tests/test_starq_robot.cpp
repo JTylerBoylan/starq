@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fstream>
 
 #include "starq/starq/starq_robot.hpp"
 
@@ -27,25 +28,42 @@ int main()
         STARQ->setFootPosition(i, center_position);
     }
 
+    // Open file for logging
+    std::ofstream log_file;
+    log_file.open("/home/nvidia/starq_ws/src/logging/20240502_StandTempTest.txt");
+
+    // Get motors
+    auto motors = STARQ->getMotors();
+
     const int time_s = 30;
     for (int t = 0; t < time_s; t++)
     {
         printf("-------------------------\n");
         printf("Time: %d s\n", t);
-        for (auto motor : STARQ->getMotors())
+
+        log_file << t << " ";
+
+        for (size_t m = 0; m < motors.size(); m++)
         {
             // Cast as odrive motor
-            auto odrive_motor = std::dynamic_pointer_cast<odrive::ODriveController>(motor);
+            auto odrive_motor = std::dynamic_pointer_cast<odrive::ODriveController>(motors[m]);
 
             // Get odrive temperature
-            const int id = odrive_motor->getCANID();
             const Float temp = odrive_motor->getFETTemperature();
 
-            printf("[Motor %d] FET Temp: %.2f\n", id, temp);
+            // Print to console
+            printf("[Motor %lu] FET Temp: %.2f\n", m, temp);
+
+            // Log to file
+            log_file << temp << " ";
         }
         printf("-------------------------\n");
+        log_file << std::endl;
+
         usleep(1E6);
     }
+
+    log_file.close();
 
     // // Move legs in a circle
     // const float frequency = 0.5f;
