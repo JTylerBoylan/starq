@@ -3,7 +3,7 @@ clear
 close all
 %%
 
-traj_dat = readmatrix("ONR40Per1FootSpace.csv", "Delimiter", ',');
+traj_dat = readmatrix("ONRTrudge60PerFootSpace.csv", "Delimiter", ',');
 
 freq = 2;
 T = 1/freq * 1E3;
@@ -63,4 +63,4 @@ f = [f1; f2; f3; f4];
 
 out = [t, id, cm, im, p, v, f]
 
-writematrix(out, '../starq/trajectories/walk_test_2.txt', 'Delimiter', ' ');
+writematrix(out, '../starq/trajectories/trudge_test_1.txt', 'Delimiter', ' ');
