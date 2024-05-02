@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <thread>
 
-#include "starq/ros2/ros2_joystick.hpp"
+#include "starq/ros2/ros2_mpc_joystick.hpp"
 #include "starq/unitree/unitree_a1_mujoco_robot.hpp"
 #include "starq/ros2/ros2_mujoco_camera.hpp"
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
     // Create ROS2 Joystick
     // This maps the ROS2 Joy inputs to MPC commands
-    auto joystick = std::make_shared<ros2::ROS2Joystick>(node, mpc_config);
+    auto joystick = std::make_shared<ros2::ROS2MPCJoystick>(node, mpc_config);
     RCLCPP_INFO(node->get_logger(), "ROS2 Joystick created\n");
 
     // Create ROS2 MuJoCo Camera

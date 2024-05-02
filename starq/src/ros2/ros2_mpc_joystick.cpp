@@ -1,9 +1,9 @@
-#include "starq/ros2/ros2_joystick.hpp"
+#include "starq/ros2/ros2_mpc_joystick.hpp"
 
 namespace starq::ros2
 {
 
-    ROS2Joystick::ROS2Joystick(rclcpp::Node::SharedPtr node, mpc::MPCConfiguration::Ptr mpc_configuration)
+    ROS2MPCJoystick::ROS2MPCJoystick(rclcpp::Node::SharedPtr node, mpc::MPCConfiguration::Ptr mpc_configuration)
         : node_(node), mpc_configuration_(mpc_configuration)
     {
         walk_gait_ = std::make_shared<mpc::Gait>();
@@ -29,10 +29,10 @@ namespace starq::ros2
         base_orientation_ = Vector3::Zero();
 
         joy_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>(
-            "joy", 10, std::bind(&ROS2Joystick::joyCallback, this, std::placeholders::_1));
+            "joy", 10, std::bind(&ROS2MPCJoystick::joyCallback, this, std::placeholders::_1));
     }
 
-    void ROS2Joystick::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
+    void ROS2MPCJoystick::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
     {
         if (msg->buttons[0] == 1)
         {

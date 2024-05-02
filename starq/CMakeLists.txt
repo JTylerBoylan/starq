@@ -21,6 +21,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 # Mujoco dependencies
@@ -74,8 +75,9 @@ add_library(starqlib SHARED
   src/ros2/odrive_controller.cpp
   src/ros2/leg_controller.cpp
   src/ros2/leg_command_publisher.cpp
-  src/ros2/ros2_joystick.cpp
+  src/ros2/ros2_mpc_joystick.cpp
   src/ros2/ros2_mujoco_camera.cpp
+  src/ros2/ros2_localization.cpp
   src/mujoco/mujoco.cpp
   src/mujoco/mujoco_controller.cpp
   src/mujoco/mujoco_localization.cpp
@@ -88,6 +90,7 @@ add_library(starqlib SHARED
 ament_target_dependencies(starqlib
   rclcpp
   sensor_msgs
+  nav_msgs
 )
 
 target_link_libraries(starqlib 
@@ -165,15 +168,15 @@ target_include_directories(test_starq_motors PUBLIC include)
 target_link_libraries(test_starq_motors PUBLIC starqlib)
 
 # ROS executables
-add_executable(test_ros2_joystick_mujoco tests/test_ros2_joystick_mujoco.cpp)
-target_link_libraries(test_ros2_joystick_mujoco starqlib)
+add_executable(test_ros2_mpc_joystick_mujoco tests/test_ros2_mpc_joystick_mujoco.cpp)
+target_link_libraries(test_ros2_mpc_joystick_mujoco starqlib)
 
 add_executable(test_ros2_camera_mujoco tests/test_ros2_camera_mujoco.cpp)
 target_link_libraries(test_ros2_camera_mujoco starqlib)
 
 # Install the ROS executables to the appropriate directory
 install(TARGETS 
-  test_ros2_joystick_mujoco
+  test_ros2_mpc_joystick_mujoco
   test_ros2_camera_mujoco
   DESTINATION lib/${PROJECT_NAME}
 )

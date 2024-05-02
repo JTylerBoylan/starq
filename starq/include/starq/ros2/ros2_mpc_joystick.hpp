@@ -1,5 +1,5 @@
-#ifndef STARQ_ROS2__ROS2_JOYSTICK_HPP_
-#define STARQ_ROS2__ROS2_JOYSTICK_HPP_
+#ifndef STARQ_ROS2__ROS2_MPC_JOYSTICK_HPP_
+#define STARQ_ROS2__ROS2_MPC_JOYSTICK_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
@@ -10,13 +10,13 @@
 namespace starq::ros2
 {
 
-    class ROS2Joystick
+    class ROS2MPCJoystick
     {
 
     public:
-        using Ptr = std::shared_ptr<ROS2Joystick>;
+        using Ptr = std::shared_ptr<ROS2MPCJoystick>;
 
-        ROS2Joystick(rclcpp::Node::SharedPtr node, mpc::MPCConfiguration::Ptr mpc_configuration);
+        ROS2MPCJoystick(rclcpp::Node::SharedPtr node, mpc::MPCConfiguration::Ptr mpc_configuration);
 
     private:
         void joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg);
