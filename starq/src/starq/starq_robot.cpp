@@ -62,6 +62,24 @@ namespace starq
         odrive_6->setGearRatio(STARQ_GEAR_RATIO);
         odrive_7->setGearRatio(STARQ_GEAR_RATIO);
 
+        odrive_0->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_1->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_2->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_3->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_4->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_5->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_6->setPosGain(STARQ_MOTOR_P_GAIN);
+        odrive_7->setPosGain(STARQ_MOTOR_P_GAIN);
+
+        odrive_0->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_1->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_2->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_3->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_4->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_5->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_6->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        odrive_7->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+
         motors_ = {
             odrive_0,
             odrive_1,

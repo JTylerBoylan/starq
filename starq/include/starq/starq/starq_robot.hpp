@@ -9,6 +9,10 @@
 #define STARQ_LINK_LENGTH_2 0.2
 #define STARQ_GEAR_RATIO 6.0
 
+#define STARQ_MOTOR_P_GAIN 100
+#define STARQ_MOTOR_V_GAIN 0.05
+#define STARQ_MOTOR_VI_GAIN 0.15
+
 namespace starq
 {
 
