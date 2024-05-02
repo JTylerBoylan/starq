@@ -8,7 +8,7 @@ traj_dat = readmatrix("ONR40Per1FootSpace.csv", "Delimiter", ',');
 freq = 2;
 T = 1/freq * 1E3;
 sz = size(traj_dat(:,1));
-t = int32(linspace(0, T, sz(1))).';
+t = floor(linspace(0, T, sz(1))).';
 
 t1 = t;
 id1 = 0*ones(sz);
