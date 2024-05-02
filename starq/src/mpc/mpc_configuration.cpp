@@ -18,7 +18,6 @@ namespace starq::mpc
     {
         window_size_ = 11;
         time_step_ = milliseconds(100);
-        is_2d_ = false;
     }
 
     MPCConfiguration::~MPCConfiguration()
@@ -50,20 +49,10 @@ namespace starq::mpc
         window_size_ = window_size;
     }
 
-    void MPCConfiguration::set2D(const bool is_2d)
-    {
-        is_2d_ = is_2d;
-    }
-
     void MPCConfiguration::setNextGait(const Gait::Ptr &gait)
     {
         gait_sequencer_->setNextGait(gait);
         is_ready_ = true;
-    }
-
-    bool MPCConfiguration::is2D() const
-    {
-        return is_2d_;
     }
 
     bool MPCConfiguration::isReady() const
@@ -184,6 +173,11 @@ namespace starq::mpc
     Matrix3 MPCConfiguration::getInertia() const
     {
         return robot_parameters_->getBodyInertia();
+    }
+
+    bool MPCConfiguration::is2D() const
+    {
+        return robot_parameters_->is2D();
     }
 
 }

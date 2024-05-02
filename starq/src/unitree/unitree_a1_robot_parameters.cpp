@@ -20,6 +20,7 @@ namespace starq::unitree
                                    Vector3(0.0, -UNITREE_A1_LENGTH_D, -UNITREE_A1_STAND_HEIGHT)};
         force_z_min_ = UNITREE_A1_Z_FORCE_MIN;
         force_z_max_ = UNITREE_A1_Z_FORCE_MAX;
+        is_2d_ = UNITREE_A1_IS_2D;
     }
 
     UnitreeA1RobotParameters::~UnitreeA1RobotParameters()
@@ -69,6 +70,11 @@ namespace starq::unitree
     Float UnitreeA1RobotParameters::getForceZMax() const
     {
         return force_z_max_;
+    }
+
+    bool UnitreeA1RobotParameters::is2D() const
+    {
+        return is_2d_;
     }
 
 }

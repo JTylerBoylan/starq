@@ -52,17 +52,9 @@ namespace starq::mpc
         /// @param window_size The window size
         void setWindowSize(const size_t &window_size);
 
-        /// @brief Set if the MPC configuration is 2D
-        /// @param is_2d If the MPC configuration is 2D
-        void set2D(const bool is_2d);
-
         /// @brief Set the next gait
         /// @param gait The gait
         void setNextGait(const Gait::Ptr &gait);
-
-        /// @brief Check if the MPC configuration is 2D
-        /// @return If the MPC configuration is 2D
-        bool is2D() const;
 
         /// @brief Check if the MPC configuration is ready
         /// @return If the MPC configuration is ready
@@ -139,6 +131,10 @@ namespace starq::mpc
         /// @return The inertia
         Matrix3 getInertia() const;
 
+        /// @brief Check if the robot is 2D
+        /// @return If the robot is 2D
+        bool is2D() const;
+
     private:
         const std::vector<LegController::Ptr> leg_controllers_;
         const RobotParameters::Ptr robot_parameters_;
@@ -152,7 +148,6 @@ namespace starq::mpc
 
         milliseconds time_step_;
         size_t window_size_;
-        bool is_2d_;
 
         StanceTrajectory stance_trajectory_;
         GaitSequence gait_sequence_;

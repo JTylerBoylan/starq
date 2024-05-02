@@ -20,6 +20,7 @@
 #define UNITREE_A1_Z_FORCE_MIN 10
 #define UNITREE_A1_Z_FORCE_MAX 250
 
+#define UNITREE_A1_IS_2D false
 
 namespace starq::unitree
 {
@@ -72,6 +73,10 @@ namespace starq::unitree
         /// @return The maximum force in the z direction
         Float getForceZMax() const override;
 
+        /// @brief Get if the robot is 2D
+        /// @return If the robot is 2D
+        bool is2D() const override;
+
     private:
         Float body_mass_;
         Matrix3 body_inertia_;
@@ -82,6 +87,7 @@ namespace starq::unitree
         std::vector<Vector3> default_foot_locations_;
         Float force_z_min_;
         Float force_z_max_;
+        bool is_2d_;
     };
 
 }

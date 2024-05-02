@@ -24,7 +24,7 @@ int main(void)
     printf("Walk Gait loaded\n");
 
     // Set gait to walk forward at constant velocity
-    walk_gait->setVelocity(Vector3(0.25, 0.0, 0), Vector3(0, 0, 0));
+    walk_gait->setVelocity(Vector3(0.5, 0.0, 0), Vector3(0, 0, 0));
     walk_gait->setFrequency(3.0);
 
     // Load stand gait from file

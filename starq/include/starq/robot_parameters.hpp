@@ -50,6 +50,10 @@ namespace starq
         /// @brief Get the maximum force in the z direction
         /// @return The maximum force in the z direction
         virtual Float getForceZMax() const = 0;
+
+        /// @brief Check if the robot is 2D
+        /// @return If the robot is 2D
+        virtual bool is2D() const = 0;
     };
 
 }
