@@ -7,7 +7,9 @@ PROJECT_DIR=/home/nvidia/starq_ws/src/
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Allow root to connect to the X server
-xhost +local:root
+if [ -n "$DISPLAY" ]; then
+    xhost +local:root
+fi
 
 ARCH=$(uname -i)
 if [ "$ARCH" == "aarch64" ]; then

@@ -9,7 +9,11 @@ RUN apt-get update && \
         libeigen3-dev \
         libx11-dev xorg-dev libglfw3 libglfw3-dev \
         ros-humble-joy \
-        ros-humble-rviz2
+        ros-humble-rviz2 \
+        ros-humble-microstrain-inertial-driver \
+        ros-humble-microstrain-inertial-examples \
+        ros-humble-usb-cam \
+        ros-humble-robot-localization
 
 # Create a new user with a specific UID and GID, and set up the workspace
 RUN useradd -m -u 1000 -s /bin/bash nvidia && \
@@ -34,6 +38,10 @@ RUN mkdir ${OSQP_PATH}/build && \
 
 # Give the user input group permissions
 RUN groupadd -g 107 input && usermod -aG input nvidia
+
+# Give the user sudo privileges
+RUN echo 'nvidia:nvidia' | chpasswd
+RUN echo 'nvidia ALL=(ALL) ALL' >> /etc/sudoers
 
 # Switch to the new non-root user
 USER nvidia
