@@ -8,6 +8,7 @@ namespace starq
         if (isRunning())
             return false;
 
+        std::lock_guard<std::mutex> lock(mutex_);
         running_ = true;
         std::thread(&ThreadRunner::run, this).detach();
         return true;
@@ -18,6 +19,7 @@ namespace starq
         if (!isRunning())
             return false;
 
+        std::lock_guard<std::mutex> lock(mutex_);
         running_ = false;
         return true;
     }

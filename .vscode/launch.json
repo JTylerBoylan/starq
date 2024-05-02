@@ -7,7 +7,7 @@
         "name": "Launch Debugger",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/nvidia/starq_ws/build/starq/test_mujoco_camera",
+        "program": "/home/nvidia/starq_ws/build/starq/test_starq_robot",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

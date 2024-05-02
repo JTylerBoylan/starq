@@ -29,19 +29,19 @@ int main()
     }
 
     // Open file for logging
-    std::ofstream log_file;
-    log_file.open("/home/nvidia/starq_ws/src/logging/20240502_StandTempTest.txt");
+    // std::ofstream log_file;
+    // log_file.open("/home/nvidia/starq_ws/src/logging/20240502_StandTempTest.txt");
 
     // Get motors
     auto motors = STARQ->getMotors();
 
-    const int time_s = 30;
+    const int time_s = 5;
     for (int t = 0; t < time_s; t++)
     {
         printf("-------------------------\n");
         printf("Time: %d s\n", t);
 
-        log_file << t << " ";
+        // log_file << t << " ";
 
         for (size_t m = 0; m < motors.size(); m++)
         {
@@ -55,15 +55,15 @@ int main()
             printf("[Motor %lu] FET Temp: %.2f\n", m, temp);
 
             // Log to file
-            log_file << temp << " ";
+            // log_file << temp << " ";
         }
         printf("-------------------------\n");
-        log_file << std::endl;
+        // log_file << std::endl;
 
         usleep(1E6);
     }
 
-    log_file.close();
+    // log_file.close();
 
     // // Move legs in a circle
     // const float frequency = 0.5f;
@@ -84,24 +84,35 @@ int main()
     //     }
     // }
 
-    // // Load trajectory from file
-    // STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
+    // Load trajectory from file
+    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
 
-    // const int traj_cycles = 5;
-    // for (int i = 0; i < traj_cycles; i++)
-    // {
-    //     // Start trajectory
-    //     STARQ->startTrajectory();
+    const int traj_cycles = 5;
+    for (int i = 0; i < traj_cycles; i++)
+    {
+        // Start trajectory
+        STARQ->startTrajectory();
 
-    //     // Wait for trajectory to finish
-    //     while(STARQ->getTrajectoryPublisher()->isRunning())
-    //     {
-    //         usleep(1E4);
-    //     }
-    // }
+        // Wait for trajectory to finish
+        while(STARQ->getTrajectoryPublisher()->isRunning())
+        {
+            usleep(1E4);
+        }
+    }
+
+    // Send legs to center position
+    for (uint32_t i = 0; i < 4; i++)
+    {
+        STARQ->setFootPosition(i, center_position);
+    }
+
+    usleep(1E6);
 
     // Set axis state to idle
     STARQ->setState(AxisState::IDLE);
+
+    // Cleanup STARQ robot
+    STARQ->cleanup();
 
     printf("Done.\n");
     return 0;

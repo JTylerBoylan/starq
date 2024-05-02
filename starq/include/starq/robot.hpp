@@ -22,6 +22,9 @@ namespace starq
         /// @brief Setup the robot
         void setup();
 
+        /// @brief Cleanup the robot
+        void cleanup();
+
         /// @brief Set the position of the foot
         /// @param leg_id The leg id
         /// @param position The target position [m] (x, y, z) in the hip frame
