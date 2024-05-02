@@ -5,9 +5,12 @@ close all
 
 traj_dat = readmatrix("ONR40Per1FootSpace.csv", "Delimiter", ',');
 
+freq = 2;
+T = 1/freq * 1E3;
 sz = size(traj_dat(:,1));
+t = int32(linspace(0, T, sz(1))).';
 
-t1 = traj_dat(:,1) * 10;
+t1 = t;
 id1 = 0*ones(sz);
 cm1 = 3*ones(sz);
 im1 = 1*ones(sz);
@@ -17,17 +20,17 @@ z1 = traj_dat(:,3) * 1E-3;
 v1 = zeros(sz(1), 3);
 f1 = zeros(sz(1), 3);
 
-t2 = traj_dat(:,1) * 10;
+t2 = t;
 id2 = 1*ones(sz);
 cm2 = 3*ones(sz);
 im2 = 1*ones(sz);
-x2 = [x1(51:end); x1(1:50)];
+x2 = [x1(end/2+1:end); x1(1:end/2)];
 y2 = zeros(sz);
-z2 = [z1(51:end); z1(1:50)];
+z2 = [z1(end/2+1:end); z1(1:end/2)];
 v2 = zeros(sz(1), 3);
 f2 = zeros(sz(1), 3);
 
-t3 = traj_dat(:,1) * 10;
+t3 = t;
 id3 = 2*ones(sz);
 cm3 = 3*ones(sz);
 im3 = 1*ones(sz);
@@ -37,7 +40,7 @@ z3 = z1;
 v3 = zeros(sz(1), 3);
 f3 = zeros(sz(1), 3);
 
-t4 = traj_dat(:,1) * 10;
+t4 = t;
 id4 = 3*ones(sz);
 cm4 = 3*ones(sz);
 im4 = 1*ones(sz);
