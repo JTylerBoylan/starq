@@ -86,9 +86,9 @@ int main()
     // }
 
     // Load trajectory from file
-    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test.txt");
+    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walk_test_2.txt");
 
-    const int traj_cycles = 5;
+    const int traj_cycles = 10;
     for (int i = 0; i < traj_cycles; i++)
     {
         // Start trajectory

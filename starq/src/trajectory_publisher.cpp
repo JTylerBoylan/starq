@@ -7,7 +7,7 @@ namespace starq
 
     TrajectoryPublisher::TrajectoryPublisher(starq::LegCommandPublisher::Ptr leg_command_publisher)
         : leg_command_publisher_(leg_command_publisher),
-          sleep_duration_us_(1000)
+          sleep_duration_us_(100)
     {
     }
 

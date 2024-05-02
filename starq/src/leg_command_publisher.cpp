@@ -10,7 +10,7 @@ namespace starq
         : leg_controllers_(leg_controllers),
           localization_(localization),
           stop_on_fail_(true),
-          sleep_duration_us_(5000)
+          sleep_duration_us_(100)
     {
         start();
     }
