@@ -3,7 +3,7 @@ clear
 close all
 %%
 
-traj_dat = readmatrix("latestFootSpace.csv", "Delimiter", ',');
+traj_dat = readmatrix("ONR40Per1FootSpace.csv", "Delimiter", ',');
 
 sz = size(traj_dat(:,1));
 
@@ -60,4 +60,4 @@ f = [f1; f2; f3; f4];
 
 out = [t, id, cm, im, p, v, f]
 
-writematrix(out, '../starq/trajectories/walk_test.txt', 'Delimiter', ' ');
+writematrix(out, '../starq/trajectories/walk_test_2.txt', 'Delimiter', ' ');
