@@ -19,6 +19,12 @@ int main()
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
     printf("STARQRobot created\n");
 
+    // Set the motor gains
+    const Float p_gain = 100.0;
+    const Float v_gain = 0.05;
+    const Float vi_gain = 0.15;
+    STARQ->setGains(p_gain, v_gain, vi_gain);
+
     // Set axis state to closed loop control
     if (!STARQ->setStates(AxisState::CLOSED_LOOP_CONTROL))
     {
@@ -40,9 +46,9 @@ int main()
     usleep(1E6 * stand_duration);
 
     // Run trajectory from file
-    const std::string file_name = "trudge_test_1.txt";
+    const std::string file_name = "trudge_test_crawl.txt";
     const int num_cycles = 10;
-    const Float frequency = 1.0; // Hz
+    const Float frequency = 0.2; // Hz
     run_file_trajectory(STARQ, file_name, frequency, num_cycles);
 
     // Move legs in a circle
