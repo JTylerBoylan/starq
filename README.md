@@ -55,7 +55,7 @@ SFTP is used to copy files remotely from your local computer to the Jetson, or v
 
 ## Other Documentation
 
-### 1. [Hardware Information)](docs/hardware.md)
+### 1. [Hardware Information](docs/hardware.md)
 
 ### 2. [Test Executable Descriptions](docs/testing.md)
 
