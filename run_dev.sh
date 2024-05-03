@@ -14,7 +14,7 @@ fi
 ARCH=$(uname -i)
 if [ "$ARCH" == "aarch64" ]; then
     # Load the CAN interface
-    sudo /bin/bash ${SCRIPT_DIR}/docs/loadcan_jetson.sh
+    sudo /bin/bash ${SCRIPT_DIR}/tools/loadcan_jetson.sh
 fi
 
 # Start the Docker container
