@@ -27,6 +27,14 @@ namespace starq
         /// @brief Destroy the leg controller.
         ~LegController();
 
+        /// @brief Get the leg dynamics.
+        /// @return The leg dynamics.
+        LegDynamics::Ptr getDynamics() const { return dynamics_; }
+
+        /// @brief Get the motor controllers.
+        /// @return The motor controllers.
+        MotorList getMotorControllers() const { return motor_controllers_; }
+
         /// @brief Set the state for a leg.
         /// @param state State.
         /// @return If the command was sent successfully.

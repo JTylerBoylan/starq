@@ -16,7 +16,7 @@ namespace starq
     {
     }
 
-    bool TrajectoryFileReader::load(const std::string &file_path)
+    bool TrajectoryFileReader::load(const std::string &file_path, const Float frequency)
     {
 
         trajectory_.clear();
@@ -50,7 +50,7 @@ namespace starq
                 return false;
             }
 
-            command->delay = std::chrono::milliseconds(delay_time);
+            command->delay = std::chrono::milliseconds(time_t(delay_time / frequency));
             command->leg_id = leg_id;
 
             trajectory_.push_back(command);

@@ -21,8 +21,9 @@ namespace starq
 
         /// @brief Load a 3D trajectory from a file.
         /// @param file_path Path to the file.
+        /// @param frequency Frequency of the trajectory.
         /// @return True if the trajectory was loaded successfully, false otherwise.
-        bool load(const std::string &file_path);
+        bool load(const std::string &file_path, const Float frequency = 1.0);
 
         /// @brief Get the trajectory.
         /// @return Vector of leg commands.

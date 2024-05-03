@@ -25,6 +25,16 @@ namespace starq
         /// @brief Cleanup the robot
         void cleanup();
 
+        /// @brief Set the state for all motors
+        /// @param state The state
+        /// @return True if successful
+        bool setStates(AxisState state);
+
+        /// @brief Set the gear ratios for all motors
+        /// @param gear_ratio The gear ratio
+        /// @return True if successful
+        bool setGearRatios(const Float gear_ratio);
+
         /// @brief Set the position of the foot
         /// @param leg_id The leg id
         /// @param position The target position [m] (x, y, z) in the hip frame
@@ -43,10 +53,15 @@ namespace starq
         /// @return True if successful
         bool setFootForce(const uint8_t &leg_id, const Vector3 &force);
 
+        /// @brief Send all feet to the default position
+        /// @return True if successful
+        bool goToDefaultFootLocations();
+
         /// @brief Load a 3D trajectory from a file
         /// @param file The file path
+        /// @param frequency The frequency of the trajectory
         /// @return True if successful
-        bool loadTrajectory(const std::string &file);
+        bool loadTrajectory(const std::string &file, const Float frequency = 1.0);
 
         /// @brief Start the trajectory
         /// @return True if successful
@@ -110,7 +125,6 @@ namespace starq
         mpc::MPCController::Ptr getMPCController() const { return mpc_controller_; }
 
     protected:
-
         /// @brief Setup the motor controllers
         virtual void setupMotors() = 0;
 
@@ -152,7 +166,6 @@ namespace starq
         TrajectoryPublisher::Ptr trajectory_publisher_;
         mpc::MPCConfiguration::Ptr mpc_configuration_;
         mpc::MPCController::Ptr mpc_controller_;
-
     };
 
 }

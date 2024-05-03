@@ -4,14 +4,8 @@
 #include "starq/robot.hpp"
 #include "starq/odrive/odrive_controller.hpp"
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
-
-#define STARQ_LINK_LENGTH_1 0.065
-#define STARQ_LINK_LENGTH_2 0.2
-#define STARQ_GEAR_RATIO 6.0
-
-#define STARQ_MOTOR_P_GAIN 100
-#define STARQ_MOTOR_V_GAIN 0.05
-#define STARQ_MOTOR_VI_GAIN 0.15
+#include "starq/starq/starq_robot_parameters.hpp"
+#include "starq/osqp/osqp.hpp"
 
 namespace starq
 {
@@ -24,10 +18,18 @@ namespace starq
         /// @brief Create a STARQ robot
         STARQRobot();
 
-        /// @brief Set the state of the motors
-        /// @param state The state
+        /// @brief Set the gains for all motors
+        /// @param p_gain Position gain
+        /// @param v_gain Velocity gain
+        /// @param vi_gain Velocity integral gain
         /// @return True if successful
-        bool setState(AxisState state);
+        bool setGains(const Float p_gain, const Float v_gain, const Float vi_gain);
+
+        /// @brief Set the limits for all motors
+        /// @param velocity_limit Velocity limit
+        /// @param current_limit Current limit
+        /// @return True if successful
+        bool setLimits(const Float velocity_limit, const Float current_limit);
 
         /// @brief Get the first CAN socket
         /// @return The CAN socket
@@ -36,22 +38,6 @@ namespace starq
         /// @brief Get the second CAN socket
         /// @return The CAN socket
         can::CANSocket::Ptr getCanSocket1() const { return can_socket_1_; }
-
-        /// @brief Get the leg dynamics of the front left leg
-        /// @return The leg dynamics of the front left leg
-        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsFL() const { return leg_dynamics_FL_; }
-
-        /// @brief Get the leg dynamics of the rear left leg
-        /// @return The leg dynamics of the rear left leg
-        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsRL() const { return leg_dynamics_RL_; }
-
-        /// @brief Get the leg dynamics of the rear right leg
-        /// @return The leg dynamics of the rear right leg
-        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsRR() const { return leg_dynamics_RR_; }
-
-        /// @brief Get the leg dynamics of the front right leg
-        /// @return The leg dynamics of the front right leg
-        STARQFiveBar2DLegDynamics::Ptr getLegDynamicsFR() const { return leg_dynamics_FR_; }
 
     private:
         /// @brief Setup the motor controllers
@@ -71,11 +57,6 @@ namespace starq
 
         can::CANSocket::Ptr can_socket_0_;
         can::CANSocket::Ptr can_socket_1_;
-
-        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_FL_;
-        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_RL_;
-        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_RR_;
-        STARQFiveBar2DLegDynamics::Ptr leg_dynamics_FR_;
     };
 }
 

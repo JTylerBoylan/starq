@@ -10,13 +10,30 @@ namespace starq
         setup();
     }
 
-    bool STARQRobot::setState(AxisState state)
+    bool STARQRobot::setGains(const Float p_gain, const Float v_gain, const Float vi_gain)
     {
         for (size_t i = 0; i < motors_.size(); i++)
         {
-            if (!motors_[i]->setState(state))
+            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
+
+            if (!odrive->setPosGain(p_gain) || !odrive->setVelGains(v_gain, vi_gain))
             {
-                std::cout << "Failed to set axis state for motor " << i << "." << std::endl;
+                std::cerr << "Failed to set gains for motor " << i << "." << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool STARQRobot::setLimits(const Float velocity_limit, const Float current_limit)
+    {
+        for (size_t i = 0; i < motors_.size(); i++)
+        {
+            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
+
+            if (!odrive->setLimits(velocity_limit, current_limit))
+            {
+                std::cerr << "Failed to set limits for motor " << i << "." << std::endl;
                 return false;
             }
         }
@@ -32,12 +49,12 @@ namespace starq
 
         if (!can_socket_0_->connect())
         {
-            std::cout << "Failed to connect to CAN interface 0." << std::endl;
+            std::cerr << "Failed to connect to CAN interface 0." << std::endl;
         }
 
         if (!can_socket_1_->connect())
         {
-            std::cout << "Failed to connect to CAN interface 1." << std::endl;
+            std::cerr << "Failed to connect to CAN interface 1." << std::endl;
         }
 
         using namespace odrive;
@@ -53,33 +70,6 @@ namespace starq
         ODriveController::Ptr odrive_6 = std::make_shared<ODriveController>(odrive_socket_1, 6);
         ODriveController::Ptr odrive_7 = std::make_shared<ODriveController>(odrive_socket_1, 7);
 
-        odrive_0->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_1->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_2->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_3->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_4->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_5->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_6->setGearRatio(STARQ_GEAR_RATIO);
-        odrive_7->setGearRatio(STARQ_GEAR_RATIO);
-
-        odrive_0->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_1->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_2->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_3->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_4->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_5->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_6->setPosGain(STARQ_MOTOR_P_GAIN);
-        odrive_7->setPosGain(STARQ_MOTOR_P_GAIN);
-
-        odrive_0->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_1->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_2->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_3->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_4->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_5->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_6->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        odrive_7->setVelGains(STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-
         motors_ = {
             odrive_0,
             odrive_1,
@@ -89,28 +79,30 @@ namespace starq
             odrive_5,
             odrive_6,
             odrive_7};
+
+        setStates(AxisState::IDLE);
+        setGearRatios(STARQ_MOTOR_GEAR_RATIO);
+        setGains(STARQ_MOTOR_P_GAIN, STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
+        setLimits(STARQ_MOTOR_MAX_VELOCITY, STARQ_MOTOR_MAX_CURRENT);
     }
 
     void STARQRobot::setupLegs()
     {
-        leg_dynamics_FL_ = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
-        leg_dynamics_RL_ = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
-        leg_dynamics_RR_ = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
-        leg_dynamics_FR_ = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
+        auto leg_dynamics_L = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
+        auto leg_dynamics_R = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
 
-        leg_dynamics_FL_->flipY();
-        leg_dynamics_RL_->flipY();
+        leg_dynamics_L->flipY();
 
-        LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_FL_,
+        LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_L,
                                                                     MotorList{motors_[0], motors_[1]});
 
-        LegController::Ptr leg_RL = std::make_shared<LegController>(leg_dynamics_RL_,
+        LegController::Ptr leg_RL = std::make_shared<LegController>(leg_dynamics_L,
                                                                     MotorList{motors_[2], motors_[3]});
 
-        LegController::Ptr leg_RR = std::make_shared<LegController>(leg_dynamics_RR_,
+        LegController::Ptr leg_RR = std::make_shared<LegController>(leg_dynamics_R,
                                                                     MotorList{motors_[4], motors_[5]});
 
-        LegController::Ptr leg_FR = std::make_shared<LegController>(leg_dynamics_FR_,
+        LegController::Ptr leg_FR = std::make_shared<LegController>(leg_dynamics_R,
                                                                     MotorList{motors_[6], motors_[7]});
 
         legs_ = {leg_FL, leg_RL, leg_RR, leg_FR};
@@ -123,12 +115,12 @@ namespace starq
 
     void STARQRobot::setupRobotDynamics()
     {
-        robot_parameters_ = nullptr;
+        robot_parameters_ = std::make_shared<STARQRobotParameters>();
     }
 
     void STARQRobot::setupMPCSolver()
     {
-        mpc_solver_ = nullptr;
+        mpc_solver_ = std::make_shared<osqp::OSQP>();
     }
 
 }

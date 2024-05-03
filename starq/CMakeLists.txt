@@ -60,6 +60,7 @@ add_library(starqlib SHARED
   src/odrive/odrive_controller.cpp
   src/starq/starq_fivebar2d_leg_dynamics.cpp
   src/starq/starq_robot.cpp
+  src/starq/starq_robot_parameters.cpp
   src/unitree/unitree_a1_leg_dynamics.cpp
   src/unitree/unitree_a1_robot_parameters.cpp
   src/unitree/unitree_a1_mujoco_robot.cpp

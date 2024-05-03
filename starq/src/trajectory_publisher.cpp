@@ -48,14 +48,16 @@ namespace starq
         for (auto &leg_command : trajectory_)
         {
 
-            while (leg_command->release_time > leg_command_publisher_->getLocalization()->getCurrentTime())
+            const auto current_time = leg_command_publisher_->getLocalization()->getCurrentTime();
+            const auto release_time = leg_command->release_time;
+            const auto delta_time = release_time - current_time;
+            
+            if (delta_time.count() > 0)
             {
-                std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
+                std::this_thread::sleep_for(delta_time);
             }
 
             leg_command_publisher_->sendCommand(leg_command);
-
-            std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration_us_));
         }
 
         stop();
