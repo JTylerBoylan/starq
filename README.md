@@ -17,8 +17,6 @@ password: nvidia
 4. SSH into the Jetson using the username and device name: $`ssh nvidia@ubuntu`
    - *Password is the same as above*
    - *If failed, test network connection using: $`ping ubuntu`*
-5. See **Building** section for next instructions
-6. Exit SSH using the $`exit` command
 
 ### Building
 1. Go to project workspace: $`cd ~/starq_ws`
@@ -46,7 +44,7 @@ password: nvidia
 ### SFTP
 SFTP is used to copy files remotely from your local computer to the Jetson, or vice versa. 
 
-1. Follow steps **1-3** above
+1. Follow steps **1-3** from the **SSH** section
 2. SFTP into the Jetson: $`sftp nvidia@ubuntu`
 3. Use commands like `ls` and `cd` to go to the directory you want to copy to/from on the remote host
 4. Use `lls` and `lcd` to do the same on your local computer
