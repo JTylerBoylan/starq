@@ -41,8 +41,8 @@ int main()
 
     // Run trajectory from file
     const std::string file_name = "trudge_test_1.txt";
-    const int num_cycles = 5;
-    const Float frequency = 3.0; // Hz
+    const int num_cycles = 10;
+    const Float frequency = 1.0; // Hz
     run_file_trajectory(STARQ, file_name, frequency, num_cycles);
 
     // Move legs in a circle
