@@ -17,20 +17,12 @@ password: nvidia
 4. SSH into the Jetson using the username and device name: $`ssh nvidia@ubuntu`
    - *Password is the same as above*
    - *If failed, test network connection using: $`ping ubuntu`*
-5. Go to project workspace: $`cd starq_ws`
-6. Run the STARQ Docker environment: $`./run_dev.sh`
-7. See **Building** section for next instructions
-8. Exit SSH using the $`exit` command
-
-### Powering Off from SSH
-**Note: Do not power off the Jetson by removing power. This could lead to file corruption. Instead:**
-1. Run $`exit` to close the Docker environment
-2. While still SSHed in the Jetson, shutdown using: $`sudo shutdown -h now`
-3. This should close the SSH connection as well
+5. See **Building** section for next instructions
+6. Exit SSH using the $`exit` command
 
 ### Building
-1. Open Terminal in the container
-2. Go to `starq_ws` folder: $`cd ~/starq_ws`
+1. Go to project workspace: $`cd ~/starq_ws`
+2. Run the STARQ Docker environment: $`./run_dev.sh`
 3. Build: $`colcon build`
 4. Source: $`source install/setup.bash`
 4. Go to the build folder: $`cd build/starq`
@@ -45,8 +37,13 @@ password: nvidia
    - You will have to enter the password again
 6. Edit test executables located in `starq/tests`
 
-### SFTP
+### Powering Off from SSH
+**Note: Do not power off the Jetson by removing power. This could lead to file corruption. Instead:**
+1. Run $`exit` to close the Docker environment
+2. While still SSHed in the Jetson, shutdown using: $`sudo shutdown -h now`
+3. This should close the SSH connection as well
 
+### SFTP
 SFTP is used to copy files remotely from your local computer to the Jetson, or vice versa. 
 
 1. Follow steps **1-3** above
