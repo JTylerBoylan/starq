@@ -24,7 +24,7 @@ namespace starq
 
         Float getCost(const VectorX &x1, const VectorX &x2, const VectorX &u, const Float dt) override;
 
-        Float getHeuristic(const VectorX &x1) override;
+        Float getHeuristic(const VectorX &x) override;
 
         bool isStateValid(const VectorX &x) override;
 

@@ -34,6 +34,12 @@ namespace starq::planning
             return results_;
         }
 
+        if (model->isStateFinal(x0))
+        {
+            results_->exit_code = ExitCode::START_IS_FINAL;
+            return results_;
+        }
+
         start_node_ = grid_->getNode(x0);
         start_node_->g = 0.0;
         start_node_->h = model->getHeuristic(x0);

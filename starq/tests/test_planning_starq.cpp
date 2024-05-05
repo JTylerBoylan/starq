@@ -14,7 +14,7 @@ int main()
 
     // Create starq planning model
     STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(localization);
-    model->setGoalState(Vector3(-10.0, 10.0, 0.0));
+    model->setGoalState(Vector3(10.0, 10.0, 0.0));
     model->setGoalThreshold(0.1);
     printf("Model created.\n");
 

@@ -64,9 +64,16 @@ int main(void)
     MPCController::Ptr mpc_controller = std::make_shared<MPCController>(mpc_config, osqp,
                                                                         robot->getLegCommandPublisher());
 
+    // Goal states
+    int goal_index = 0;
+    const std::vector<Vector3> goal_states = {Vector3(1.0, 1.0, 0.0),
+                                              Vector3(1.0, -1.0, 0.0),
+                                              Vector3(-1.0, -1.0, 0.0),
+                                              Vector3(-1.0, 1.0, 0.0)};
+
     // Create starq planning model
     STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(robot->getLocalization());
-    model->setGoalState(Vector3(1.0, 1.0, 0.0));
+    model->setGoalState(goal_states[goal_index]);
     model->setGoalThreshold(0.1);
     printf("Model created.\n");
 
@@ -76,7 +83,7 @@ int main(void)
 
     // Create plan configuration
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
-    config->dx = Vector3(0.1, 0.1, M_PI / 16.0);
+    config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
     config->dt = 0.25;
     config->time_limit = milliseconds(500);
     printf("Configuration created.\n");
@@ -120,21 +127,31 @@ int main(void)
         // Solve
         PlanResults::Ptr results = solver->solve(config, model);
 
-        // Send command
-        if (results->node_path.size() > 0)
+        switch (results->exit_code)
         {
-            VectorX u = results->node_path[1]->u;
-            printf("  ->  Sending command: vx: %f vy: %f w: %f\n", u(0), u(1), u(2));
-            walk_gait->setVelocity(Vector3(u(0), u(1), 0), Vector3(0, 0, u(2)));
-        }
-        else
-        {
-            printf("  ->  No solution found\n");
-            walk_gait->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
+        case ExitCode::SUCCESS:
+            // Send command
+            if (results->node_path.size() > 1)
+            {
+                VectorX u = results->node_path[1]->u;
+                printf("  ->  Sending command: vx: %f vy: %f w: %f\n", u(0), u(1), u(2));
+                walk_gait->setVelocity(Vector3(u(0), u(1), 0), Vector3(0, 0, u(2)));
+            }
+            break;
+        case ExitCode::START_IS_FINAL:
+            // Cycle through goal states
+            goal_index = (goal_index + 1) % goal_states.size();
+            model->setGoalState(goal_states[goal_index]);
+            printf(" -> New goal: x: %f y: %f th: %f\n", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
+            break;
+        default:
+            // Print error
+            printf(" -> Planner failed with exit code: %d\n", results->exit_code);
+            break;
         }
 
         // Sleep for 10 milliseconds
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     // Wait for simulation to close

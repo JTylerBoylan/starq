@@ -19,7 +19,8 @@ namespace starq::planning
         GENERATION_LIMIT = 5,
         NO_NODES_IN_QUEUE = 6,
         INVALID_GRID_RESOLUTION = 7,
-        INVALID_START_STATE = 8
+        INVALID_START_STATE = 8,
+        START_IS_FINAL = 9
     };
 
     struct Node
