@@ -85,8 +85,11 @@ int main(void)
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
     config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
     config->dt = 0.25;
-    config->time_limit = milliseconds(500);
+    config->time_limit = milliseconds(1000);
     printf("Configuration created.\n");
+
+    // Set simulation frame rate
+    mujoco::MuJoCo::getInstance()->setFrameRate(30);
 
     // Start simulation
     robot->startSimulation();
@@ -122,10 +125,11 @@ int main(void)
         // Print position
         const Vector3 position = robot->getLocalization()->getCurrentPosition();
         const Vector3 orientation = robot->getLocalization()->getCurrentOrientation();
-        printf("Current position: x: %f y: %f th: %f", position.x(), position.y(), orientation.z());
+        printf("Position: x: %f y: %f th: %f ", position.x(), position.y(), orientation.z());
 
         // Solve
         PlanResults::Ptr results = solver->solve(config, model);
+        printf("  (%d)  ", results->exit_code);
 
         switch (results->exit_code)
         {
@@ -134,7 +138,7 @@ int main(void)
             if (results->node_path.size() > 1)
             {
                 VectorX u = results->node_path[1]->u;
-                printf("  ->  Sending command: vx: %f vy: %f w: %f\n", u(0), u(1), u(2));
+                printf("  ->  Send: vx: %f vy: %f w: %f", u(0), u(1), u(2));
                 walk_gait->setVelocity(Vector3(u(0), u(1), 0), Vector3(0, 0, u(2)));
             }
             break;
@@ -142,16 +146,17 @@ int main(void)
             // Cycle through goal states
             goal_index = (goal_index + 1) % goal_states.size();
             model->setGoalState(goal_states[goal_index]);
-            printf(" -> New goal: x: %f y: %f th: %f\n", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
+            printf(" -> New goal: x: %f y: %f th: %f", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
             break;
         default:
             // Print error
-            printf(" -> Planner failed with exit code: %d\n", results->exit_code);
+            printf(" -> Planner failed with exit code: %d", results->exit_code);
             break;
         }
+        printf("\n");
 
         // Sleep for 10 milliseconds
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
     }
 
     // Wait for simulation to close
