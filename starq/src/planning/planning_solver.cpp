@@ -27,23 +27,23 @@ namespace starq::planning
 
         grid_ = std::make_shared<ImplicitGrid>(config_->dx);
 
-        if (!model->isStateValid(x0))
+        start_node_ = grid_->getNode(x0);
+        start_node_->g = 0.0;
+        start_node_->h = model->getHeuristic(x0);
+        start_node_->f = start_node_->g + start_node_->h;
+
+        if (!model->isStateValid(start_node_->x))
         {
             std::cerr << "Invalid configuration: Initial state is not valid" << std::endl;
             results_->exit_code = ExitCode::INVALID_START_STATE;
             return results_;
         }
 
-        if (model->isStateFinal(x0))
+        if (model->isStateFinal(start_node_->x))
         {
             results_->exit_code = ExitCode::START_IS_FINAL;
             return results_;
         }
-
-        start_node_ = grid_->getNode(x0);
-        start_node_->g = 0.0;
-        start_node_->h = model->getHeuristic(x0);
-        start_node_->f = start_node_->g + start_node_->h;
 
         best_node_ = start_node_;
 
