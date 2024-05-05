@@ -61,6 +61,7 @@ add_library(starqlib SHARED
   src/starq/starq_fivebar2d_leg_dynamics.cpp
   src/starq/starq_robot.cpp
   src/starq/starq_robot_parameters.cpp
+  src/starq/starq_planning_model.cpp
   src/unitree/unitree_a1_leg_dynamics.cpp
   src/unitree/unitree_a1_robot_parameters.cpp
   src/unitree/unitree_a1_mujoco_robot.cpp
@@ -85,6 +86,8 @@ add_library(starqlib SHARED
   src/mujoco/mujoco_robot.cpp
   src/mujoco/mujoco_camera.cpp
   src/osqp/osqp.cpp
+  src/planning/implicit_grid.cpp
+  src/planning/planning_solver.cpp
 )
 
 # Link the library to the dependencies
@@ -168,6 +171,14 @@ add_executable(test_starq_motors tests/test_starq_motors.cpp)
 target_include_directories(test_starq_motors PUBLIC include)
 target_link_libraries(test_starq_motors PUBLIC starqlib)
 
+add_executable(test_planning_dummy tests/test_planning_dummy.cpp)
+target_include_directories(test_planning_dummy PUBLIC include)
+target_link_libraries(test_planning_dummy PUBLIC starqlib)
+
+add_executable(test_planning_starq tests/test_planning_starq.cpp)
+target_include_directories(test_planning_starq PUBLIC include)
+target_link_libraries(test_planning_starq PUBLIC starqlib)
+
 # ROS executables
 add_executable(test_ros2_mpc_joystick_mujoco tests/test_ros2_mpc_joystick_mujoco.cpp)
 target_link_libraries(test_ros2_mpc_joystick_mujoco starqlib)
@@ -232,6 +243,10 @@ target_link_libraries(test_mujoco_mpc_controller PUBLIC starqlib)
 add_executable(test_mujoco_camera tests/test_mujoco_camera.cpp)
 target_include_directories(test_mujoco_camera PUBLIC include)
 target_link_libraries(test_mujoco_camera PUBLIC starqlib)
+
+add_executable(test_mujoco_mpc_w_planning tests/test_mujoco_mpc_w_planning.cpp)
+target_include_directories(test_mujoco_mpc_w_planning PUBLIC include)
+target_link_libraries(test_mujoco_mpc_w_planning PUBLIC starqlib)
 
 # Finalize the ament package
 ament_package()
