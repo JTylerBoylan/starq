@@ -39,30 +39,15 @@ int main(void)
     stand_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
     stand_gait->setFrequency(10.0);
 
-    // Create MPC Configuration object based on the robot
-    MPCConfiguration::Ptr mpc_config = std::make_shared<MPCConfiguration>(robot->getLegs(),
-                                                                          robot->getRobotParameters(),
-                                                                          robot->getLocalization());
+    // MPC settings
+    robot->getMPCConfiguration()->setTimeStep(milliseconds(50));
+    robot->getMPCConfiguration()->setWindowSize(21);
 
-    // Set MPC parameters
-    mpc_config->setTimeStep(milliseconds(50));
-    mpc_config->setWindowSize(21);
-    printf("MPCConfiguration created\n");
-
-    // Create OSQP solver object
-    OSQP::Ptr osqp = std::make_shared<OSQP>();
-    printf("OSQP created\n");
-
-    // Set OSQP parameters
-    osqp->getSettings()->verbose = false;
-    osqp->getSettings()->max_iter = 2000;
-    osqp->getSettings()->polishing = true;
-    osqp->getSettings()->warm_starting = true;
-
-    // Create MPC Controller object
-    // MPC Controller is responsible for running the MPC solver and sending the leg commands to the robot
-    MPCController::Ptr mpc_controller = std::make_shared<MPCController>(mpc_config, osqp,
-                                                                        robot->getLegCommandPublisher());
+    // OSQP settings
+    robot->getOSQPSolver()->getSettings()->verbose = false;
+    robot->getOSQPSolver()->getSettings()->max_iter = 2000;
+    robot->getOSQPSolver()->getSettings()->polishing = true;
+    robot->getOSQPSolver()->getSettings()->warm_starting = true;
 
     // Goal states
     int goal_index = 0;
@@ -108,17 +93,17 @@ int main(void)
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Start MPC Controller in a separate thread
-    mpc_controller->start();
+    robot->startMPC();
     printf("MPCController started\n");
 
     // Run standing gait for 5 seconds
     printf("Standing for 5 seconds...\n");
-    mpc_config->setNextGait(stand_gait);
+    robot->setNextGait(stand_gait);
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Transition to walking gait
     printf("Walking...\n");
-    mpc_config->setNextGait(walk_gait);
+    robot->setNextGait(walk_gait);
 
     printf("Starting Planner\n");
     while (robot->isSimulationOpen())
