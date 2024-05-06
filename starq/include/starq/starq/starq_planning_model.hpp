@@ -30,7 +30,7 @@ namespace starq
 
         bool isStateFinal(const VectorX &x) override;
 
-        std::vector<VectorX> getActions(const VectorX &x) override;
+        std::vector<VectorX> getActions(const VectorX &x, const VectorX &dx, const Float dt) override;
 
     private:
         slam::Localization::Ptr localization_;

@@ -60,8 +60,11 @@ namespace starq
 
     Float STARQPlanningModel::getHeuristic(const VectorX &x)
     {
-        const VectorX dx = xf_.head(2) - x.head(2);
-        return dx.norm();
+        const Float cx = 1.0;
+        const Float cth = 0.25;
+        const VectorX dx = xf_ - x;
+        const Float dth = xf_(2) - x(2);
+        return cx * dx.norm() + cth * (dth > M_PI ? 2 * M_PI - dth : dth);
     }
 
     bool STARQPlanningModel::isStateValid(const VectorX &x)
@@ -72,29 +75,31 @@ namespace starq
 
     bool STARQPlanningModel::isStateFinal(const VectorX &x)
     {
-        const VectorX dx = (xf_.head(2) - x.head(2));
-        return dx.norm() < threshold_;
+        return getHeuristic(x) < threshold_;
     }
 
-    std::vector<VectorX> STARQPlanningModel::getActions(const VectorX &x)
+    std::vector<VectorX> STARQPlanningModel::getActions(const VectorX &x, const VectorX &dx, const Float dt)
     {
         (void)x;
-        int res_v = 8;
-        int res_w = 7;
-        Float vx_mag = 0.5;
-        Float vx_off = 0.25;
-        Float vy_mag = 0.25;
-        Float dth = 2 * M_PI / res_v;
-        Float dw = M_PI / 16;
-        int w_off = res_w / 2;
+        const int res_v = 8;
+        const int res_w = 7;
+
+        const VectorX v_mag = dx / dt;
+        const VectorX v_fac = Vector3(2.0, 1.0, 2.0);
+        const VectorX v = v_mag.cwiseProduct(v_fac);
+        const Float vx_off = 0.25;
+
+        const Float dth = 2 * M_PI / res_v;
+        const int w_off = res_w / 2;
+
         std::vector<VectorX> actions(res_v * res_w, Vector3());
         for (int i = 0; i < res_v; i++)
         {
             for (int j = 0; j < res_w; j++)
             {
-                const Float vx = vx_mag * std::cos(i * dth) + vx_off;
-                const Float vy = vy_mag * std::sin(i * dth);
-                const Float wz = dw * (j - w_off);
+                const Float vx = v.x() * std::cos(i * dth) + vx_off;
+                const Float vy = v.y() * std::sin(i * dth);
+                const Float wz = v.z() * (j - w_off);
 
                 actions[res_w * i + j] << vx, vy, wz;
             }

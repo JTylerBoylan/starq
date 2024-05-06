@@ -23,7 +23,7 @@ namespace starq::planning
 
             virtual bool isStateFinal(const VectorX &x) = 0;
 
-            virtual std::vector<VectorX> getActions(const VectorX &x) = 0;
+            virtual std::vector<VectorX> getActions(const VectorX &x, const VectorX &dx, const Float dt) = 0;
     };
 
 }

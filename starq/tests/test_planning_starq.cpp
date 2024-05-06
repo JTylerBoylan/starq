@@ -14,8 +14,8 @@ int main()
 
     // Create starq planning model
     STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(localization);
-    model->setGoalState(Vector3(10.0, 10.0, 0.0));
-    model->setGoalThreshold(0.1);
+    model->setGoalState(Vector3(0.0, -2.0, -M_PI / 2.0));
+    model->setGoalThreshold(0.10);
     printf("Model created.\n");
 
     // Create STARQ planning solver
@@ -24,9 +24,11 @@ int main()
 
     // Create plan configuration
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
-    config->dx = Vector3(0.1, 0.1, M_PI / 16.0);
-    config->dt = 0.25;
-    config->time_limit = milliseconds(10000);
+    config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
+    config->dt = 0.15;
+    config->time_limit = milliseconds(2000);
+    config->max_iterations = 100000;
+    config->max_generations = 200;
     printf("Configuration created.\n");
 
     // Solve

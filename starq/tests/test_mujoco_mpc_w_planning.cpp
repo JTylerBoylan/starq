@@ -74,7 +74,7 @@ int main(void)
     // Create starq planning model
     STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(robot->getLocalization());
     model->setGoalState(goal_states[goal_index]);
-    model->setGoalThreshold(0.1);
+    model->setGoalThreshold(0.10);
     printf("Model created.\n");
 
     // Create STARQ planning solver
@@ -84,8 +84,10 @@ int main(void)
     // Create plan configuration
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
     config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
-    config->dt = 0.25;
-    config->time_limit = milliseconds(1000);
+    config->dt = 0.15;
+    config->time_limit = milliseconds(2000);
+    config->max_iterations = 100000;
+    config->max_generations = 200;
     printf("Configuration created.\n");
 
     // Set simulation frame rate
@@ -151,12 +153,13 @@ int main(void)
         default:
             // Print error
             printf(" -> Planner failed with exit code: %d", results->exit_code);
+            walk_gait->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
             break;
         }
         printf("\n");
 
         // Sleep for 10 milliseconds
-        std::this_thread::sleep_for(std::chrono::milliseconds(0));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Wait for simulation to close

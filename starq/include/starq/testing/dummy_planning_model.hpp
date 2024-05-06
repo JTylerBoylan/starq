@@ -50,13 +50,14 @@ namespace starq::testing
             return x.norm() < 0.1;
         }
 
-        std::vector<VectorX> getActions(const VectorX &x) override
+        std::vector<VectorX> getActions(const VectorX &x, const VectorX &dx, const Float dt) override
         {
             (void)x;
+            const VectorX v = dx / dt;
             std::vector<VectorX> actions(8, VectorX(2));
             for (size_t i = 0; i < 8; i++)
             {
-                actions[i] << std::cos(i * M_PI / 4), std::sin(i * M_PI / 4);
+                actions[i] << v(1) * std::cos(i * M_PI / 4), v(2) * std::sin(i * M_PI / 4);
             }
             return actions;
         }
