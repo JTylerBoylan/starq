@@ -1,7 +1,7 @@
 microstrain_inertial_driver:
   ros__parameters:
     # You should change this section of config to match your setup
-    port : '/dev/microstrain_main'
+    port : '/dev/ttyACM0'
     baudrate : 115200
 
     # This will cause the node to convert any NED measurements to ENU

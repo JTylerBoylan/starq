@@ -11,6 +11,7 @@ MICROSTRAIN_LAUNCH_FILE = os.path.join(ament_index_python.packages.get_package_s
 IMU_CONFIG_FILE = os.path.join('/home/nvidia/starq_ws/src/starq/config', 'imu_cv7.yml')
 LEFT_CAMERA_CONFIG_PATH = os.path.join('/home/nvidia/starq_ws/src/starq/config', 'left_camera.yaml')
 RIGHT_CAMERA_CONFIG_PATH = os.path.join('/home/nvidia/starq_ws/src/starq/config', 'right_camera.yaml')
+EKF_CONFIG_PATH = os.path.join('/home/nvidia/starq_ws/src/starq/config', 'ekf.yaml')
 
 def generate_launch_description():
     return LaunchDescription([
@@ -117,14 +118,26 @@ def generate_launch_description():
                 ]
         ),
 
+        ########################
+        ## ROBOT LOCALIZATION ##
+        ########################
+
+        Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
+            output='screen',
+            parameters=[EKF_CONFIG_PATH],
+        ),
+
         ###########
         ## STARQ ##
         ###########
 
         # STARQ Node
-        Node(
-            package='starq',
-            executable='starq_node',
-            output='screen'
-        )
+        # Node(
+        #     package='starq',
+        #     executable='starq_node',
+        #     output='screen'
+        # )
     ])
