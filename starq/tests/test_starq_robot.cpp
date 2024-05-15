@@ -46,9 +46,9 @@ int main()
     usleep(1E6 * stand_duration);
 
     // Run trajectory from file
-    const std::string file_name = "trudge_test_crawl.txt";
+    const std::string file_name = "walk_test_2.txt";
     const int num_cycles = 10;
-    const Float frequency = 0.2; // Hz
+    const Float frequency = 1.5; // Hz
     run_file_trajectory(STARQ, file_name, frequency, num_cycles);
 
     // Move legs in a circle
