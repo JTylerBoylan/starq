@@ -1,6 +1,6 @@
 <launch>
 
-    <node pkg="starq" exec="test_ros2_joystick_mujoco" name="test_ros2_joystick_mujoco"  output="screen"/>
+    <node pkg="starq" exec="test_ros2_mpc_joystick_mujoco" name="test_ros2_mpc_joystick_mujoco"  output="screen"/>
 
     <node pkg="joy" exec="joy_node" name="joy_node" output="screen"/>
 
