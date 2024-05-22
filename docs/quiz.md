@@ -4,9 +4,32 @@
 
 - Create a new executable that prints out "Hello world!" to console
 
+- Create a dummy motor controller header/class that outputs to console when a function is called
+
+- Create a dummy leg dynamics header/class that outputs to console when the kinematics are called
+
+- In your executable, add your dummy motor controller object and send a couple commands to it
+
+- Add your dummy leg dynamics object
+
+- Add a leg controller object using the dummy motor controller and leg dynamics objects
+
+- Add a leg command publisher object using your leg controllers
+
+- Add a trajectory file reader and a trajectory publisher
+
+- Load and run a trajectory from a file
+
+- Add an e-stop on the dummy motor controller class
+
+## Robots
+
+- Create a new executable that prints out "Hello world!" to console
+
+- Create a dummy robot class
+
 ## STARQ
 
-- Create a file 
 
 ## MuJoCo
 
