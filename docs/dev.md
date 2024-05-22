@@ -1,4 +1,21 @@
-# STARQ C++ Library
+# STARQ C++ Development
+
+## Setup
+### Windows
+1. Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+2. Change default distro to Ubuntu 22.04: $`wsl --install -d Ubuntu-22.04`
+3. Open Ubuntu from Start menu
+4. Set username and password
+4. Update: $`sudo apt update`
+5. Install display driver: $`sudo apt install x-<fix>`
+6. Install [Docker Desktop for Windows]((https://docs.docker.com/desktop/install/windows-install/))
+7. Turn on Docker setting: `Resources > Distros > Ubuntu 22.04`
+8. In Ubuntu, run the [Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+9. Use Ubuntu terminal for all future steps
+
+### Ubuntu
+1. Install [Docker Engine for Linux](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+2. Run the [Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 ## Installation
 1. Open the Terminal
@@ -7,9 +24,10 @@
 
 ## Docker + VSCode
 1. Go to the workspace folder: $`cd ~/starq_ws`
-2. Build the development environment *(if needed)*: $`./build_dev.sh`
+2. Build the development environment *(only once)*: $`./build_dev.sh`
 3. Run the development enviroment: $`./run_dev.sh`
 4. Open VSCode
+5. Install `Dev Containers` Extension
 5. Press the `F1` key > `Dev Containers: Attach to Running Container...` > `starq`
 6. `File` > `Open Folder` > `/home/nvidia/starq_ws/src/`
 
@@ -65,13 +83,13 @@ target_link_libraries(my_executable PUBLIC starqlib)
 
 int main(int argc, char **argv)
 {
-  printf("Hello World!\n");
-
   rclcpp::init(argc, argv);
   
-  rclcpp::Node node;
-  rclcpp::spin(node);
+  auto node = std::make_shared<rclcpp::Node>("test_node");
 
+  RCLCPP_INFO(node->get_logger(), "Hello world!\n");
+
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

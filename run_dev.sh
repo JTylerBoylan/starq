@@ -8,7 +8,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Allow root to connect to the X server
 if [ -n "$DISPLAY" ]; then
-    xhost +local:root
+    xhost +local:root > /dev/null
 fi
 
 ARCH=$(uname -i)
