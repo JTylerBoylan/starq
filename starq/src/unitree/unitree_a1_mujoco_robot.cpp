@@ -27,7 +27,7 @@ namespace starq::unitree
         return camera_future_;
     }
 
-    void UnitreeA1MuJoCoRobot::setupMotors()
+    void UnitreeA1MuJoCoRobot::setupMotorControllers()
     {
         auto motor_FRA = std::make_shared<MuJoCoController>(mujoco_, 0);
         auto motor_FRB = std::make_shared<MuJoCoController>(mujoco_, 1);
@@ -48,7 +48,7 @@ namespace starq::unitree
                    motor_RLA, motor_RLB, motor_RLC};
     }
 
-    void UnitreeA1MuJoCoRobot::setupLegs()
+    void UnitreeA1MuJoCoRobot::setupLegControllers()
     {
         unitree_RRR_L_ = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
                                                                 UNITREE_A1_LENGTH_LT,
@@ -70,7 +70,7 @@ namespace starq::unitree
         legs_ = {leg_FL, leg_RL, leg_RR, leg_FR};
     }
 
-    void UnitreeA1MuJoCoRobot::setupRobotDynamics()
+    void UnitreeA1MuJoCoRobot::setupRobotParameters()
     {
         robot_parameters_ = std::make_shared<UnitreeA1RobotParameters>();
     }

@@ -6,10 +6,10 @@ namespace starq
 {
     void Robot::setup()
     {
-        setupMotors();
-        setupLegs();
+        setupMotorControllers();
+        setupLegControllers();
         setupLocalization();
-        setupRobotDynamics();
+        setupRobotParameters();
         setupMPCSolver();
         setupLegCommandPublisher();
         setupTrajectoryFileReader();

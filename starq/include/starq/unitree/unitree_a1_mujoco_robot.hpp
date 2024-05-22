@@ -57,13 +57,13 @@ namespace starq::unitree
     private:
 
         /// @brief Setup the motors
-        void setupMotors() override;
+        void setupMotorControllers() override;
 
         /// @brief Setup the legs
-        void setupLegs() override;
+        void setupLegControllers() override;
 
         /// @brief Setup the robot dynamics
-        void setupRobotDynamics() override;
+        void setupRobotParameters() override;
 
         /// @brief Setup the model predictive control solver
         void setupMPCSolver() override;

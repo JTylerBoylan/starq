@@ -126,16 +126,16 @@ namespace starq
 
     protected:
         /// @brief Setup the motor controllers
-        virtual void setupMotors() = 0;
+        virtual void setupMotorControllers() = 0;
 
         /// @brief Setup the leg controllers
-        virtual void setupLegs() = 0;
+        virtual void setupLegControllers() = 0;
 
         /// @brief Setup the localization
         virtual void setupLocalization() = 0;
 
         /// @brief Setup the robot dynamics
-        virtual void setupRobotDynamics() = 0;
+        virtual void setupRobotParameters() = 0;
 
         /// @brief Setup the model predictive control solver
         virtual void setupMPCSolver() = 0;

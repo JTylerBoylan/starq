@@ -40,7 +40,7 @@ namespace starq
         return true;
     }
 
-    void STARQRobot::setupMotors()
+    void STARQRobot::setupMotorControllers()
     {
 
         using namespace can;
@@ -86,7 +86,7 @@ namespace starq
         setLimits(STARQ_MOTOR_MAX_VELOCITY, STARQ_MOTOR_MAX_CURRENT);
     }
 
-    void STARQRobot::setupLegs()
+    void STARQRobot::setupLegControllers()
     {
         auto leg_dynamics_L = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
         auto leg_dynamics_R = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
@@ -113,7 +113,7 @@ namespace starq
         localization_ = std::make_shared<SystemLocalization>();
     }
 
-    void STARQRobot::setupRobotDynamics()
+    void STARQRobot::setupRobotParameters()
     {
         robot_parameters_ = std::make_shared<STARQRobotParameters>();
     }
