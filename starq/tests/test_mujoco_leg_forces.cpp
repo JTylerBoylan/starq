@@ -65,9 +65,9 @@ int main()
         LegList{leg_FL, leg_RL, leg_RR, leg_FR});
     printf("Leg command publisher created\n");
 
-    // Launch simulation in a separate thread
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+    // Launch simulation
+    mujoco->load("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml");
+    mujoco->start();
 
     // Wait for the simulation to open
     while (!mujoco->isOpen())
@@ -110,7 +110,7 @@ int main()
         leg_command_publisher->sendCommand(std::make_shared<LegCommand>(leg_command));
     }
 
-    while (mujoco->isOpen())
+    while (mujoco->isRunning())
     {
         // Print front right foot position
         Vector3 foot_position;
@@ -136,7 +136,7 @@ int main()
     }
 
     // Wait for the simulation to close
-    sim.wait();
+    mujoco->wait();
 
     printf("Done\n");
     return 0;

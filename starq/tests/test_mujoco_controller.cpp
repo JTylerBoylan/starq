@@ -25,9 +25,17 @@ int main()
     MuJoCoController::Ptr controller11 = std::make_shared<MuJoCoController>(mujoco, 11);
     printf("Controllers created\n");
 
-    // Launch simulation in a separate thread
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+    // Launch simulation
+    mujoco->load("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml");
+    mujoco->start();
+
+    // Wait for the simulation to open
+    while (!mujoco->isOpen())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    printf("Simulation started\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     // Set control mode to position
     controller0->setControlMode(starq::ControlMode::POSITION);
@@ -57,9 +65,9 @@ int main()
     controller9->setPosition(0);
     controller10->setPosition(0.9);
     controller11->setPosition(-1.8);
-    
+
     // Wait for the simulation to close
-    sim.wait();
+    mujoco->wait();
 
     printf("Done\n");
     return 0;

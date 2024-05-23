@@ -1,6 +1,8 @@
 #ifndef STARQ_UNITREE__UNITREE_A1_MUJOCO_ROBOT_HPP_
 #define STARQ_UNITREE__UNITREE_A1_MUJOCO_ROBOT_HPP_
 
+#include <future>
+
 #include "starq/mujoco/mujoco_robot.hpp"
 #include "starq/mujoco/mujoco_camera.hpp"
 #include "starq/unitree/unitree_a1_leg_dynamics.hpp"

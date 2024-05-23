@@ -57,16 +57,17 @@ int main()
     LegController::Ptr leg_RL = std::make_shared<LegController>(unitree_RRR_L,
                                                                 MotorList{motor_RLA, motor_RLB, motor_RLC});
 
-    // Launch simulation in a separate thread
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+    // Launch simulation
+    mujoco->load("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml");
+    mujoco->start();
 
-    // Wait for simulation to start
+    // Wait for the simulation to open
     while (!mujoco->isOpen())
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     printf("Simulation started\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     // Set leg control modes to position
     leg_FR->setControlMode(ControlMode::POSITION);
@@ -106,7 +107,7 @@ int main()
     printf("RL Foot force: %f, %f, %f\n", foot_force(0), foot_force(1), foot_force(2));
 
     // Wait for simulation to finish
-    sim.wait();
+    mujoco->wait();
 
     printf("Done\n");
     return 0;

@@ -46,7 +46,7 @@ int main()
     UnitreeA1LegDynamics::Ptr unitree_RRR_R = std::make_shared<UnitreeA1LegDynamics>(UNITREE_A1_LENGTH_D,
                                                                                      UNITREE_A1_LENGTH_LT,
                                                                                      UNITREE_A1_LENGTH_LC);
-    
+
     // Flip the Y axis for the right leg
     unitree_RRR_R->flipYAxis();
     printf("Dynamics created\n");
@@ -83,11 +83,11 @@ int main()
     TrajectoryController::Ptr trajectory_controller = std::make_shared<TrajectoryController>(leg_command_publisher);
     printf("Trajectory publisher created\n");
 
-    // Launch simulation in a separate thread
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
+    // Launch simulation
+    mujoco->load("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml");
+    mujoco->start();
 
-    // Wait for simulation to start
+    // Wait for the simulation to open
     while (!mujoco->isOpen())
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -104,7 +104,7 @@ int main()
     // Wait for 3 seconds to let the simulation settle
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    while (mujoco->isOpen())
+    while (mujoco->isRunning())
     {
         // Repeatedly run trajectory from file
         trajectory_controller->setTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt");
@@ -118,7 +118,7 @@ int main()
     }
 
     // Wait for simulation to finish
-    sim.wait();
+    mujoco->wait();
 
     printf("Done\n");
     return 0;

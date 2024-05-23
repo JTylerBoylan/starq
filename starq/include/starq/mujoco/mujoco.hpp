@@ -9,13 +9,15 @@
 #include "GLFW/glfw3.h"
 #include "mujoco/mujoco.h"
 
+#include "starq/thread_runner.hpp"
+
 namespace starq::mujoco
 {
 
     using MuJoCoControlFunction = std::function<void(const mjModel *model, mjData *data)>;
 
     /// @brief MuJoCo simulation class
-    class MuJoCo
+    class MuJoCo : public ThreadRunner
     {
     public:
         using Ptr = std::shared_ptr<MuJoCo>;
@@ -30,9 +32,9 @@ namespace starq::mujoco
         /// @brief Destructor
         ~MuJoCo();
 
-        /// @brief Open the simulation window
-        /// @return If the simulation was successfully opened
-        void open(const std::string &model_path);
+        /// @brief Load a simulation
+        /// @return If the simulation was successfully loaded
+        void load(const std::string &model_path);
 
         /// @brief Close the simulation window
         /// @return If the simulation was successfully closed
@@ -97,9 +99,13 @@ namespace starq::mujoco
         /// @brief Cleanup GLFW and MuJoCo
         void cleanup();
 
-        bool is_open_ = false;
-        GLFWwindow *window_ = nullptr;
-        double frame_rate_ = 60.0;
+        /// @brief Run the simulation
+        void run() override;
+
+        std::string model_path_;
+        bool is_open_;
+        GLFWwindow *window_;
+        double frame_rate_;
 
         mjModel *model_ = nullptr;
         mjData *data_ = nullptr;

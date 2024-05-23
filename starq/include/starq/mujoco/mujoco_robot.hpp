@@ -1,8 +1,6 @@
 #ifndef STARQ_MUJOCO__MUJOCO_ROBOT_HPP_
 #define STARQ_MUJOCO__MUJOCO_ROBOT_HPP_
 
-#include <future>
-
 #include "starq/mujoco/mujoco.hpp"
 #include "starq/mujoco/mujoco_controller.hpp"
 #include "starq/mujoco/mujoco_localization.hpp"
@@ -25,7 +23,7 @@ namespace starq::mujoco
         void setSceneFile(const std::string &scene_file);
 
         /// @brief Start the simulation
-        std::future<void> &startSimulation();
+        void startSimulation();
 
         /// @brief Wait for the simulation to finish
         void waitForSimulation();
@@ -44,7 +42,6 @@ namespace starq::mujoco
         MuJoCo::Ptr mujoco_;
 
         std::string scene_file_;
-        std::future<void> simulation_;
     };
 
 }

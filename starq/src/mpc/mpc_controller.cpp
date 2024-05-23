@@ -33,7 +33,10 @@ namespace starq::mpc
     MPCController::~MPCController()
     {
         if (isRunning())
+        {
             stop();
+            wait();
+        }
     }
 
     Float MPCController::getFrequency()
@@ -82,8 +85,6 @@ namespace starq::mpc
             last_force_state_ = force_state;
             run_count_++;
         }
-
-        stop();
     }
 
     void MPCController::sendFootForce(const uint8_t leg_id, const Vector3 &force_body)

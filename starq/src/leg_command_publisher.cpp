@@ -18,7 +18,10 @@ namespace starq
     LegCommandPublisher::~LegCommandPublisher()
     {
         if (isRunning())
+        {
             stop();
+            wait();
+        }
     }
 
     void LegCommandPublisher::sendCommand(LegCommand::Ptr leg_command)

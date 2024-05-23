@@ -15,30 +15,26 @@ namespace starq::mujoco
         scene_file_ = scene_file;
     }
 
-    std::future<void> &MuJoCoRobot::startSimulation()
+    void MuJoCoRobot::startSimulation()
     {
-        simulation_ = std::async(std::launch::async, [this]()
-                                 { mujoco_->open(scene_file_); });
+        mujoco_->load(scene_file_);
+        mujoco_->start();
 
         while (!mujoco_->isOpen())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-
-        return simulation_;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     void MuJoCoRobot::waitForSimulation()
     {
-        if (simulation_.valid())
-        {
-            simulation_.wait();
-        }
+        mujoco_->wait();
     }
 
     bool MuJoCoRobot::isSimulationOpen()
     {
-        return mujoco_->isOpen();
+        return mujoco_->isRunning();
     }
 
     void MuJoCoRobot::setupLocalization()

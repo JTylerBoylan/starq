@@ -18,6 +18,9 @@ namespace starq::mujoco
     }
 
     MuJoCo::MuJoCo()
+        : is_open_(false),
+          window_(nullptr),
+          frame_rate_(60.0)
     {
     }
 
@@ -34,44 +37,17 @@ namespace starq::mujoco
             mj_deleteModel(model_);
             model_ = nullptr;
         }
+
+        if (isRunning())
+        {
+            stop();
+            wait();
+        }
     }
 
-    void MuJoCo::open(const std::string &model_path)
+    void MuJoCo::load(const std::string &model_path)
     {
-
-        if (is_open_)
-        {
-            std::cerr << "MuJoCo is already open" << std::endl;
-            return;
-        }
-
-        loadModel(model_path);
-
-        initGLFW();
-
-        setupCallbacks();
-
-        is_open_ = true;
-        while (!glfwWindowShouldClose(window_))
-        {
-            const mjtNum simend = data_->time + 1.0 / frame_rate_;
-            while (data_->time < simend)
-            {
-                mj_step(model_, data_);
-            }
-
-            mjrRect viewport = {0, 0, 0, 0};
-            glfwGetFramebufferSize(window_, &viewport.width, &viewport.height);
-
-            mjv_updateScene(model_, data_, &option_, &perturb_, &camera_, mjCAT_ALL, &scene_);
-            mjr_render(viewport, &scene_, &context_);
-
-            glfwSwapBuffers(window_);
-
-            glfwPollEvents();
-        }
-
-        cleanup();
+        model_path_ = model_path;
     }
 
     void MuJoCo::close()
@@ -147,15 +123,40 @@ namespace starq::mujoco
 
     void MuJoCo::cleanup()
     {
-        if (!is_open_)
-            return;
-
         glfwDestroyWindow(window_);
 
         mjv_freeScene(&scene_);
         mjr_freeContext(&context_);
+    }
+
+    void MuJoCo::run()
+    {
+        loadModel(model_path_);
+        initGLFW();
+        setupCallbacks();
+
+        is_open_ = true;
+        while (!glfwWindowShouldClose(window_) && isRunning())
+        {
+            const mjtNum simend = data_->time + 1.0 / frame_rate_;
+            while (data_->time < simend)
+            {
+                mj_step(model_, data_);
+            }
+
+            mjrRect viewport = {0, 0, 0, 0};
+            glfwGetFramebufferSize(window_, &viewport.width, &viewport.height);
+
+            mjv_updateScene(model_, data_, &option_, &perturb_, &camera_, mjCAT_ALL, &scene_);
+            mjr_render(viewport, &scene_, &context_);
+
+            glfwSwapBuffers(window_);
+
+            glfwPollEvents();
+        }
 
         is_open_ = false;
+        cleanup();
     }
 
     void MuJoCo::keyPressCallback(GLFWwindow *window, int key, int scancode, int act, int mods)

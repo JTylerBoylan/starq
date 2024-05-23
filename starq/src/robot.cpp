@@ -19,10 +19,8 @@ namespace starq
 
     void Robot::cleanup()
     {
-        publisher_->stop();
         trajectory_controller_->stop();
         mpc_controller_->stop();
-
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 

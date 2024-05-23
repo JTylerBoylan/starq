@@ -8,9 +8,12 @@ namespace starq
         if (isRunning())
             return false;
 
-        std::lock_guard<std::mutex> lock(mutex_);
-        running_ = true;
-        std::thread(&ThreadRunner::run, this).detach();
+        state_ = RUNNING;
+        std::thread([this]()
+                    {
+                        run();
+                        state_ = STOPPED; })
+            .detach();
         return true;
     }
 
@@ -20,14 +23,34 @@ namespace starq
             return false;
 
         std::lock_guard<std::mutex> lock(mutex_);
-        running_ = false;
+        state_ = STOPPING;
         return true;
+    }
+
+    void ThreadRunner::wait()
+    {
+        while (!isStopped())
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
+        }
     }
 
     bool ThreadRunner::isRunning()
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        return running_;
+        return state_ == RUNNING;
+    }
+
+    bool ThreadRunner::isStopping()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return state_ == STOPPING;
+    }
+
+    bool ThreadRunner::isStopped()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return state_ == STOPPED;
     }
 
 }

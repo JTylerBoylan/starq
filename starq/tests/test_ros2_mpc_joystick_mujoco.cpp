@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     MuJoCo::getInstance()->setFrameRate(30.0);
 
     // Start simulation
-    auto &sim = robot->startSimulation();
+    robot->startSimulation();
     RCLCPP_INFO(node->get_logger(), "Simulation started\n");
 
     // Send legs to default positions
@@ -59,6 +59,8 @@ int main(int argc, char **argv)
 
     // Start ROS2 spin thread
     RCLCPP_INFO(node->get_logger(), "Starting spin thread");
+    std::future<void> sim = std::async(std::launch::async, [&]()
+                                       { robot->waitForSimulation(); });
     std::thread spin_thread([&]()
                             { rclcpp::spin_until_future_complete(node, sim); });
 

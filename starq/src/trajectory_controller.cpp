@@ -15,6 +15,15 @@ namespace starq
     {
     }
 
+    TrajectoryController::~TrajectoryController()
+    {
+        if (isRunning())
+        {
+            stop();
+            wait();
+        }
+    }
+
     bool TrajectoryController::setFrequency(const Float frequency)
     {
         if (frequency <= 0.0f)
@@ -122,8 +131,6 @@ namespace starq
                 leg_command_publisher_->sendCommand(leg_command);
             }
         }
-
-        stop();
     }
 
     bool TrajectoryController::loadTrajectoryFromFile(const std::string &file_path, Trajectory &trajectory)

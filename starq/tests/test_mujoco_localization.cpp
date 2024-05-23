@@ -65,10 +65,9 @@ int main()
     // Create localization object
     MuJoCoLocalization::Ptr localization = std::make_shared<MuJoCoLocalization>(mujoco);
 
-    // Launch simulation in a separate thread
-    std::future<void> sim = std::async(std::launch::async, [&]
-                                       { mujoco->open("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml"); });
-    printf("Simulation started\n");
+    // Launch simulation
+    mujoco->load("/home/nvidia/starq_ws/src/starq/models/unitree_a1/scene.xml");
+    mujoco->start();
 
     // Wait for the simulation to open
     while (!mujoco->isOpen())
@@ -93,7 +92,7 @@ int main()
     // Wait for the robot to move
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    while (mujoco->isOpen())
+    while (mujoco->isRunning())
     {
         // Print current position
         Vector3 position = localization->getCurrentPosition();
@@ -116,7 +115,7 @@ int main()
     }
 
     // Wait for simulation to finish
-    sim.wait();
+    mujoco->wait();
 
     printf("Done\n");
     return 0;
