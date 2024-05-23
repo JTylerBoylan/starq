@@ -7,7 +7,7 @@
 #include "starq/slam/localization.hpp"
 #include "starq/robot_parameters.hpp"
 #include "starq/leg_command_publisher.hpp"
-#include "starq/trajectory_publisher.hpp"
+#include "starq/trajectory_controller.hpp"
 
 namespace starq::mpc
 {
@@ -64,7 +64,7 @@ namespace starq::mpc
         slam::Localization::Ptr localization_;
         RobotParameters::Ptr robot_parameters_;
 
-        std::vector<TrajectoryPublisher::Ptr> trajectory_publishers_;
+        std::vector<TrajectoryController::Ptr> trajectory_controllers_;
 
         bool stop_on_fail_;
         std::chrono::microseconds sleep_duration_us_;

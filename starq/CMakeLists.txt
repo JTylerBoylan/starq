@@ -50,8 +50,7 @@ include_directories(include)
 add_library(starqlib SHARED
   src/leg_controller.cpp
   src/leg_command_publisher.cpp
-  src/trajectory_file_reader.cpp 
-  src/trajectory_publisher.cpp
+  src/trajectory_controller.cpp
   src/thread_runner.cpp
   src/estop.cpp
   src/robot.cpp

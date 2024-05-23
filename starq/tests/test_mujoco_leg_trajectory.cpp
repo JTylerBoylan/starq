@@ -6,8 +6,7 @@
 #include "starq/leg_controller.hpp"
 
 #include "starq/mujoco/mujoco_localization.hpp"
-#include "starq/trajectory_file_reader.hpp"
-#include "starq/trajectory_publisher.hpp"
+#include "starq/trajectory_controller.hpp"
 
 using namespace starq;
 using namespace starq::mujoco;
@@ -70,18 +69,6 @@ int main()
     leg_RL->setControlMode(ControlMode::POSITION);
     printf("Control mode set\n");
 
-    // Create trajectory file reader object
-    TrajectoryFileReader::Ptr trajectory_file_reader = std::make_shared<TrajectoryFileReader>();
-
-    // Load trajectory from file
-    // Trajectories are created in MATLAB and saved as text files
-    if (!trajectory_file_reader->load("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt"))
-    {
-        printf("Failed to load trajectory\n");
-        return 1;
-    }
-    printf("Trajectory loaded\n");
-
     // Create localization object
     MuJoCoLocalization::Ptr localization = std::make_shared<MuJoCoLocalization>(mujoco);
 
@@ -93,7 +80,7 @@ int main()
     printf("Leg command publisher created\n");
 
     // Create trajectory publisher to send trajectory commands to the legs
-    TrajectoryPublisher::Ptr trajectory_publisher = std::make_shared<TrajectoryPublisher>(leg_command_publisher);
+    TrajectoryController::Ptr trajectory_controller = std::make_shared<TrajectoryController>(leg_command_publisher);
     printf("Trajectory publisher created\n");
 
     // Launch simulation in a separate thread
@@ -120,10 +107,11 @@ int main()
     while (mujoco->isOpen())
     {
         // Repeatedly run trajectory from file
-        trajectory_publisher->runTrajectory(trajectory_file_reader->getTrajectory());
+        trajectory_controller->setTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/walking.txt");
+        trajectory_controller->start();
 
         // Wait for trajectory to finish before running it again
-        while (trajectory_publisher->isRunning())
+        while (trajectory_controller->isRunning())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }

@@ -4,7 +4,7 @@
 #include "starq/testing/dummy_motor_controller.hpp"
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 #include "starq/leg_command_publisher.hpp"
-#include "starq/trajectory_file_reader.hpp"
+#include "starq/trajectory_controller.hpp"
 
 // Leg ID
 #define LEG_ID 0x0

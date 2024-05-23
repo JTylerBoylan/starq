@@ -98,16 +98,13 @@ void run_circle_trajectory(STARQRobot::Ptr STARQ,
 
 void run_file_trajectory(STARQRobot::Ptr STARQ, const std::string &file_name, const Float frequency, const int num_cycles)
 {
-    // Load trajectory from file
-    STARQ->loadTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/" + file_name, frequency);
-
     for (int i = 0; i < num_cycles; i++)
     {
         // Start trajectory
-        STARQ->startTrajectory();
+        STARQ->runTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/" + file_name, frequency);
 
         // Wait for trajectory to finish
-        while (STARQ->getTrajectoryPublisher()->isRunning())
+        while (STARQ->getTrajectoryController()->isRunning())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }

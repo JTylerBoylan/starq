@@ -23,10 +23,10 @@ namespace starq::mpc
         last_force_state_.resize(legs_.size(),
                                  std::make_pair(true, Vector3::Zero()));
 
-        trajectory_publishers_.resize(legs_.size());
+        trajectory_controllers_.resize(legs_.size());
         for (size_t i = 0; i < legs_.size(); i++)
         {
-            trajectory_publishers_[i] = std::make_shared<TrajectoryPublisher>(leg_command_publisher_);
+            trajectory_controllers_[i] = std::make_shared<TrajectoryController>(leg_command_publisher_);
         }
     }
 
@@ -145,7 +145,8 @@ namespace starq::mpc
             trajectory.push_back(command);
         }
 
-        trajectory_publishers_[leg_id]->runTrajectory(trajectory);
+        trajectory_controllers_[leg_id]->setTrajectory(trajectory);
+        trajectory_controllers_[leg_id]->start();
     }
 
 }

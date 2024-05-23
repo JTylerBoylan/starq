@@ -12,8 +12,7 @@ namespace starq
         setupRobotParameters();
         setupMPCSolver();
         setupLegCommandPublisher();
-        setupTrajectoryFileReader();
-        setupTrajectoryPublisher();
+        setupTrajectoryController();
         setupMPCConfiguration();
         setupMPCController();
     }
@@ -21,7 +20,7 @@ namespace starq
     void Robot::cleanup()
     {
         publisher_->stop();
-        trajectory_publisher_->stop();
+        trajectory_controller_->stop();
         mpc_controller_->stop();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -32,14 +31,9 @@ namespace starq
         publisher_ = std::make_shared<LegCommandPublisher>(legs_);
     }
 
-    void Robot::setupTrajectoryFileReader()
+    void Robot::setupTrajectoryController()
     {
-        trajectory_file_reader_ = std::make_shared<TrajectoryFileReader>();
-    }
-
-    void Robot::setupTrajectoryPublisher()
-    {
-        trajectory_publisher_ = std::make_shared<TrajectoryPublisher>(publisher_);
+        trajectory_controller_ = std::make_shared<TrajectoryController>(publisher_);
     }
 
     void Robot::setupMPCConfiguration()
@@ -146,19 +140,53 @@ namespace starq
         return true;
     }
 
-    bool Robot::loadTrajectory(const std::string &file, const Float frequency)
+    bool Robot::runTrajectory(const Trajectory &trajectory, const Float frequency, const size_t num_loops)
     {
-        return trajectory_file_reader_->load(file, frequency);
+        if (trajectory_controller_->isRunning())
+        {
+            std::cerr << "Trajectory controller is already running." << std::endl;
+            return false;
+        }
+
+        trajectory_controller_->setTrajectory(trajectory);
+        trajectory_controller_->setFrequency(frequency);
+        trajectory_controller_->setNumLoops(num_loops);
+
+        return trajectory_controller_->start();
     }
 
-    bool Robot::startTrajectory()
+    bool Robot::runTrajectory(const std::string &file_path, const Float frequency, const size_t num_loops)
     {
-        return trajectory_publisher_->runTrajectory(trajectory_file_reader_->getTrajectory());
+        if (trajectory_controller_->isRunning())
+        {
+            std::cerr << "Trajectory controller is already running." << std::endl;
+            return false;
+        }
+
+        trajectory_controller_->setTrajectory(file_path);
+        trajectory_controller_->setFrequency(frequency);
+        trajectory_controller_->setNumLoops(num_loops);
+
+        return trajectory_controller_->start();
     }
 
-    bool Robot::runTrajectory(const std::vector<LegCommand::Ptr> &trajectory)
+    bool Robot::setNextTrajectory(const Trajectory &trajectory, const Float frequency)
     {
-        return trajectory_publisher_->runTrajectory(trajectory);
+        trajectory_controller_->setTrajectory(trajectory);
+        trajectory_controller_->setFrequency(frequency);
+        return true;
+    }
+
+    bool Robot::setNextTrajectory(const std::string &file_path, const Float frequency)
+    {
+        trajectory_controller_->setTrajectory(file_path);
+        trajectory_controller_->setFrequency(frequency);
+        return true;
+    }
+
+    bool Robot::stopTrajectory()
+    {
+        return trajectory_controller_->stop();
     }
 
     bool Robot::startMPC()

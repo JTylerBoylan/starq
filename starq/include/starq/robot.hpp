@@ -4,8 +4,7 @@
 #include "starq/motor_controller.hpp"
 #include "starq/leg_controller.hpp"
 #include "starq/leg_command_publisher.hpp"
-#include "starq/trajectory_file_reader.hpp"
-#include "starq/trajectory_publisher.hpp"
+#include "starq/trajectory_controller.hpp"
 #include "starq/slam/localization.hpp"
 #include "starq/robot_parameters.hpp"
 #include "starq/mpc/mpc_controller.hpp"
@@ -57,20 +56,35 @@ namespace starq
         /// @return True if successful
         bool goToDefaultFootLocations();
 
-        /// @brief Load a 3D trajectory from a file
-        /// @param file The file path
-        /// @param frequency The frequency of the trajectory
-        /// @return True if successful
-        bool loadTrajectory(const std::string &file, const Float frequency = 1.0);
-
-        /// @brief Start the trajectory
-        /// @return True if successful
-        bool startTrajectory();
-
         /// @brief Run a trajectory
         /// @param trajectory The trajectory
+        /// @param frequency The frequency [Hz]
+        /// @param num_loops The number of loops
         /// @return True if successful
-        bool runTrajectory(const std::vector<LegCommand::Ptr> &trajectory);
+        bool runTrajectory(const Trajectory &trajectory, const Float frequency = 1.0, const size_t num_loops = 1);
+
+        /// @brief Run a trajectory from a file
+        /// @param file_path The file path
+        /// @param frequency The frequency [Hz]
+        /// @param num_loops The number of loops
+        /// @return True if successful
+        bool runTrajectory(const std::string &file_path, const Float frequency = 1.0, const size_t num_loops = 1);
+
+        /// @brief Set the next trajectory
+        /// @param trajectory The trajectory
+        /// @param frequency The frequency [Hz]
+        /// @return True if successful
+        bool setNextTrajectory(const Trajectory &trajectory, const Float frequency = 1.0);
+
+        /// @brief Set the next trajectory from a file
+        /// @param file_path The file path
+        /// @param frequency The frequency [Hz]
+        /// @return True if successful
+        bool setNextTrajectory(const std::string &file_path, const Float frequency = 1.0);
+
+        /// @brief Stop the trajectory
+        /// @return True if successful
+        bool stopTrajectory();
 
         /// @brief Start the model predictive control
         /// @return True if successful
@@ -108,13 +122,9 @@ namespace starq
         /// @return The leg command publisher
         LegCommandPublisher::Ptr getLegCommandPublisher() const { return publisher_; }
 
-        /// @brief Get the trajectory file reader
-        /// @return The trajectory file reader
-        TrajectoryFileReader::Ptr getTrajectoryFileReader() const { return trajectory_file_reader_; }
-
-        /// @brief Get the trajectory publisher
-        /// @return The trajectory publisher
-        TrajectoryPublisher::Ptr getTrajectoryPublisher() const { return trajectory_publisher_; }
+        /// @brief Get the trajectory controller
+        /// @return The trajectory controller
+        TrajectoryController::Ptr getTrajectoryController() const { return trajectory_controller_; }
 
         /// @brief Get the model predictive control configuration
         /// @return The model predictive control configuration
@@ -143,11 +153,8 @@ namespace starq
         /// @brief Setup the leg command publisher
         virtual void setupLegCommandPublisher();
 
-        /// @brief Setup the trajectory file reader
-        virtual void setupTrajectoryFileReader();
-
-        /// @brief Setup the trajectory publisher
-        virtual void setupTrajectoryPublisher();
+        /// @brief Setup the trajectory controller
+        virtual void setupTrajectoryController();
 
         /// @brief Setup the model predictive control configuration
         virtual void setupMPCConfiguration();
@@ -162,8 +169,7 @@ namespace starq
         mpc::MPCSolver::Ptr mpc_solver_;
 
         LegCommandPublisher::Ptr publisher_;
-        TrajectoryFileReader::Ptr trajectory_file_reader_;
-        TrajectoryPublisher::Ptr trajectory_publisher_;
+        TrajectoryController::Ptr trajectory_controller_;
         mpc::MPCConfiguration::Ptr mpc_configuration_;
         mpc::MPCController::Ptr mpc_controller_;
     };
