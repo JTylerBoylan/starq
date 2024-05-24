@@ -5,8 +5,8 @@
 namespace starq
 {
 
-    STARQFiveBar2DLegDynamics::STARQFiveBar2DLegDynamics(Float L1, Float L2)
-        : L1_(L1), L2_(L2), YA_(1.0) {}
+    STARQFiveBar2DLegDynamics::STARQFiveBar2DLegDynamics(Float L1, Float L2, LegSide side)
+        : L1_(L1), L2_(L2), YA_(side) {}
 
     bool STARQFiveBar2DLegDynamics::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
     {

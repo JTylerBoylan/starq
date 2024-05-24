@@ -12,16 +12,17 @@ namespace starq
     public:
         using Ptr = std::shared_ptr<STARQFiveBar2DLegDynamics>;
 
-        enum LegConfiguration
+        enum LegSide
         {
-            LEFT_LEG = 1,
-            RIGHT_LEG = -1
+            LEFT_LEG = -1,
+            RIGHT_LEG = 1
         };
 
         /// @brief Constructor for FiveBar2D leg.
         /// @param L1 Length of the first link in meters
         /// @param L2 Length of the second link in meters
-        STARQFiveBar2DLegDynamics(Float L1, Float L2);
+        /// @param side Side of the leg
+        STARQFiveBar2DLegDynamics(Float L1, Float L2, LegSide side = LEFT_LEG);
 
         /// @brief Forward kinematics for FiveBar2D leg.
         /// @param joint_angles Joint angles.

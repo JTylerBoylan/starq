@@ -59,10 +59,10 @@ namespace starq
 
     void STARQRobot::setupLegControllers()
     {
-        auto leg_dynamics_L = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
-        auto leg_dynamics_R = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2);
-
-        leg_dynamics_L->flipY();
+        auto leg_dynamics_L = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2,
+                                                                          STARQFiveBar2DLegDynamics::LEFT_LEG);
+        auto leg_dynamics_R = std::make_shared<STARQFiveBar2DLegDynamics>(STARQ_LINK_LENGTH_1, STARQ_LINK_LENGTH_2,
+                                                                          STARQFiveBar2DLegDynamics::RIGHT_LEG);
 
         LegController::Ptr leg_FL = std::make_shared<LegController>(leg_dynamics_L,
                                                                     MotorList{motors_[0], motors_[1]});

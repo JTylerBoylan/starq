@@ -12,7 +12,7 @@ alpha = 0.5 * (pi - thetaA - thetaB);
 gamma = asin(L1_*sin(alpha)/L2_);
 phi = pi - alpha - gamma;
 
-theta = -(thetaA + alpha);
+theta = thetaA + alpha;
 R = L2_*sin(phi)/sin(alpha);
 
 X = R*cos(theta);
