@@ -8,7 +8,7 @@
         "name": "Launch Debugger",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/nvidia/starq_ws/build/starq/test_mujoco",
+        "program": "/home/nvidia/starq_ws/build/starq/test_mujoco_mpc_w_planning",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

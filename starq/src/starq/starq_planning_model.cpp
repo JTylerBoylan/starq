@@ -8,16 +8,32 @@ namespace starq
     {
         xf_ = VectorX::Zero(3);
         threshold_ = 0.25;
+        dx_ = Vector3(0.05, 0.05, M_PI / 64.0);
+        dt_ = 0.15;
     }
 
     void STARQPlanningModel::setGoalState(const VectorX &xf)
     {
         xf_ = xf;
+        computeActions();
     }
 
     void STARQPlanningModel::setGoalThreshold(const Float threshold)
     {
         threshold_ = threshold;
+        computeActions();
+    }
+
+    void STARQPlanningModel::setGridResolution(const VectorX &dx)
+    {
+        dx_ = dx;
+        computeActions();
+    }
+
+    void STARQPlanningModel::setTimeStep(const Float dt)
+    {
+        dt_ = dt;
+        computeActions();
     }
 
     VectorX STARQPlanningModel::getInitialState()
@@ -78,13 +94,18 @@ namespace starq
         return getHeuristic(x) < threshold_;
     }
 
-    std::vector<VectorX> STARQPlanningModel::getActions(const VectorX &x, const VectorX &dx, const Float dt)
+    std::vector<VectorX> STARQPlanningModel::getActions(const VectorX &x)
     {
         (void)x;
+        return actions_;
+    }
+
+    void STARQPlanningModel::computeActions()
+    {
         const int res_v = 8;
         const int res_w = 7;
 
-        const VectorX v_mag = dx / dt;
+        const VectorX v_mag = dx_ / dt_;
         const VectorX v_fac = Vector3(2.0, 1.0, 2.0);
         const VectorX v = v_mag.cwiseProduct(v_fac);
         const Float vx_off = 0.25;
@@ -92,7 +113,7 @@ namespace starq
         const Float dth = 2 * M_PI / res_v;
         const int w_off = res_w / 2;
 
-        std::vector<VectorX> actions(res_v * res_w, Vector3());
+        actions_.resize(res_v * res_w, Vector3());
         for (int i = 0; i < res_v; i++)
         {
             for (int j = 0; j < res_w; j++)
@@ -101,10 +122,9 @@ namespace starq
                 const Float vy = v.y() * std::sin(i * dth);
                 const Float wz = v.z() * (j - w_off);
 
-                actions[res_w * i + j] << vx, vy, wz;
+                actions_[res_w * i + j] << vx, vy, wz;
             }
         }
-        return actions;
     }
 
 }

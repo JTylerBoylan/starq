@@ -16,6 +16,8 @@ void printSolution(OSQP::Ptr osqp, MPCConfiguration::Ptr mpc_config);
 
 int main(void)
 {
+    // Set simulation frame rate
+    mujoco::MuJoCo::getInstance()->setFrameRate(30);
 
     // Create Unitree A1 robot
     auto robot = std::make_shared<UnitreeA1MuJoCoRobot>();
@@ -56,12 +58,6 @@ int main(void)
                                               Vector3(-1.0, -1.0, 0.0),
                                               Vector3(-1.0, 1.0, 0.0)};
 
-    // Create starq planning model
-    STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(robot->getLocalization());
-    model->setGoalState(goal_states[goal_index]);
-    model->setGoalThreshold(0.10);
-    printf("Model created.\n");
-
     // Create STARQ planning solver
     PlanSolver::Ptr solver = std::make_shared<PlanSolver>();
     printf("Solver created.\n");
@@ -75,8 +71,13 @@ int main(void)
     config->max_generations = 250;
     printf("Configuration created.\n");
 
-    // Set simulation frame rate
-    mujoco::MuJoCo::getInstance()->setFrameRate(30);
+    // Create starq planning model
+    STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(robot->getLocalization());
+    model->setGoalState(goal_states[goal_index]);
+    model->setGoalThreshold(0.10);
+    model->setGridResolution(config->dx);
+    model->setTimeStep(config->dt);
+    printf("Model created.\n");
 
     // Start simulation
     robot->startSimulation();

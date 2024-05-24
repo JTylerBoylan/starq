@@ -97,7 +97,7 @@ namespace starq::planning
                 best_node_ = current_node;
             }
 
-            const std::vector<VectorX> actions = model->getActions(current_node->x, config_->dx, config_->dt);
+            const std::vector<VectorX> actions = model->getActions(current_node->x);
             for (const VectorX &u : actions)
             {
                 const Node::Ptr child = getChild(current_node, u, config_->dt);

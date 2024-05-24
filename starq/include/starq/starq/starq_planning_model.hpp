@@ -18,6 +18,10 @@ namespace starq
 
         void setGoalThreshold(const Float threshold);
 
+        void setGridResolution(const VectorX &dx);
+
+        void setTimeStep(const Float dt);
+
         VectorX getInitialState() override;
 
         VectorX getNextState(const VectorX &x1, const VectorX &u, const Float dt) override;
@@ -30,12 +34,17 @@ namespace starq
 
         bool isStateFinal(const VectorX &x) override;
 
-        std::vector<VectorX> getActions(const VectorX &x, const VectorX &dx, const Float dt) override;
+        std::vector<VectorX> getActions(const VectorX &x) override;
 
     private:
+        void computeActions();
+
         slam::Localization::Ptr localization_;
         VectorX xf_;
         Float threshold_;
+        VectorX dx_;
+        Float dt_;
+        std::vector<VectorX> actions_;
     };
 
 }
