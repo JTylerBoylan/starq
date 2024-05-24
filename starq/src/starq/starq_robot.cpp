@@ -10,36 +10,6 @@ namespace starq
         setup();
     }
 
-    bool STARQRobot::setGains(const Float p_gain, const Float v_gain, const Float vi_gain)
-    {
-        for (size_t i = 0; i < motors_.size(); i++)
-        {
-            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
-
-            if (!odrive->setPosGain(p_gain) || !odrive->setVelGains(v_gain, vi_gain))
-            {
-                std::cerr << "Failed to set gains for motor " << i << "." << std::endl;
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool STARQRobot::setLimits(const Float velocity_limit, const Float current_limit)
-    {
-        for (size_t i = 0; i < motors_.size(); i++)
-        {
-            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
-
-            if (!odrive->setLimits(velocity_limit, current_limit))
-            {
-                std::cerr << "Failed to set limits for motor " << i << "." << std::endl;
-                return false;
-            }
-        }
-        return true;
-    }
-
     void STARQRobot::setupMotorControllers()
     {
 
@@ -84,6 +54,7 @@ namespace starq
         setGearRatios(STARQ_MOTOR_GEAR_RATIO);
         setGains(STARQ_MOTOR_P_GAIN, STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
         setLimits(STARQ_MOTOR_MAX_VELOCITY, STARQ_MOTOR_MAX_CURRENT);
+        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // Prevents CAN buffer overflow
     }
 
     void STARQRobot::setupLegControllers()
@@ -121,6 +92,36 @@ namespace starq
     void STARQRobot::setupMPCSolver()
     {
         mpc_solver_ = std::make_shared<osqp::OSQP>();
+    }
+
+    bool STARQRobot::setGains(const Float p_gain, const Float v_gain, const Float vi_gain)
+    {
+        for (size_t i = 0; i < motors_.size(); i++)
+        {
+            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
+
+            if (!odrive->setPosGain(p_gain) || !odrive->setVelGains(v_gain, vi_gain))
+            {
+                std::cerr << "Failed to set gains for motor " << i << "." << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool STARQRobot::setLimits(const Float velocity_limit, const Float current_limit)
+    {
+        for (size_t i = 0; i < motors_.size(); i++)
+        {
+            auto odrive = std::dynamic_pointer_cast<odrive::ODriveController>(motors_[i]);
+
+            if (!odrive->setLimits(velocity_limit, current_limit))
+            {
+                std::cerr << "Failed to set limits for motor " << i << "." << std::endl;
+                return false;
+            }
+        }
+        return true;
     }
 
 }

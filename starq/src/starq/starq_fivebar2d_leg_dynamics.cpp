@@ -6,12 +6,12 @@ namespace starq
 {
 
     STARQFiveBar2DLegDynamics::STARQFiveBar2DLegDynamics(Float L1, Float L2)
-        : L1_(L1), L2_(L2), y_axis_(1.0) {}
+        : L1_(L1), L2_(L2), YA_(1.0) {}
 
     bool STARQFiveBar2DLegDynamics::getForwardKinematics(const Vector3 &joint_angles, Vector3 &foot_position)
     {
-        const Float thetaA = y_axis_ * joint_angles(0);
-        const Float thetaB = y_axis_ * joint_angles(1);
+        const Float thetaA = YA_ * joint_angles(0);
+        const Float thetaB = YA_ * joint_angles(1);
 
         const Float alpha = 0.5f * (M_PI - thetaA - thetaB);
         const Float gamma = std::asin(L1_ * std::sin(alpha) / L2_);
@@ -42,28 +42,42 @@ namespace starq
         const Float thetaA = theta0 - alpha;
         const Float thetaB = theta1 - alpha;
 
-        joint_angles = Vector3(y_axis_ * thetaA, y_axis_ * thetaB, 0);
+        joint_angles = Vector3(YA_ * thetaA, YA_ * thetaB, 0);
 
         return true;
     }
 
     bool STARQFiveBar2DLegDynamics::getJacobian(const Vector3 &joint_angles, Matrix3 &jacobian)
     {
+        using namespace std;
 
-        const Float thetaA = y_axis_ * joint_angles(0);
-        const Float thetaB = y_axis_ * joint_angles(1);
+        const Float A = joint_angles(0);
+        const Float B = joint_angles(1);
 
-        const Float thetaA_2 = 0.5 * thetaA;
-        const Float thetaB_2 = 0.5 * thetaB;
+        const Float Y_2 = YA_ / 2.0;
+        const Float Y_2A = Y_2 * A;
+        const Float Y_2B = Y_2 * B;
+        const Float s1 = sin(Y_2A + Y_2B);
+        const Float c1 = cos(Y_2A + Y_2B);
+        const Float s2 = sin(Y_2A - Y_2B);
+        const Float c2 = cos(Y_2A - Y_2B);
 
-        const Float dXdA = (L2_ * std::sin(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_)) * ((M_SQRT2 * L1_ * std::sin(thetaA_2 + thetaB_2)) / (2 * L2_ * std::sqrt(-(std::pow(L1_, 2) - 2 * std::pow(L2_, 2) + std::pow(L1_, 2) * std::cos(thetaA + thetaB)) / std::pow(L2_, 2))) + 0.5f)) / std::cos(thetaA_2 + thetaB_2) - (L2_ * std::sin(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::pow(std::cos(thetaA_2 + thetaB_2), 2)) - (L2_ * std::cos(thetaA_2 - thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::cos(thetaA_2 + thetaB_2));
-        const Float dXdB = (L2_ * std::cos(thetaA_2 - thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::cos(thetaA_2 + thetaB_2)) - (L2_ * std::sin(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::pow(std::cos(thetaA_2 + thetaB_2), 2)) + (L2_ * std::sin(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_)) * ((M_SQRT2 * L1_ * std::sin(thetaA_2 + thetaB_2)) / (2 * L2_ * std::sqrt(-(std::pow(L1_, 2) - 2 * std::pow(L2_, 2) + std::pow(L1_, 2) * std::cos(thetaA + thetaB)) / std::pow(L2_, 2))) + 0.5f)) / std::cos(thetaA_2 + thetaB_2);
+        const Float as1 = Y_2A + Y_2B - asin((L1_ * c1) / L2_);
+        
+        const Float t1 = sin(as1) * (Y_2 + (L1_ * Y_2 * s1) / (L2_ * sqrt(-(L1_ * L1_ * c1 * c1 - L2_ * L2_) / (L2_ * L2_))));
+
+        const Float t2 = L2_ * t1 / c1;
+        const Float t3 = L2_ * Y_2 * cos(as1) / c1;
+        const Float t4 = t3 * s1 / c1;
+
+        const Float dXdA = t2 * s2 - t3 * c2 - t4 * s2;
+        const Float dXdB = t2 * s2 + t3 * c2 - t4 * s2;
         const Float dXdC = 0.0;
         const Float dYdA = 0.0;
         const Float dYdB = 0.0;
         const Float dYdC = 0.0;
-        const Float dZdA = (L2_ * std::sin(thetaA_2 - thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::cos(thetaA_2 + thetaB_2)) - (L2_ * std::cos(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::pow(std::cos(thetaA_2 + thetaB_2), 2)) + (L2_ * std::cos(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_)) * ((M_SQRT2 * L1_ * std::sin(thetaA_2 + thetaB_2)) / (2 * L2_ * std::sqrt(-(std::pow(L1_, 2) - 2 * std::pow(L2_, 2) + std::pow(L1_, 2) * std::cos(thetaA + thetaB)) / std::pow(L2_, 2))) + 0.5f)) / std::cos(thetaA_2 + thetaB_2);
-        const Float dZdB = (L2_ * std::cos(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_)) * ((M_SQRT2 * L1_ * std::sin(thetaA_2 + thetaB_2)) / (2 * L2_ * std::sqrt(-(std::pow(L1_, 2) - 2 * std::pow(L2_, 2) + std::pow(L1_, 2) * std::cos(thetaA + thetaB)) / std::pow(L2_, 2))) + 0.5f)) / std::cos(thetaA_2 + thetaB_2) - (L2_ * std::cos(thetaA_2 - thetaB_2) * std::sin(thetaA_2 + thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::pow(std::cos(thetaA_2 + thetaB_2), 2)) - (L2_ * std::sin(thetaA_2 - thetaB_2) * std::cos(thetaA_2 + thetaB_2 - std::asin((L1_ * std::cos(thetaA_2 + thetaB_2)) / L2_))) / (2 * std::cos(thetaA_2 + thetaB_2));
+        const Float dZdA = t2 * c2 + t3 * s2 - t4 * c2;
+        const Float dZdB = t2 * c2 - t3 * s2 - t4 * c2;
         const Float dZdC = 0.0;
 
         jacobian << dXdA, dXdB, dXdC,
@@ -75,7 +89,7 @@ namespace starq
 
     void STARQFiveBar2DLegDynamics::flipY()
     {
-        y_axis_ = -y_axis_;
+        YA_ = -YA_;
     }
 
 }

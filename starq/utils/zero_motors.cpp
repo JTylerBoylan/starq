@@ -12,8 +12,12 @@ int main(void)
     // Ready motors
     STARQ->setStates(AxisState::CLOSED_LOOP_CONTROL);
 
-    // Go to center position
-    STARQ->goToDefaultFootLocations();
+    // Loop through all motors
+    for (auto motor : STARQ->getMotors())
+    {
+        // Set motor position to 0
+        motor->setPosition(0.0);
+    }
 
     // Wait for 500 ms
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

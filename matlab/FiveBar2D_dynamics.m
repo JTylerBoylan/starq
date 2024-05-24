@@ -2,31 +2,29 @@ clc
 clear
 close all
 
-%% Forward
+syms L1_ L2_ YA_
+syms A B
 
-syms L1_M L2_M
-syms thetaA thetaB
+thetaA = YA_ * A;
+thetaB = YA_ * B;
 
-alpha_f = 0.5 * (pi - thetaA - thetaB);
-gamma_f = asin(L1_M*sin(alpha_f)/L2_M);
-phi_f = pi - alpha_f - gamma_f;
+alpha = 0.5 * (pi - thetaA - thetaB);
+gamma = asin(L1_*sin(alpha)/L2_);
+phi = pi - alpha - gamma;
 
-theta_f = -(thetaA + alpha_f);
-R_f = L2_M*sin(phi_f)/sin(alpha_f);
+theta = -(thetaA + alpha);
+R = L2_*sin(phi)/sin(alpha);
 
-X_f = R_f*cos(theta_f);
-Y_f = R_f*sin(theta_f);
+X = R*cos(theta);
+Y = R*sin(theta);
 
-P_f = [X_f; Y_f];
+P = [X; Y];
 
-J_f = jacobian(P_f, [thetaA; thetaB]);
+J = jacobian(P, [A; B]);
 
-forward_jacobian = simplify(J_f)
+forward_jacobian = simplify(J)
 
-getForwardKinematics = matlabFunction(P_f);
-getForwardJacobian = matlabFunction(forward_jacobian);
-
-Jf_11 = forward_jacobian(1,1)
-Jf_12 = forward_jacobian(1,2)
-Jf_21 = forward_jacobian(2,1)
-Jf_22 = forward_jacobian(2,2)
+J_11 = forward_jacobian(1,1)
+J_12 = forward_jacobian(1,2)
+J_21 = forward_jacobian(2,1)
+J_22 = forward_jacobian(2,2)
