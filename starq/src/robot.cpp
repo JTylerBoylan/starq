@@ -17,13 +17,6 @@ namespace starq
         setupMPCController();
     }
 
-    void Robot::cleanup()
-    {
-        trajectory_controller_->stop();
-        mpc_controller_->stop();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
     void Robot::setupLegCommandPublisher()
     {
         publisher_ = std::make_shared<LegCommandPublisher>(legs_);

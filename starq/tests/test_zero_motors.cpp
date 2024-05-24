@@ -35,8 +35,8 @@ int main(void)
     for (uint8_t i = 0; i < MAX_ODRIVE_ID; i++)
     {
         // Clear errors
-        if (!odrive_socket_0->clearErrors(i) ||
-            !odrive_socket_1->clearErrors(i))
+        if (!odrive_socket_0->setPosition(i, 0.0) ||
+            !odrive_socket_1->setPosition(i, 0.0))
         {
             printf("Failed to clear errors for axis %d.\n", i);
         }

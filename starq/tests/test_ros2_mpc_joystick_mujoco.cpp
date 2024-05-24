@@ -59,10 +59,8 @@ int main(int argc, char **argv)
 
     // Start ROS2 spin thread
     RCLCPP_INFO(node->get_logger(), "Starting spin thread");
-    std::future<void> sim = std::async(std::launch::async, [&]()
-                                       { robot->waitForSimulation(); });
     std::thread spin_thread([&]()
-                            { rclcpp::spin_until_future_complete(node, sim); });
+                            { rclcpp::spin(node); });
 
     while (robot->isSimulationOpen())
     {
@@ -77,7 +75,7 @@ int main(int argc, char **argv)
     // Stop MPC
     robot->stopMPC();
 
-    // Wait for the spin thread to finish
+    // Stop spinning
     spin_thread.join();
 
     // Shutdown ROS2

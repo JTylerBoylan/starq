@@ -70,9 +70,9 @@ int main(void)
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
     config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
     config->dt = 0.15;
-    config->time_limit = milliseconds(2000);
-    config->max_iterations = 100000;
-    config->max_generations = 200;
+    config->time_limit = milliseconds(5000);
+    config->max_iterations = 500000;
+    config->max_generations = 250;
     printf("Configuration created.\n");
 
     // Set simulation frame rate
@@ -134,6 +134,7 @@ int main(void)
             goal_index = (goal_index + 1) % goal_states.size();
             model->setGoalState(goal_states[goal_index]);
             printf(" -> New goal: x: %f y: %f th: %f", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
+            walk_gait->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
             break;
         default:
             // Print error
@@ -150,9 +151,6 @@ int main(void)
     // Wait for simulation to close
     robot->waitForSimulation();
     printf("Simulation closed\n");
-
-    // Cleanup
-    robot->cleanup();
 
     printf("Done\n");
     return 0;

@@ -284,6 +284,7 @@ namespace starq::odrive
         std::cout << "  Position estimate: " << getPositionEstimate() << std::endl;
         std::cout << "  Velocity estimate: " << getVelocityEstimate() << std::endl;
         std::cout << "  Torque estimate: " << getTorqueEstimate() << std::endl;
+        std::cout << std::endl;
     }
 
     std::string ODriveController::getErrorName()

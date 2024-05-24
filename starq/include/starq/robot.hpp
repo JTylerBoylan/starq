@@ -21,9 +21,6 @@ namespace starq
         /// @brief Setup the robot
         void setup();
 
-        /// @brief Cleanup the robot
-        void cleanup();
-
         /// @brief Set the state for all motors
         /// @param state The state
         /// @return True if successful

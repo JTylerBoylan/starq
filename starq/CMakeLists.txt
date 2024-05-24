@@ -125,6 +125,19 @@ install(TARGETS starqlib
 )
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
+# Util executables
+add_executable(clear_errors utils/clear_errors.cpp)
+target_include_directories(clear_errors PUBLIC include)
+target_link_libraries(clear_errors PUBLIC starqlib)
+
+add_executable(zero_motors utils/zero_motors.cpp)
+target_include_directories(zero_motors PUBLIC include)
+target_link_libraries(zero_motors PUBLIC starqlib)
+
+add_executable(motor_info utils/motor_info.cpp)
+target_include_directories(motor_info PUBLIC include)
+target_link_libraries(motor_info PUBLIC starqlib)
+
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)
@@ -153,6 +166,10 @@ target_link_libraries(test_fivebar2d_dummy PUBLIC starqlib)
 add_executable(test_clear_errors tests/test_clear_errors.cpp)
 target_include_directories(test_clear_errors PUBLIC include)
 target_link_libraries(test_clear_errors PUBLIC starqlib)
+
+add_executable(test_zero_motors tests/test_zero_motors.cpp)
+target_include_directories(test_zero_motors PUBLIC include)
+target_link_libraries(test_zero_motors PUBLIC starqlib)
 
 add_executable(test_command_publisher_dummy tests/test_command_publisher_dummy.cpp)
 target_include_directories(test_command_publisher_dummy PUBLIC include)

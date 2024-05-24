@@ -66,9 +66,6 @@ int main()
     // Set axis state to idle
     STARQ->setStates(AxisState::IDLE);
 
-    // Cleanup STARQ robot
-    STARQ->cleanup();
-
     printf("Done.\n");
     return 0;
 }
