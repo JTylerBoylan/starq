@@ -20,7 +20,7 @@ int main()
     printf("STARQRobot created\n");
 
     // Set the motor gains
-    const Float p_gain = 100.0;
+    const Float p_gain = 30.0;
     const Float v_gain = 0.05;
     const Float vi_gain = 0.15;
     STARQ->setGains(p_gain, v_gain, vi_gain);
@@ -48,7 +48,7 @@ int main()
     // Run trajectory from file
     const std::string file_name = "walk_test_2.txt";
     const int num_cycles = 10;
-    const Float frequency = 1.5; // Hz
+    const Float frequency = 0.5; // Hz
     run_file_trajectory(STARQ, file_name, frequency, num_cycles);
 
     // Move legs in a circle

@@ -31,6 +31,16 @@ int main(void)
     ODriveSocket::Ptr odrive_socket_0 = std::make_shared<ODriveSocket>(can_socket_0);
     ODriveSocket::Ptr odrive_socket_1 = std::make_shared<ODriveSocket>(can_socket_1);
 
+    // Loop through all motor IDs and set to ready
+    for (uint8_t i = 0; i < MAX_ODRIVE_ID; i++)
+    {
+        if (!odrive_socket_0->setAxisState(i, CLOSED_LOOP_CONTROL) ||
+            !odrive_socket_1->setAxisState(i, CLOSED_LOOP_CONTROL))
+        {
+            printf("Failed to zero motor on axis %d.\n", i);
+        }
+    }
+
     // Loop through all motor IDs and clear errors
     for (uint8_t i = 0; i < MAX_ODRIVE_ID; i++)
     {
@@ -38,10 +48,21 @@ int main(void)
         if (!odrive_socket_0->setPosition(i, 0.0) ||
             !odrive_socket_1->setPosition(i, 0.0))
         {
-            printf("Failed to clear errors for axis %d.\n", i);
+            printf("Failed to zero motor on axis %d.\n", i);
         }
     }
-    printf("Cleared errors for all axes.\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    printf("Zeroed motors.\n");
+
+    // Loop through all motor IDs and set to idle
+    for (uint8_t i = 0; i < MAX_ODRIVE_ID; i++)
+    {
+        if (!odrive_socket_0->setAxisState(i, IDLE) ||
+            !odrive_socket_1->setAxisState(i, IDLE))
+        {
+            printf("Failed to zero motor on axis %d.\n", i);
+        }
+    }
 
     printf("Done.\n");
     return 0;

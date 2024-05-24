@@ -5,8 +5,12 @@
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
 // Leg link lengths in meters (ET-Quad Leg)
-#define LEG_LINK_1_LENGTH_M 0.05f
-#define LEG_LINK_2_LENGTH_M 0.150f
+// #define LEG_LINK_1_LENGTH_M 0.05f
+// #define LEG_LINK_2_LENGTH_M 0.150f
+
+// Leg link lengths in meters (STARQ Leg)
+#define LEG_LINK_1_LENGTH_M 0.065f
+#define LEG_LINK_2_LENGTH_M 0.2f
 
 // Gear ratios on motors (ET-Quad Hip)
 #define GEAR_RATIO_A 6.0f
@@ -69,11 +73,12 @@ int main(void)
     // Circular Trajectory
     // Center position of the leg space range
     const float center_x = 0.0f;
-    const float center_z = -std::sqrt(2) * 0.1f;
+    const float center_z = -0.18914;
 
     // Go to center position
     if (!leg->setFootPosition(Vector3(center_x, 0, center_z)))
         return 1;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     printf("Centered foot position.\n");
 
     // Circle parameters

@@ -9,6 +9,9 @@ int main(void)
     // Create a STARQ robot
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
 
+    // Wait to recieve messages
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    
     printf("Motor info:\n");
 
     // Loop through all motors

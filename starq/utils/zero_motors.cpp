@@ -9,26 +9,17 @@ int main(void)
     // Create a STARQ robot
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
 
-    // Set states to closed loop control
-    for (auto motor : STARQ->getMotors())
-    {
-        motor->setState(AxisState::CLOSED_LOOP_CONTROL);
-    }
+    // Ready motors
+    STARQ->setStates(AxisState::CLOSED_LOOP_CONTROL);
 
-    // Set positions to 0
-    for (auto motor : STARQ->getMotors())
-    {
-        motor->setPosition(0.0);
-    }
+    // Go to center position
+    STARQ->goToDefaultFootLocations();
 
-    // Wait for 1 second
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    // Wait for 500 ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // Idle
-    for (auto motor : STARQ->getMotors())
-    {
-        motor->setState(AxisState::IDLE);
-    }
+    // Idle motors
+    STARQ->setStates(AxisState::IDLE);
 
     printf("Zeroed motors\n");
     return 0;

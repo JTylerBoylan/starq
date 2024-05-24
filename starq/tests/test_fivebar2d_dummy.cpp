@@ -6,8 +6,12 @@
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
 // Leg link lengths in meters (ET-Quad Leg)
-#define LEG_LINK_1_LENGTH_M 0.05f
-#define LEG_LINK_2_LENGTH_M 0.150f
+// #define LEG_LINK_1_LENGTH_M 0.05f
+// #define LEG_LINK_2_LENGTH_M 0.150f
+
+// Leg link lengths in meters (STARQ Leg)
+#define LEG_LINK_1_LENGTH_M 0.065f
+#define LEG_LINK_2_LENGTH_M 0.2f
 
 using namespace starq;
 using namespace starq::testing;

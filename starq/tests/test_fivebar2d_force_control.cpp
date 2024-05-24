@@ -5,8 +5,12 @@
 #include "starq/starq/starq_fivebar2d_leg_dynamics.hpp"
 
 // Leg link lengths in meters (ET-Quad Leg)
-#define LEG_LINK_1_LENGTH_M 0.05f
-#define LEG_LINK_2_LENGTH_M 0.150f
+// #define LEG_LINK_1_LENGTH_M 0.05f
+// #define LEG_LINK_2_LENGTH_M 0.150f
+
+// Leg link lengths in meters (STARQ Leg)
+#define LEG_LINK_1_LENGTH_M 0.065f
+#define LEG_LINK_2_LENGTH_M 0.2f
 
 // Gear ratios on motors (ET-Quad Hip)
 #define GEAR_RATIO_A 6.0f
@@ -21,7 +25,7 @@ int main(void)
     printf("Hello world!\n");
 
     // Create a CAN socket object on the can0 interface
-    CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can1");
+    CANSocket::Ptr can_socket = std::make_shared<CANSocket>("can0");
 
     // Connect to the CAN interface
     if (can_socket->connect())
@@ -38,8 +42,8 @@ int main(void)
     ODriveSocket::Ptr odrive_socket = std::make_shared<ODriveSocket>(can_socket);
 
     // Create two ODrive controllers for the hip motors
-    ODriveController::Ptr odrive_A = std::make_shared<ODriveController>(odrive_socket, 4);
-    ODriveController::Ptr odrive_B = std::make_shared<ODriveController>(odrive_socket, 5);
+    ODriveController::Ptr odrive_A = std::make_shared<ODriveController>(odrive_socket, 0);
+    ODriveController::Ptr odrive_B = std::make_shared<ODriveController>(odrive_socket, 1);
     printf("Created ODrive controllers.\n");
 
     // Set gear ratios
@@ -67,8 +71,8 @@ int main(void)
     printf("Set to force control mode.\n");
 
     // Apply a constant force at the end effector
-    const float force_x = 5.0f;
-    const float force_z = -5.0f;
+    const float force_x = 0.0f;
+    const float force_z = -10.0f;
     printf("Applying Force: %f, %f\n", force_x, force_z);
 
     // Get current joint torques
