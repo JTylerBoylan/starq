@@ -30,29 +30,3 @@ Jf_11 = forward_jacobian(1,1)
 Jf_12 = forward_jacobian(1,2)
 Jf_21 = forward_jacobian(2,1)
 Jf_22 = forward_jacobian(2,2)
-
-%% Test
-
-L1 = 0.05;
-L2 = 0.15;
-
-thA = 0;
-thB = 0;
-
-Jf_00 = getForwardJacobian(L1, L2, thA, thB)
-
-Ff = [0; -5];
-
-Tf = Jf_00' * Ff
-
-%% INVERSE
-
-inverse_jacobian = inv(forward_jacobian)
-
-getInverseJacobian = matlabFunction(inverse_jacobian);
-
-%% Test
-
-Ji_00 = getInverseJacobian(L1, L2, thA, thB)
-
-

@@ -20,9 +20,8 @@ password: nvidia
 
 ### Building
 1. Go to project workspace: $`cd ~/starq_ws`
-2. Run the STARQ Docker environment: $`./run_dev.sh`
-3. Build: $`colcon build`
-4. Source: $`source install/setup.bash`
+2. Build: $`colcon build`
+3. Source: $`source install/setup.bash`
 4. Go to the build folder: $`cd build/starq`
 5. Run $`ls` to see all test executables
 
@@ -37,9 +36,8 @@ password: nvidia
 
 ### Powering Off from SSH
 **Note: Do not power off the Jetson by removing power. This could lead to file corruption. Instead:**
-1. Run $`exit` to close the Docker environment
-2. While still SSHed in the Jetson, shutdown using: $`sudo shutdown -h now`
-3. This should close the SSH connection as well
+1. While still SSHed in the Jetson, shutdown using: $`sudo shutdown -h now`
+2. This should close the SSH connection as well
 
 ### SFTP
 SFTP is used to copy files remotely from your local computer to the Jetson, or vice versa. 

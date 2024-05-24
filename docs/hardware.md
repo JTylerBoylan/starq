@@ -75,4 +75,4 @@ Instructions on how to enable CAN on the Jetson.
 1. Open the Terminal on the Jetson
 2. Go to the `tools` folder: $`cd ~/starq_ws/tools`
 3. Run the command: $`sudo ./loadcan_jetson.sh` \
-*Note: This is run automatically with `./run_dev.sh`.*
+*Note: This is run automatically on boot. See `tools/load_can.service` for more information*

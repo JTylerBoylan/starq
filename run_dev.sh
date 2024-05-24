@@ -11,12 +11,6 @@ if [ -n "$DISPLAY" ]; then
     xhost +local:root > /dev/null
 fi
 
-ARCH=$(uname -i)
-if [ "$ARCH" == "aarch64" ]; then
-    # Load the CAN interface
-    sudo /bin/bash ${SCRIPT_DIR}/tools/loadcan_jetson.sh
-fi
-
 # Start the Docker container
 docker run -it \
     --rm \
