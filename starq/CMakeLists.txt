@@ -138,6 +138,14 @@ add_executable(motor_info utils/motor_info.cpp)
 target_include_directories(motor_info PUBLIC include)
 target_link_libraries(motor_info PUBLIC starqlib)
 
+add_executable(set_gains utils/set_gains.cpp)
+target_include_directories(set_gains PUBLIC include)
+target_link_libraries(set_gains PUBLIC starqlib)
+
+add_executable(run_trajectory utils/run_trajectory.cpp)
+target_include_directories(run_trajectory PUBLIC include)
+target_link_libraries(run_trajectory PUBLIC starqlib)
+
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)
 target_include_directories(test_can_connection PUBLIC include)

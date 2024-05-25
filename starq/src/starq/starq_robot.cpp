@@ -50,11 +50,7 @@ namespace starq
             odrive_6,
             odrive_7};
 
-        setStates(AxisState::IDLE);
         setGearRatios(STARQ_MOTOR_GEAR_RATIO);
-        setGains(STARQ_MOTOR_P_GAIN, STARQ_MOTOR_V_GAIN, STARQ_MOTOR_VI_GAIN);
-        setLimits(STARQ_MOTOR_MAX_VELOCITY, STARQ_MOTOR_MAX_CURRENT);
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // Prevents CAN buffer overflow
     }
 
     void STARQRobot::setupLegControllers()
