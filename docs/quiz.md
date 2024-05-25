@@ -22,6 +22,8 @@
 
 - What script is responsible for loading the CAN kernels on the Jetson?
 
+- How do you turn off the Jetson? Why is it important to "soft" shutdown?
+
 ## C++
 
 - Why are pointers used in C++?  Why do we use shared pointers over "raw" pointers?
@@ -60,7 +62,6 @@
 
 - Wait 5 seconds, then set the forces on all legs to 10N in the -z direction
 
-
 ## MuJoCo
 
 - In simulation, make the robot walk in a circle around the origin point using MPC
@@ -76,3 +77,5 @@
 - Create a launch file that launches the `joy` node and your executable
 
 - Create a ROS2 joystick class that loads various trajectories from a file using the buttons, and changes the frequency of the trajectory based on the joystick input
+
+- Launch using `ros2 launch`
