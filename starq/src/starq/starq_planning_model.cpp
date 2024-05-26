@@ -6,34 +6,32 @@ namespace starq
     STARQPlanningModel::STARQPlanningModel(slam::Localization::Ptr localization)
         : localization_(localization)
     {
-        xf_ = VectorX::Zero(3);
-        threshold_ = 0.25;
-        dx_ = Vector3(0.05, 0.05, M_PI / 64.0);
-        dt_ = 0.15;
+        x_goal_ = VectorX::Zero(3);
+        v_max_ = Vector3(1.0, 0.5, M_PI / 8.0);
+        dt_min_ = 0.05;
     }
 
     void STARQPlanningModel::setGoalState(const VectorX &xf)
     {
-        xf_ = xf;
-        computeActions();
+        x_goal_ = xf;
     }
 
-    void STARQPlanningModel::setGoalThreshold(const Float threshold)
+    void STARQPlanningModel::setMaxVelocity(const VectorX &v_max)
     {
-        threshold_ = threshold;
-        computeActions();
+        v_max_ = v_max;
     }
 
-    void STARQPlanningModel::setGridResolution(const VectorX &dx)
+    void STARQPlanningModel::setMinTimeStep(const Float dt)
     {
-        dx_ = dx;
-        computeActions();
+        dt_min_ = dt;
     }
 
-    void STARQPlanningModel::setTimeStep(const Float dt)
+    void STARQPlanningModel::update(PlanConfiguration::Ptr config)
     {
-        dt_ = dt;
         computeActions();
+
+        config->dx = dx_;
+        config->dt = dt_;
     }
 
     VectorX STARQPlanningModel::getInitialState()
@@ -78,8 +76,8 @@ namespace starq
     {
         const Float cx = 1.0;
         const Float cth = 0.25;
-        const VectorX dx = xf_ - x;
-        const Float dth = xf_(2) - x(2);
+        const VectorX dx = x_goal_ - x;
+        const Float dth = x_goal_(2) - x(2);
         return cx * dx.norm() + cth * (dth > M_PI ? 2 * M_PI - dth : dth);
     }
 
@@ -103,12 +101,14 @@ namespace starq
     void STARQPlanningModel::computeActions()
     {
         const int res_v = 8;
-        const int res_w = 7;
+        const int res_w = 3;
 
-        const VectorX v_mag = dx_ / dt_;
-        const VectorX v_fac = Vector3(2.0, 1.0, 2.0);
-        const VectorX v = v_mag.cwiseProduct(v_fac);
-        const Float vx_off = 0.25;
+        const VectorX delta_x = (x_goal_ - getInitialState()).cwiseAbs();
+        const VectorX v = v_max_.cwiseMin(Cv_ * delta_x);
+
+        dt_ = std::min(dt_min_, Ct_ * delta_x.norm());
+        dx_ = 0.5 * v * dt_;
+        threshold_ = 2.0 * dx_.norm();
 
         const Float dth = 2 * M_PI / res_v;
         const int w_off = res_w / 2;
@@ -118,7 +118,7 @@ namespace starq
         {
             for (int j = 0; j < res_w; j++)
             {
-                const Float vx = v.x() * std::cos(i * dth) + vx_off;
+                const Float vx = v.x() * std::cos(i * dth);
                 const Float vy = v.y() * std::sin(i * dth);
                 const Float wz = v.z() * (j - w_off);
 

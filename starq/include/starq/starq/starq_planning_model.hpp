@@ -6,8 +6,9 @@
 
 namespace starq
 {
+    using namespace starq::planning;
 
-    class STARQPlanningModel : public planning::PlanningModel
+    class STARQPlanningModel : public PlanningModel
     {
     public:
         using Ptr = std::shared_ptr<STARQPlanningModel>;
@@ -16,11 +17,11 @@ namespace starq
 
         void setGoalState(const VectorX &xf);
 
-        void setGoalThreshold(const Float threshold);
+        void setMaxVelocity(const VectorX &v_max);
 
-        void setGridResolution(const VectorX &dx);
+        void setMinTimeStep(const Float dt);
 
-        void setTimeStep(const Float dt);
+        void update(PlanConfiguration::Ptr config) override;
 
         VectorX getInitialState() override;
 
@@ -40,10 +41,18 @@ namespace starq
         void computeActions();
 
         slam::Localization::Ptr localization_;
-        VectorX xf_;
-        Float threshold_;
-        VectorX dx_;
+
+        VectorX x_goal_;
+        VectorX v_max_;
+        Float dt_min_;
+
+        Float Cv_ = 1.0;
+        Float Ct_ = 0.2;
+
         Float dt_;
+        VectorX dx_;
+        Float threshold_;
+
         std::vector<VectorX> actions_;
     };
 

@@ -16,6 +16,8 @@ namespace starq::planning
         model_ = model;
         results_ = std::make_shared<PlanResults>();
 
+        model_->update(config_);
+
         const VectorX x0 = model->getInitialState();
 
         if (config_->dx.size() != x0.size())

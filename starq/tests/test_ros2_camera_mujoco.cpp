@@ -56,13 +56,18 @@ int main(int argc, char **argv)
     RCLCPP_INFO(node->get_logger(), "Holding foot position for 5 seconds...\n");
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
+    // Load stand gait from file
+    Gait::Ptr stand_gait = std::make_shared<Gait>();
+    stand_gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
+    printf("Stand Gait loaded\n");
+
+    // Stand still at default height
+    stand_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
+    stand_gait->setFrequency(10.0);
+
     // Start MPC
-    RCLCPP_INFO(node->get_logger(), "Starting MPC");
-    if (!robot->startMPC())
-    {
-        RCLCPP_INFO(node->get_logger(), "Failed to start MPC.\n");
-        return 1;
-    }
+    robot->runMPCGait(stand_gait);
+    printf("MPC started\n");
 
     // Start ROS2 spin thread
     RCLCPP_INFO(node->get_logger(), "Starting spin thread");

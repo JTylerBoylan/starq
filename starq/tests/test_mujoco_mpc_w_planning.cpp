@@ -74,9 +74,6 @@ int main(void)
     // Create starq planning model
     STARQPlanningModel::Ptr model = std::make_shared<STARQPlanningModel>(robot->getLocalization());
     model->setGoalState(goal_states[goal_index]);
-    model->setGoalThreshold(0.10);
-    model->setGridResolution(config->dx);
-    model->setTimeStep(config->dt);
     printf("Model created.\n");
 
     // Start simulation
@@ -93,18 +90,14 @@ int main(void)
     // Wait for simulation to settle
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    // Start MPC Controller in a separate thread
-    robot->startMPC();
-    printf("MPCController started\n");
-
     // Run standing gait for 5 seconds
     printf("Standing for 5 seconds...\n");
-    robot->setNextGait(stand_gait);
+    robot->runMPCGait(stand_gait);
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Transition to walking gait
     printf("Walking...\n");
-    robot->setNextGait(walk_gait);
+    robot->runMPCGait(walk_gait);
 
     printf("Starting Planner\n");
     while (robot->isSimulationOpen())

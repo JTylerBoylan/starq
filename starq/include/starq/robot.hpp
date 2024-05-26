@@ -83,17 +83,13 @@ namespace starq
         /// @return True if successful
         bool stopTrajectory();
 
-        /// @brief Start the model predictive control
-        /// @return True if successful
-        bool startMPC();
+        /// @brief Run the model predictive control
+        /// @param gait The gait to run
+        bool runMPCGait(mpc::Gait::Ptr gait);
 
         /// @brief Stop the model predictive control
         /// @return True if successful
         bool stopMPC();
-
-        /// @brief Set the next gait for the model predictive control
-        /// @param gait The gait
-        void setNextGait(mpc::Gait::Ptr gait);
 
         /// @brief Get the motor controllers
         /// @return The motor controllers

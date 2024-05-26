@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
     // Create Unitree A1 robot
     auto robot = std::make_shared<UnitreeA1MuJoCoRobot>();
-    RCLCPP_INFO(node->get_logger(), "UnitreeA1MuJoCoRobot created\n");
+    RCLCPP_INFO(node->get_logger(), "UnitreeA1MuJoCoRobot created");
 
     // Set MPC parameters
     auto mpc_config = robot->getMPCConfiguration();
@@ -30,14 +30,14 @@ int main(int argc, char **argv)
     // Create ROS2 Joystick
     // This maps the ROS2 Joy inputs to MPC commands
     auto joystick = std::make_shared<ros2::ROS2MPCJoystick>(node, mpc_config);
-    RCLCPP_INFO(node->get_logger(), "ROS2 Joystick created\n");
+    RCLCPP_INFO(node->get_logger(), "ROS2 Joystick created");
 
     // Set MuJoCo frame rate
     MuJoCo::getInstance()->setFrameRate(30.0);
 
     // Start simulation
     robot->startSimulation();
-    RCLCPP_INFO(node->get_logger(), "Simulation started\n");
+    RCLCPP_INFO(node->get_logger(), "Simulation started");
 
     // Send legs to default positions
     for (uint8_t id = 0; id < UNITREE_A1_NUM_LEGS; id++)
@@ -46,16 +46,21 @@ int main(int argc, char **argv)
     }
 
     // Wait for simulation to settle
-    RCLCPP_INFO(node->get_logger(), "Holding foot position for 5 seconds...\n");
+    RCLCPP_INFO(node->get_logger(), "Holding foot position for 5 seconds...");
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
+    // Load stand gait from file
+    Gait::Ptr stand_gait = std::make_shared<Gait>();
+    stand_gait->load("/home/nvidia/starq_ws/src/starq/gaits/stand.txt");
+    printf("Stand Gait loaded\n");
+
+    // Stand still at default height
+    stand_gait->setPose(Vector3(0, 0, UNITREE_A1_STAND_HEIGHT), Vector3(0, 0, 0));
+    stand_gait->setFrequency(10.0);
+
     // Start MPC
-    RCLCPP_INFO(node->get_logger(), "Starting MPC");
-    if (!robot->startMPC())
-    {
-        RCLCPP_INFO(node->get_logger(), "Failed to start MPC.\n");
-        return 1;
-    }
+    robot->runMPCGait(stand_gait);
+    RCLCPP_INFO(node->get_logger(), "MPC started");
 
     // Start ROS2 spin thread
     RCLCPP_INFO(node->get_logger(), "Starting spin thread");

@@ -8,22 +8,24 @@ namespace starq::planning
 
     class PlanningModel
     {
-        public:
-            using Ptr = std::shared_ptr<PlanningModel>;
+    public:
+        using Ptr = std::shared_ptr<PlanningModel>;
 
-            virtual VectorX getInitialState() = 0;
+        virtual void update(PlanConfiguration::Ptr config) { (void)config; };
 
-            virtual VectorX getNextState(const VectorX &x1, const VectorX &u, const Float dt) = 0;
+        virtual VectorX getInitialState() = 0;
 
-            virtual Float getCost(const VectorX &x1, const VectorX &x2, const VectorX &u, const Float dt) = 0;
+        virtual VectorX getNextState(const VectorX &x1, const VectorX &u, const Float dt) = 0;
 
-            virtual Float getHeuristic(const VectorX &x1) = 0;
+        virtual Float getCost(const VectorX &x1, const VectorX &x2, const VectorX &u, const Float dt) = 0;
 
-            virtual bool isStateValid(const VectorX &x) = 0;
+        virtual Float getHeuristic(const VectorX &x1) = 0;
 
-            virtual bool isStateFinal(const VectorX &x) = 0;
+        virtual bool isStateValid(const VectorX &x) = 0;
 
-            virtual std::vector<VectorX> getActions(const VectorX &x) = 0;
+        virtual bool isStateFinal(const VectorX &x) = 0;
+
+        virtual std::vector<VectorX> getActions(const VectorX &x) = 0;
     };
 
 }

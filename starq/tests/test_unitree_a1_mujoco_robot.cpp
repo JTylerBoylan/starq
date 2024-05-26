@@ -54,22 +54,14 @@ int main()
     // Wait for simulation to settle 
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    // Start MPC
-    printf("Starting MPC...\n");
-    if (!robot.startMPC())
-    {
-        printf("Failed to start MPC.\n");
-        return 1;
-    }
-
     // Start with the stand gait for 5 seconds
     printf("Standing for 5 seconds...\n");
-    robot.setNextGait(stand_gait);
+    robot.runMPCGait(stand_gait);
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Transition to walking
     printf("Walking...\n");
-    robot.setNextGait(walk_gait);
+    robot.runMPCGait(walk_gait);
 
     // Run while the simulation is open
     while (robot.isSimulationOpen())

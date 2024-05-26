@@ -180,19 +180,20 @@ namespace starq
         return trajectory_controller_->stop();
     }
 
-    bool Robot::startMPC()
-    {
-        return mpc_controller_->start();
-    }
-
     bool Robot::stopMPC()
     {
         return mpc_controller_->stop();
     }
 
-    void Robot::setNextGait(mpc::Gait::Ptr gait)
+    bool Robot::runMPCGait(mpc::Gait::Ptr gait)
     {
         mpc_configuration_->setNextGait(gait);
+        if (!mpc_controller_->isRunning())
+        {
+
+            return mpc_controller_->start();
+        }
+        return true;
     }
 
 }
