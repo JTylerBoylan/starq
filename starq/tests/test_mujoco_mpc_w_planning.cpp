@@ -64,8 +64,6 @@ int main(void)
 
     // Create plan configuration
     PlanConfiguration::Ptr config = std::make_shared<PlanConfiguration>();
-    config->dx = Vector3(0.05, 0.05, M_PI / 64.0);
-    config->dt = 0.15;
     config->time_limit = milliseconds(5000);
     config->max_iterations = 500000;
     config->max_generations = 250;
@@ -115,20 +113,21 @@ int main(void)
         switch (results->exit_code)
         {
         case ExitCode::SUCCESS:
+            if (model->getVelocity().norm() < 0.1)
+            {
+                // Cycle through goal states
+                goal_index = (goal_index + 1) % goal_states.size();
+                model->setGoalState(goal_states[goal_index]);
+                printf(" -> New goal: x: %f y: %f th: %f", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
+                walk_gait->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
+            }
             // Send command
-            if (results->node_path.size() > 1)
+            else if (results->node_path.size() > 1)
             {
                 VectorX u = results->node_path[1]->u;
                 printf("  ->  Send: vx: %f vy: %f w: %f", u(0), u(1), u(2));
                 walk_gait->setVelocity(Vector3(u(0), u(1), 0), Vector3(0, 0, u(2)));
             }
-            break;
-        case ExitCode::START_IS_FINAL:
-            // Cycle through goal states
-            goal_index = (goal_index + 1) % goal_states.size();
-            model->setGoalState(goal_states[goal_index]);
-            printf(" -> New goal: x: %f y: %f th: %f", goal_states[goal_index].x(), goal_states[goal_index].y(), goal_states[goal_index].z());
-            walk_gait->setVelocity(Vector3(0, 0, 0), Vector3(0, 0, 0));
             break;
         default:
             // Print error

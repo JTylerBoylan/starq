@@ -19,7 +19,19 @@ namespace starq
 
         void setMaxVelocity(const VectorX &v_max);
 
-        void setMinTimeStep(const Float dt);
+        void setDampingRadius(const Float rho_t);
+
+        void setIdealNodeCount(const Float N);
+
+        void setGridResolutionFactor(const Float g);
+
+        VectorX getVelocity();
+
+        Float getTimeStep();
+
+        VectorX getGridResolution();
+
+        Float getGoalThreshold();
 
         void update(PlanConfiguration::Ptr config) override;
 
@@ -40,15 +52,18 @@ namespace starq
     private:
         void computeActions();
 
+        VectorX wrap(const VectorX &x);
+
         slam::Localization::Ptr localization_;
 
         VectorX x_goal_;
         VectorX v_max_;
-        Float dt_min_;
 
-        Float Cv_ = 2.0;
-        Float Ct_ = 0.80;
+        Float rho_t_;
+        Float N_;
+        Float g_;
 
+        VectorX v_;
         Float dt_;
         VectorX dx_;
         Float threshold_;
