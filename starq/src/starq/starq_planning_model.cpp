@@ -1,5 +1,7 @@
 #include "starq/starq/starq_planning_model.hpp"
 
+#include <iostream>
+
 namespace starq
 {
 
@@ -8,7 +10,7 @@ namespace starq
     {
         x_goal_ = VectorX::Zero(3);
         v_max_ = Vector3(1.0, 0.5, M_PI / 8.0);
-        dt_min_ = 0.05;
+        dt_min_ = 0.5;
     }
 
     void STARQPlanningModel::setGoalState(const VectorX &xf)
@@ -106,9 +108,9 @@ namespace starq
         const VectorX delta_x = (x_goal_ - getInitialState()).cwiseAbs();
         const VectorX v = v_max_.cwiseMin(Cv_ * delta_x);
 
-        dt_ = std::min(dt_min_, Ct_ * delta_x.norm());
+        dt_ = std::max(dt_min_, Ct_ * delta_x.norm());
         dx_ = 0.5 * v * dt_;
-        threshold_ = 2.0 * dx_.norm();
+        threshold_ = dx_.norm();
 
         const Float dth = 2 * M_PI / res_v;
         const int w_off = res_w / 2;

@@ -46,8 +46,8 @@ namespace starq
         VectorX v_max_;
         Float dt_min_;
 
-        Float Cv_ = 1.0;
-        Float Ct_ = 0.2;
+        Float Cv_ = 2.0;
+        Float Ct_ = 0.80;
 
         Float dt_;
         VectorX dx_;
