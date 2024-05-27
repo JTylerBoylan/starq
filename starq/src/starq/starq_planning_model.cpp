@@ -13,6 +13,8 @@ namespace starq
         rho_t_ = 0.25;
         N_ = 10;
         g_ = 5;
+        v_fac_ = Vector3(1.0, 0.5, 1.0);
+        v_off_ = Vector3(0.0, 0.0, 0.0);
     }
 
     void STARQPlanningModel::setGoalState(const VectorX &xf)
@@ -38,6 +40,16 @@ namespace starq
     void STARQPlanningModel::setGridResolutionFactor(const Float g)
     {
         g_ = g;
+    }
+
+    void STARQPlanningModel::setVelocityFactor(const VectorX &v_fac)
+    {
+        v_fac_ = v_fac;
+    }
+
+    void STARQPlanningModel::setVelocityOffset(const VectorX &v_off)
+    {
+        v_off_ = v_off;
     }
 
     VectorX STARQPlanningModel::getVelocity()
@@ -129,8 +141,7 @@ namespace starq
         const VectorX delta_x = wrap(x_goal_ - getInitialState());
         v_ = v_max_.cwiseMin((delta_x.cwiseQuotient(v_max_).norm() / rho_t_) * v_max_);
 
-        const Float dt_min = rho_t_ / N_;
-        dt_ = std::max(dt_min, delta_x.cwiseQuotient(v_).norm() / N_);
+        dt_ = delta_x.cwiseQuotient(v_).norm() / N_;
         dx_ = (dt_ / (g_ * std::sqrt(2))) * v_;
         threshold_ = dt_;
 
@@ -142,8 +153,8 @@ namespace starq
         {
             for (int j = 0; j < res_w; j++)
             {
-                const Float vx = v_.x() * std::cos(i * dth);
-                const Float vy = v_.y() * std::sin(i * dth);
+                const Float vx = v_.x() * std::cos(i * dth) * v_fac_.x() + v_off_.x();
+                const Float vy = v_.y() * std::sin(i * dth) * v_fac_.y() + v_off_.y();
                 const Float wz = v_.z() * (j - w_off);
 
                 actions_[res_w * i + j] << vx, vy, wz;

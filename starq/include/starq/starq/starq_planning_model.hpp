@@ -25,6 +25,10 @@ namespace starq
 
         void setGridResolutionFactor(const Float g);
 
+        void setVelocityFactor(const VectorX &v_fac);
+
+        void setVelocityOffset(const VectorX &v_off);
+
         VectorX getVelocity();
 
         Float getTimeStep();
@@ -58,10 +62,11 @@ namespace starq
 
         VectorX x_goal_;
         VectorX v_max_;
-
         Float rho_t_;
         Float N_;
         Float g_;
+        VectorX v_fac_;
+        VectorX v_off_;
 
         VectorX v_;
         Float dt_;
