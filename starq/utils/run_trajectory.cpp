@@ -2,29 +2,24 @@
 
 #include "starq/starq/starq_robot.hpp"
 
+#define TRAJECTORY_FOLDER "/home/nvidia/starq_ws/src/starq/trajectories/"
+
 using namespace starq;
+
+void print_usage(char *name);
+bool parse_args(int argc, char **argv, std::string &file_name, Float &frequency, int &num_loops);
 
 int main(int argc, char **argv)
 {
 
-    // Check if the number of arguments is correct
-    if (argc < 2 || argc > 4)
-    {
-        printf("Usage: %s <file> <frequency=1> <num_loops=1>\n", argv[0]);
-        return 1;
-    }
-
     // Parse arguments
-    std::string file_name = argv[1];
+    std::string file_name;
     Float frequency = 1.0;
     int num_loops = 1;
-    if (argc > 2)
+    if (!parse_args(argc, argv, file_name, frequency, num_loops))
     {
-        frequency = std::stof(argv[2]);
-    }
-    if (argc > 3)
-    {
-        num_loops = std::stoi(argv[3]);
+        print_usage(argv[0]);
+        return 1;
     }
 
     // Create a STARQ robot
@@ -49,7 +44,11 @@ int main(int argc, char **argv)
     for (int loop = 1; loop <= num_loops; loop++)
     {
         printf("Loop %d/%d\n", loop, num_loops);
-        STARQ->runTrajectory("/home/nvidia/starq_ws/src/starq/trajectories/" + file_name, frequency, 1);
+        if (!STARQ->runTrajectory(TRAJECTORY_FOLDER + file_name, frequency, 1))
+        {
+            printf("Failed to run trajectory\n");
+            return 1;
+        }
 
         // Wait for trajectory to finish
         STARQ->getTrajectoryController()->wait();
@@ -60,4 +59,34 @@ int main(int argc, char **argv)
     STARQ->setStates(AxisState::IDLE);
 
     return 0;
+}
+
+void print_usage(char *name)
+{
+    printf("! Run a trajectory from a file on the STARQ robot\n");
+    printf("Usage: %s <file> <frequency> <num_loops>\n", name);
+    printf("  file:       Trajectory file name (relative to the trajectories folder) (required)\n");
+    printf("  frequency:  Trajectory loop frequency (default: 1.0)\n");
+    printf("  num_loops:  Number of trajectory loops (default: 1)\n");
+    printf("! Example: %s walk_test.txt 0.5 10\n", name);
+}
+
+bool parse_args(int argc, char **argv, std::string &file_name, Float &frequency, int &num_loops)
+{
+    if (argc < 2 || argc > 4)
+    {
+        return false;
+    }
+
+    file_name = argv[1];
+    if (argc > 2)
+    {
+        frequency = std::stof(argv[2]);
+    }
+    if (argc > 3)
+    {
+        num_loops = std::stoi(argv[3]);
+    }
+
+    return true;
 }

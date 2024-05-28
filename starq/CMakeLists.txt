@@ -126,25 +126,25 @@ install(TARGETS starqlib
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
 # Util executables
-add_executable(clear_errors utils/clear_errors.cpp)
-target_include_directories(clear_errors PUBLIC include)
-target_link_libraries(clear_errors PUBLIC starqlib)
+add_executable(starq_clear_errors utils/clear_errors.cpp)
+target_include_directories(starq_clear_errors PUBLIC include)
+target_link_libraries(starq_clear_errors PUBLIC starqlib)
 
-add_executable(zero_motors utils/zero_motors.cpp)
-target_include_directories(zero_motors PUBLIC include)
-target_link_libraries(zero_motors PUBLIC starqlib)
+add_executable(starq_zero_motors utils/zero_motors.cpp)
+target_include_directories(starq_zero_motors PUBLIC include)
+target_link_libraries(starq_zero_motors PUBLIC starqlib)
 
-add_executable(motor_info utils/motor_info.cpp)
-target_include_directories(motor_info PUBLIC include)
-target_link_libraries(motor_info PUBLIC starqlib)
+add_executable(starq_motor_info utils/motor_info.cpp)
+target_include_directories(starq_motor_info PUBLIC include)
+target_link_libraries(starq_motor_info PUBLIC starqlib)
 
-add_executable(set_gains utils/set_gains.cpp)
-target_include_directories(set_gains PUBLIC include)
-target_link_libraries(set_gains PUBLIC starqlib)
+add_executable(starq_set_gains utils/set_gains.cpp)
+target_include_directories(starq_set_gains PUBLIC include)
+target_link_libraries(starq_set_gains PUBLIC starqlib)
 
-add_executable(run_trajectory utils/run_trajectory.cpp)
-target_include_directories(run_trajectory PUBLIC include)
-target_link_libraries(run_trajectory PUBLIC starqlib)
+add_executable(starq_run_trajectory utils/run_trajectory.cpp)
+target_include_directories(starq_run_trajectory PUBLIC include)
+target_link_libraries(starq_run_trajectory PUBLIC starqlib)
 
 # Test executables
 add_executable(test_can_connection tests/test_can_connection.cpp)

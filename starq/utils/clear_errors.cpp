@@ -6,6 +6,8 @@ using namespace starq;
 
 int main(void)
 {
+    printf("Clearing errors...\n");
+
     // Create a STARQ robot
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
 

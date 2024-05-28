@@ -4,20 +4,19 @@
 
 using namespace starq;
 
+void print_usage(char *name);
+bool parse_args(int argc, char **argv, Float &p_gain, Float &v_gain, Float &vi_gain);
+
 int main(int argc, char **argv)
 {
 
-    // Check if the number of arguments is correct
-    if (argc != 4)
+    // Parse arguments
+    Float p_gain, v_gain, vi_gain;
+    if (!parse_args(argc, argv, p_gain, v_gain, vi_gain))
     {
-        printf("Usage: %s <p_gain> <v_gain> <vi_gain>\n", argv[0]);
+        print_usage(argv[0]);
         return 1;
     }
-
-    // Parse arguments
-    Float p_gain = std::stof(argv[1]);
-    Float v_gain = std::stof(argv[2]);
-    Float vi_gain = std::stof(argv[3]);
 
     // Create a STARQ robot
     STARQRobot::Ptr STARQ = std::make_shared<STARQRobot>();
@@ -33,4 +32,36 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+void print_usage(char *name)
+{
+    printf("! Set the gains of the STARQ robot\n");
+    printf("Usage: %s <p_gain> <v_gain> <vi_gain>\n", name);
+    printf("  p_gain:  Proportional gain (required)\n");
+    printf("  v_gain:  Velocity gain (required)\n");
+    printf("  vi_gain: Integral velocity gain (required)\n");
+    printf("! Example: %s 50 0.15 0.30\n", name);
+}
+
+bool parse_args(int argc, char **argv, Float &p_gain, Float &v_gain, Float &vi_gain)
+{
+    if (argc != 4)
+    {
+        return false;
+    }
+
+    try
+    {
+        p_gain = std::stof(argv[1]);
+        v_gain = std::stof(argv[2]);
+        vi_gain = std::stof(argv[3]);
+    }
+    catch(const std::invalid_argument& e)
+    {
+        printf("! ERROR: Invalid arguments\n");
+        return false;
+    }
+
+    return true;
 }
