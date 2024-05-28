@@ -9,7 +9,7 @@
 4. Update: $`sudo apt update`
 5. Install display driver: $`sudo apt install x-<fix>`
 6. Install [Docker Desktop for Windows]((https://docs.docker.com/desktop/install/windows-install/))
-7. Turn on Docker setting: `Resources > Distros > Ubuntu 22.04`
+7. Turn on Docker setting: `Settings > Resources > WSL integration > Ubuntu 22.04`
 8. In Ubuntu, run the [Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 9. Use Ubuntu terminal for all future steps
 
