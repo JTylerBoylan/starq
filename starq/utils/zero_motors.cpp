@@ -12,6 +12,9 @@ int main(void)
     // Ready motors
     STARQ->setStates(AxisState::CLOSED_LOOP_CONTROL);
 
+    // Wait for 100ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
     // Loop through all motors
     for (auto motor : STARQ->getMotors())
     {
@@ -19,8 +22,8 @@ int main(void)
         motor->setPosition(0.0);
     }
 
-    // Wait for 500 ms
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    // Wait for 1000 ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Idle motors
     STARQ->setStates(AxisState::IDLE);
