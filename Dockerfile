@@ -46,8 +46,15 @@ RUN echo 'nvidia ALL=(ALL) ALL' >> /etc/sudoers
 # Switch to the new non-root user
 USER nvidia
 
+# Build project
+COPY . /home/nvidia/starq_ws/src/
+RUN cd /home/nvidia/starq_ws && \
+    . /opt/ros/humble/setup.sh && \
+    colcon build
+
 RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+RUN echo "export PATH=$PATH:/home/nvidia/starq_ws/build/starq" >> ~/.bashrc
 
 # Set the default command to execute when creating a new container
 CMD ["bash"]
