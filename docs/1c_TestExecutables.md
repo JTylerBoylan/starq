@@ -2,11 +2,9 @@
 
 ## Jetson Test Executables
 
-- Run from the `build/starq` directory on the Jetson AGX Orin
-
 ### 1. Test CAN Connection
 - Source: `starq/tests/test_can_connection.cpp`
-- Executable: $`./test_can_connection`
+- Executable: $`test_can_connection`
 - This test makes sure the "can0" interface is UP and able to communicate messages
 - It can be used to verify that the ODrives are successfully sending messages and/or to view the IDs of the CAN messages that are being recieved
 - Troubleshooting:
@@ -16,7 +14,7 @@
 
 ### 2. Test ODrive Control
 - Source: `starq/tests/test_odrive_control.cpp`
-- Executable: $`./test_odrive_control`
+- Executable: $`test_odrive_control`
 - This test is used for controlling a single ODrive controller. It should incrementally set the position to higher angles, and print the ODrive info at each position
 - It can be used to verify that the ODrive is correctly positioning itself based on a given command
 - Troubleshooting:
@@ -25,13 +23,13 @@
 
 ### 3. Test Clear Errors
 - Source: `starq/test/test_clear_errors.cpp`
-- Executable: $`./test_clear_errors`
+- Executable: $`test_clear_errors`
 - This test is used to clear the errors on all connected ODrives
 - Useful for resetting ODrive errors if one occurs
 
 ### 4. Test Five-bar 2D Position Control
 - Source: `starq/test/test_fivebar2d_position_control.cpp`
-- Executable: $`./test_fivebar2d_position_control`
+- Executable: $`test_fivebar2d_position_control`
 - This test is used to set a fivebar-2d leg to a specific position. It should follow a circular trajectory
 - Useful for testing the inverse kinematics of the `STARQFiveBar2DLegDynamics` class
 - Troubleshooting:
@@ -40,7 +38,7 @@
 
 ### 5. Test Five-bar 2D Force Control
 - Source: `starq/test/test_fivebar2d_force_control.cpp`
-- Executable: $`./test_fivebar2d_force_control`
+- Executable: $`test_fivebar2d_force_control`
 - This test is used to set a fivebar-2d leg to a specific force
 - Useful for testing the Jacobian of the `STARQFiveBar2DLegDynamics` class, as well as measuring the losses due to friction in the gears
 - Troubleshooting:
@@ -51,7 +49,7 @@
 
 ### 1. Test STARQ Motors
 - Source: `starq/test/test_starq_motors.cpp`
-- Executable: $`./test_starq_motors`
+- Executable: $`test_starq_motors`
 - This test loops through all STARQ motors and prints their infos
 - Useful for checking if there are any motors that are not communicating
 - Troubleshooting:
@@ -60,7 +58,7 @@
 
 ### 2. Test STARQ Robot
 - Source: `starq/test/test_starq_robot.cpp`
-- Executable: $`./test_starq_robot`
+- Executable: $`test_starq_robot`
 - This test runs a simple feed-forward trajectory from a file on the STARQ platform
 - You can also run a circle trajectory on all feet to test syncronization between the legs
 - Useful for gait development
@@ -69,49 +67,49 @@
 
 ### 1. Test MuJoCo
 - Source: `starq/test/test_mujoco.cpp`
-- Executable: $`./test_mujoco`
+- Executable: $`test_mujoco`
 - Simplest script for starting a MuJoCo simulation with the base control function
 - Troubleshooting:
   - [MuJoCo Docs](https://mujoco.readthedocs.io/en/stable/overview.html)
 
 ### 2. Test MuJoCo Controller
 - Source: `starq/test/test_mujoco_controller.cpp`
-- Executable: $`./test_mujoco_controller`
+- Executable: $`test_mujoco_controller`
 - Test the simulated PID control to keep the robot in a standing position
 
 ### 3. Test MuJoCo Leg Control
 - Source: `starq/test/test_mujoco_leg_control.cpp`
-- Executable: $`./test_mujoco_leg_control`
+- Executable: $`test_mujoco_leg_control`
 
 ### 4. Test MuJoCo Leg Forces
 - Source: `starq/test/test_mujoco_leg_forces.cpp`
-- Executable: $`./test_mujoco_leg_forces`
+- Executable: $`test_mujoco_leg_forces`
 
 ### 5. Test MuJoCo Leg Trajectory
 - Source: `starq/test/test_mujoco_leg_trajectory.cpp`
-- Executable: $`./test_mujoco_leg_trajectory`
+- Executable: $`test_mujoco_leg_trajectory`
 
 ### 6. Test MuJoCo Localization
 - Source: `starq/test/test_mujoco_localization.cpp`
-- Executable: $`./test_mujoco_localization`
+- Executable: $`test_mujoco_localization`
 
 ## MuJoCo MPC Test Executables
 
 ### 1. Test MuJoCo MPC Planner
 - Source: `starq/test/test_mujoco_mpc_planner.cpp`
-- Executable: $`./test_mujoco_mpc_planner`
+- Executable: $`test_mujoco_mpc_planner`
 
 ### 2. Test MuJoCo MPC Solver
 - Source: `starq/test/test_mujoco_mpc_solver.cpp`
-- Executable: $`./test_mujoco_mpc_solver`
+- Executable: $`test_mujoco_mpc_solver`
 
 ### 3. Test MuJoCo MPC Controller
 - Source: `starq/test/test_mujoco_mpc_controller.cpp`
-- Executable: $`./test_mujoco_mpc_controller`
+- Executable: $`test_mujoco_mpc_controller`
 
 ### 4. Test Unitree A1 MuJoCo Robot
 - Source: `starq/test/test_unitree_a1_mujoco_robot.cpp`
-- Executable: $`./test_unitree_a1_mujoco_robot`
+- Executable: $`test_unitree_a1_mujoco_robot`
 
 ### 5. Test ROS2 Joystick MuJoCo
 - Source: `starq/test/test_ros2_joystick_mujoco.cpp`
@@ -121,7 +119,7 @@
 
 ### 1. Test MuJoco Camera
 - Source: `starq/test/test_mujoco_camera.cpp`
-- Executable: $`./test_mujoco_camera`
+- Executable: $`test_mujoco_camera`
 
 ### 2. Test ROS2 Camera MuJoCo
 - Source: `starq/test/test_ros2_camera_mujoco.cpp`

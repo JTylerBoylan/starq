@@ -54,6 +54,7 @@ RUN cd /home/nvidia/starq_ws && \
 
 RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+RUN echo "source /home/nvidia/starq_ws/install/setup.bash" >> ~/.bashrc
 RUN echo "export PATH=$PATH:/home/nvidia/starq_ws/build/starq" >> ~/.bashrc
 
 # Set the default command to execute when creating a new container
