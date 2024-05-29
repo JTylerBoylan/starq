@@ -1,6 +1,6 @@
 # C++ Library Development
 
-## Notes
+## C++ Notes
 
 ### Overview
 - C++ is used on this project over other languages for it's performance and embedded programming capabilities
@@ -23,8 +23,44 @@
 
 ### Robot Class
 
+- The highest level of the library is the `Robot` class
+- The Robot class contains the functions to every subcomponent that runs the physical robot
+- Every robot needs to define `6` subclasses to have full functionality
+  1. `MotorController`: Interface between the library and the hardware/simulation 
+     - ODriveController
+     - MuJoCoController
+  2. `LegDynamics`: Equations for forward and inverse kinematics, and Jacobian of a leg 
+     - FiveBar2DLegDynamics
+     - UnitreeA1LegDynamics
+  3. `Localization`: Current time, and the position and orientation of the robot
+     - SystemLocalization *(System time only)*
+     - ROS2Localization
+     - MuJoCoLocalization
+  4. `RobotParameters`: Parameters required to run model predictive control 
+     - STARQRobotParameters
+     - UnitreeA1RobotParameters
+  5. `MPCSolver`: Interface with external MPC/QP solvers
+     - OSQP
+  6. `PlanningModel`: SBMPO planning model
+     - STARQPlanningModel
+
+### Current Robot Definitions
+
 | Name | MotorControllers | LegDynamics | Localization | RobotParameters | PlanningModel | MPCSolver |
 | ---- | ---------------- | ----------- | ------------ | --------------- | ------------- | --------- |
 | **STARQ** | ODrive | FiveBar2D | ROS2 | STARQ | STARQ | OSQP |
 | **UnitreeA1** | MuJoCo | UnitreeA1 | MuJoCo | UnitreeA1 | STARQ | OSQP |
-| **Dummy** | Dummy | Dummy | System | STARQ | Dummy | null |
+
+### Using a Robot
+
+- Include a robot into your program using:
+  - `#include "starq/starq/starq_robot.hpp"`
+  - `#include "starq/unitree/unitree_a1_mujoco_robot.hpp"`
+- See the available functions [here](../starq/include/starq/robot.hpp)
+- See robot specific functions for:
+  - [STARQ Robot](../starq/include/starq/starq/starq_robot.hpp)
+  - [Unitree A1 Robot](../starq/include/starq/unitree/unitree_a1_mujoco_robot.hpp)
+- See examples in the `tests` and `utils` directories
+
+### Creating a Custom Robot
+
