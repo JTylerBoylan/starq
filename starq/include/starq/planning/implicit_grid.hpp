@@ -18,13 +18,13 @@ namespace starq::planning
 
         VectorX getState(const GridKey &k, const VectorX &xr);
 
-        Node::Ptr getNode(const GridKey &k);
+        Node *getNode(const GridKey &k);
 
-        Node::Ptr getNode(const VectorX &x);
+        Node *getNode(const VectorX &x);
 
-        Node::Ptr createNode(const GridKey &k, const VectorX &xr);
+        Node *createNode(const GridKey &k, const VectorX &xr);
 
-        std::vector<Node::Ptr> getNodes() const;
+        std::vector<Node *> getNodes() const;
 
     private:
         struct GridKeyHash
@@ -41,7 +41,7 @@ namespace starq::planning
         };
 
         const VectorX dx_;
-        std::unordered_map<GridKey, Node::Ptr, GridKeyHash> grid_;
+        std::unordered_map<GridKey, std::unique_ptr<Node>, GridKeyHash> grid_;
     };
 
 }

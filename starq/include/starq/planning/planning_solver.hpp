@@ -24,10 +24,9 @@ namespace starq::planning
         void saveNodes(const std::string &filename);
 
     private:
+        Node *getChild(const Node *parent, const VectorX &u, const Float dt);
 
-        Node::Ptr getChild(const Node::Ptr parent, const VectorX &u, const Float dt);
-
-        void updateNode(const Node::Ptr node, const Node::Ptr parent, const VectorX &u);
+        void updateNode(Node *node, Node *parent, const VectorX &u);
 
         void generatePath();
 
@@ -37,7 +36,7 @@ namespace starq::planning
         PlanConfiguration::Ptr config_;
         PlanningModel::Ptr model_;
 
-        Node::Ptr start_node_, best_node_;
+        Node *start_node_, *best_node_;
     };
 
 }
