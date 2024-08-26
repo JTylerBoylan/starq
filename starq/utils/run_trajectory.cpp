@@ -2,7 +2,7 @@
 
 #include "starq/starq/starq_robot.hpp"
 
-#define TRAJECTORY_FOLDER "/home/nvidia/starq_ws/src/starq/trajectories/"
+#define TRAJECTORY_FOLDER "/home/nvidia/starq_ws/starq/trajectories/"
 
 using namespace starq;
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     for (int i = countdown; i > 0; i--)
     {
         printf("Starting in %d seconds...\n", i);
-        usleep(1E6);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     // Run trajectory
