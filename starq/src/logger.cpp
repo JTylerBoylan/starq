@@ -15,6 +15,7 @@ namespace starq
 
     void Logger::log(const std::string &data)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         file_ << data;
     }
 }
