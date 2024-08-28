@@ -53,6 +53,7 @@ add_library(starqlib SHARED
   src/trajectory_controller.cpp
   src/thread_runner.cpp
   src/estop.cpp
+  src/logger.cpp
   src/robot.cpp
   src/can/can_socket.cpp
   src/odrive/odrive_socket.cpp

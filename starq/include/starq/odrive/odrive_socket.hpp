@@ -3,6 +3,7 @@
 
 #include "starq/can/can_socket.hpp"
 #include "starq/thread_runner.hpp"
+#include "starq/logger.hpp"
 
 #include <thread>
 #include <mutex>
@@ -183,6 +184,8 @@ namespace starq::odrive
             float vel_estimate = 0.0f;
             float torque_estimate = 0.0f;
         } info_[MAX_CAN_ID + 1];
+
+        Logger::Ptr logger_;
     };
 
 }

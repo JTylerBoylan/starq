@@ -28,6 +28,9 @@ namespace starq::odrive
             std::cerr << "Could not send axis state." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET axis_state " + std::to_string(state) + "\n");
         return true;
     }
 
@@ -44,6 +47,9 @@ namespace starq::odrive
             std::cerr << "Could not send control mode." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET control_mode " + std::to_string(control_mode) + "\n");
         return true;
     }
 
@@ -60,6 +66,10 @@ namespace starq::odrive
             std::cerr << "Could not send limits." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET velocity_limit " + std::to_string(velocity_limit) + "\n");
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET current_limit " + std::to_string(current_limit) + "\n");
         return true;
     }
 
@@ -75,6 +85,9 @@ namespace starq::odrive
             std::cerr << "Could not send position gain." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET pos_gain " + std::to_string(pos_gain) + "\n");
         return true;
     }
 
@@ -91,6 +104,10 @@ namespace starq::odrive
             std::cerr << "Could not send velocity gains." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET vel_gain " + std::to_string(vel_gain) + "\n");
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET vel_int_gain " + std::to_string(vel_integrator_gain) + "\n");
         return true;
     }
 
@@ -111,6 +128,10 @@ namespace starq::odrive
             std::cerr << "Could not send position." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) +
+                     " SET pos " + std::to_string(pos) + " vel_ff " + std::to_string(vel_ff) + " torq_ff " + std::to_string(torque_ff) + "\n");
         return true;
     }
 
@@ -127,6 +148,10 @@ namespace starq::odrive
             std::cerr << "Could not send velocity." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) +
+                     " SET vel " + std::to_string(vel) + " torq_ff " + std::to_string(torque_ff) + "\n");
         return true;
     }
 
@@ -142,6 +167,9 @@ namespace starq::odrive
             std::cerr << "Could not send torque." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " SET torq " + std::to_string(torque) + "\n");
         return true;
     }
 
@@ -157,6 +185,9 @@ namespace starq::odrive
             std::cerr << "Could not clear errors." << std::endl;
             return false;
         }
+
+        const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+        logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " CLEAR_ERRORS\n");
         return true;
     }
 
@@ -228,6 +259,9 @@ namespace starq::odrive
 
     void ODriveSocket::run()
     {
+        logger_ = std::make_shared<Logger>("odrive.log");
+        logger_->log("[" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + "] START\n");
+
         while (isRunning())
         {
 
@@ -250,6 +284,7 @@ namespace starq::odrive
             switch (cmd_id)
             {
             case 0x001:
+            {
                 // Heartbeat
                 uint32_t axis_error;
                 uint8_t axis_state;
@@ -260,8 +295,15 @@ namespace starq::odrive
                     info_[can_id].axis_error = axis_error;
                     info_[can_id].axis_state = axis_state;
                 }
+                if (axis_error != 0)
+                {
+                    const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                    logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " ERROR " + std::to_string(axis_error) + "\n");
+                }
                 break;
+            }
             case 0x014:
+            {
                 // Get_Iq
                 float iq_setpoint, iq_measured;
                 std::memcpy(&iq_setpoint, frame.data, sizeof(iq_setpoint));
@@ -271,8 +313,12 @@ namespace starq::odrive
                     info_[can_id].iq_setpoint = iq_setpoint;
                     info_[can_id].iq_measured = iq_measured;
                 }
+                const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO iq_measured " + std::to_string(iq_measured) + "\n");
                 break;
+            }
             case 0x015:
+            {
                 // Get_Temperature
                 float fet_temperature, motor_temperature;
                 std::memcpy(&fet_temperature, frame.data, sizeof(fet_temperature));
@@ -282,8 +328,13 @@ namespace starq::odrive
                     info_[can_id].fet_temperature = fet_temperature;
                     info_[can_id].motor_temperature = motor_temperature;
                 }
+                const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO fet_temperature " + std::to_string(fet_temperature) + "\n");
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO motor_temperature " + std::to_string(motor_temperature) + "\n");
                 break;
+            }
             case 0x017:
+            {
                 // Get_Bus_Voltage_Current
                 float bus_voltage, bus_current;
                 std::memcpy(&bus_voltage, frame.data, sizeof(bus_voltage));
@@ -293,8 +344,13 @@ namespace starq::odrive
                     info_[can_id].bus_voltage = bus_voltage;
                     info_[can_id].bus_current = bus_current;
                 }
+                const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO bus_voltage " + std::to_string(bus_voltage) + "\n");
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO bus_current " + std::to_string(bus_current) + "\n");
                 break;
+            }
             case 0x009:
+            {
                 // Get_Encoder_Estimates
                 float pos_estimate, vel_estimate;
                 std::memcpy(&pos_estimate, frame.data, sizeof(pos_estimate));
@@ -304,8 +360,13 @@ namespace starq::odrive
                     info_[can_id].pos_estimate = pos_estimate;
                     info_[can_id].vel_estimate = vel_estimate;
                 }
+                const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO pos_estimate " + std::to_string(pos_estimate) + "\n");
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO vel_estimate " + std::to_string(vel_estimate) + "\n");
                 break;
+            }
             case 0x01C:
+            {
                 // Get_Torques
                 float torque_estimate;
                 std::memcpy(&torque_estimate, frame.data, sizeof(torque_estimate));
@@ -313,9 +374,14 @@ namespace starq::odrive
                     std::lock_guard<std::mutex> lock(mutex_);
                     info_[can_id].torque_estimate = torque_estimate;
                 }
+                const time_t time = std::chrono::system_clock::now().time_since_epoch().count();
+                logger_->log("[" + std::to_string(time) + "] " + std::to_string(can_id) + " INFO torq_estimate " + std::to_string(torque_estimate) + "\n");
                 break;
             }
+            }
         }
+
+        logger_->log("[" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + "] END\n");
     }
 
 }
