@@ -28,8 +28,9 @@ namespace starq
         }
 
         using namespace odrive;
-        ODriveSocket::Ptr odrive_socket_0 = std::make_shared<ODriveSocket>(can_socket_0_);
-        ODriveSocket::Ptr odrive_socket_1 = std::make_shared<ODriveSocket>(can_socket_1_);
+        Logger::Ptr logger = std::make_shared<Logger>("odrive.log");
+        ODriveSocket::Ptr odrive_socket_0 = std::make_shared<ODriveSocket>(can_socket_0_, logger);
+        ODriveSocket::Ptr odrive_socket_1 = std::make_shared<ODriveSocket>(can_socket_1_, logger);
 
         ODriveController::Ptr odrive_0 = std::make_shared<ODriveController>(odrive_socket_0, 0);
         ODriveController::Ptr odrive_1 = std::make_shared<ODriveController>(odrive_socket_0, 1);

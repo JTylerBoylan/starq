@@ -19,7 +19,7 @@ namespace starq::odrive
 
         /// @brief Create an ODrive socket.
         /// @param socket CAN socket to use for communication.
-        ODriveSocket(const starq::can::CANSocket::Ptr socket);
+        ODriveSocket(const starq::can::CANSocket::Ptr socket, const Logger::Ptr logger = nullptr);
 
         /// @brief Destroy the ODrive socket.
         ~ODriveSocket();
