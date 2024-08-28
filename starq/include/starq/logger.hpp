@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <fstream>
+#include <mutex>
 
 namespace starq
 {
@@ -23,6 +24,7 @@ namespace starq
 
     private:
         std::ofstream file_;
+        std::mutex mutex_;
     };
 }
 
