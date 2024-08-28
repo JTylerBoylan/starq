@@ -25,13 +25,12 @@ namespace starq::planning
 
     struct Node
     {
-        using Ptr = std::shared_ptr<Node>;
         VectorX x, u;
         Float g = std::numeric_limits<Float>::infinity(),
               h = std::numeric_limits<Float>::infinity(),
               f = std::numeric_limits<Float>::infinity();
         uint32_t gen = 0;
-        Node::Ptr parent = nullptr;
+        Node *parent = nullptr;
     };
 
     struct PlanConfiguration
@@ -51,18 +50,18 @@ namespace starq::planning
         ExitCode exit_code = RUNNING;
         uint32_t iterations = 0;
         Float cost = 0.0;
-        std::vector<Node::Ptr> node_path;
+        std::vector<Node *> node_path;
     };
 
     struct NodeCompare
     {
-        bool operator()(const Node::Ptr &lhs, const Node::Ptr &rhs) const
+        bool operator()(const Node *lhs, const Node *rhs) const
         {
             return lhs->f > rhs->f;
         }
     };
 
-    using PriorityQueue = std::priority_queue<Node::Ptr, std::vector<Node::Ptr>, NodeCompare>;
+    using PriorityQueue = std::priority_queue<Node *, std::vector<Node *>, NodeCompare>;
     using PriorityQueue_Ptr = std::shared_ptr<PriorityQueue>;
 
     using GridKey = std::vector<int32_t>;

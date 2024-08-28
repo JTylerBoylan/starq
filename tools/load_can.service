@@ -1,5 +1,5 @@
 # Installation:
-# $ sudo cp ~/starq_ws/src/tools/load_can.service /etc/systemd/system/
+# $ sudo cp ~/starq_ws/tools/load_can.service /etc/systemd/system/
 # $ sudo systemctl daemon-reload
 # $ sudo systemctl enable load_can.service
 # $ sudo sytemctl start load_can.service
@@ -12,8 +12,7 @@ Description=Load CAN Interfaces
 After=network.target
 
 [Service]
-ExecStart=/home/nvidia/starq_ws/src/tools/loadcan_jetson.sh
-Restart=always
+ExecStart=/home/nvidia/starq_ws/tools/loadcan_jetson.sh
 
 [Install]
 WantedBy=multi-user.target

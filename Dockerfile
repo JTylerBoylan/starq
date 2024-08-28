@@ -21,7 +21,7 @@ RUN useradd -m -u 1000 -s /bin/bash nvidia && \
     chown -R nvidia:nvidia /home/nvidia/starq_ws
 
 # Install MuJoCo
-ENV MUJOCO_PATH /home/nvidia/MuJoCo
+ENV MUJOCO_PATH=/home/nvidia/MuJoCo
 RUN git clone https://github.com/google-deepmind/mujoco ${MUJOCO_PATH}
 RUN mkdir ${MUJOCO_PATH}/build && \ 
     cd ${MUJOCO_PATH}/build && \
@@ -29,7 +29,7 @@ RUN mkdir ${MUJOCO_PATH}/build && \
     cmake --build . --target install
 
 # Install OSQP
-ENV OSQP_PATH /home/nvidia/osqp
+ENV OSQP_PATH=/home/nvidia/osqp
 RUN git clone https://github.com/osqp/osqp ${OSQP_PATH}
 RUN mkdir ${OSQP_PATH}/build && \
     cd ${OSQP_PATH}/build && \
@@ -55,7 +55,7 @@ RUN cd /home/nvidia/starq_ws && \
 RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN echo "source /home/nvidia/starq_ws/install/setup.bash" >> ~/.bashrc
-RUN echo "export PATH=$PATH:/home/nvidia/starq_ws/build/starq" >> ~/.bashrc
+RUN echo "export PATH=\$PATH:/home/nvidia/starq_ws/build/starq" >> ~/.bashrc
 
 # Set the default command to execute when creating a new container
 CMD ["bash"]

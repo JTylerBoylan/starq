@@ -58,14 +58,14 @@ namespace starq
         /// @param frequency The frequency [Hz]
         /// @param num_loops The number of loops
         /// @return True if successful
-        bool runTrajectory(const Trajectory &trajectory, const Float frequency = 1.0, const size_t num_loops = 1);
+        bool runTrajectory(const Trajectory &trajectory, const Float frequency = 1.0, const std::size_t num_loops = 1);
 
         /// @brief Run a trajectory from a file
         /// @param file_path The file path
         /// @param frequency The frequency [Hz]
         /// @param num_loops The number of loops
         /// @return True if successful
-        bool runTrajectory(const std::string &file_path, const Float frequency = 1.0, const size_t num_loops = 1);
+        bool runTrajectory(const std::string &file_path, const Float frequency = 1.0, const std::size_t num_loops = 1);
 
         /// @brief Set the next trajectory
         /// @param trajectory The trajectory

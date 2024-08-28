@@ -37,17 +37,17 @@ namespace starq::planning
         return x;
     }
 
-    Node::Ptr ImplicitGrid::getNode(const GridKey &k)
+    Node *ImplicitGrid::getNode(const GridKey &k)
     {
         const auto it = grid_.find(k);
         if (it != grid_.end())
         {
-            return it->second;
+            return it->second.get();
         }
         return nullptr;
     }
 
-    Node::Ptr ImplicitGrid::getNode(const VectorX &x)
+    Node *ImplicitGrid::getNode(const VectorX &x)
     {
         auto k = getKey(x);
         auto node = getNode(k);
@@ -58,22 +58,21 @@ namespace starq::planning
         return node;
     }
 
-    Node::Ptr ImplicitGrid::createNode(const GridKey &k, const VectorX &xr)
+    Node *ImplicitGrid::createNode(const GridKey &k, const VectorX &xr)
     {
         const VectorX x = getState(k, xr);
-        const Node::Ptr node = std::make_shared<Node>();
-        node->x = x;
-        grid_[k] = node;
-        return node;
+        grid_[k] = std::make_unique<Node>();
+        grid_[k]->x = x;
+        return grid_[k].get();
     }
 
-    std::vector<Node::Ptr> ImplicitGrid::getNodes() const
+    std::vector<Node*> ImplicitGrid::getNodes() const
     {
-        std::vector<Node::Ptr> nodes;
+        std::vector<Node*> nodes;
         nodes.reserve(grid_.size());
         for (const auto &it : grid_)
         {
-            nodes.push_back(it.second);
+            nodes.push_back(it.second.get());
         }
         return nodes;
     }

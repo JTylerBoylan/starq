@@ -79,7 +79,7 @@ namespace starq::planning
                 break;
             }
 
-            const Node::Ptr current_node = queue_->top();
+            Node *current_node = queue_->top();
             queue_->pop();
 
             if (model->isStateFinal(current_node->x))
@@ -102,7 +102,7 @@ namespace starq::planning
             const std::vector<VectorX> actions = model->getActions(current_node->x);
             for (const VectorX &u : actions)
             {
-                const Node::Ptr child = getChild(current_node, u, config_->dt);
+                Node* child = getChild(current_node, u, config_->dt);
 
                 if (!child)
                     continue;
@@ -117,7 +117,6 @@ namespace starq::planning
             }
 
             results_->iterations++;
-
             results_->time_elapsed = duration_cast<milliseconds>(high_resolution_clock::now() - clock_start);
         }
 
@@ -128,7 +127,7 @@ namespace starq::planning
         return results_;
     }
 
-    Node::Ptr PlanSolver::getChild(const Node::Ptr parent, const VectorX &u, const Float dt)
+    Node* PlanSolver::getChild(const Node* parent, const VectorX &u, const Float dt)
     {
         const VectorX x1 = parent->x;
         const VectorX x2 = model_->getNextState(x1, u, dt);
@@ -136,7 +135,7 @@ namespace starq::planning
         if (!model_->isStateValid(x2))
             return nullptr;
 
-        const Node::Ptr child = grid_->getNode(x2);
+        Node* child = grid_->getNode(x2);
 
         if (child == parent)
             return nullptr;
@@ -144,7 +143,7 @@ namespace starq::planning
         return child;
     }
 
-    void PlanSolver::updateNode(const Node::Ptr child, const Node::Ptr parent, const VectorX &u)
+    void PlanSolver::updateNode(Node* child, Node* parent, const VectorX &u)
     {
         if (child->h == std::numeric_limits<Float>::infinity())
         {
@@ -160,10 +159,10 @@ namespace starq::planning
     void PlanSolver::generatePath()
     {
         results_->cost = best_node_->g;
-        const size_t max_gen = best_node_->gen;
+        const std::size_t max_gen = best_node_->gen;
         results_->node_path.reserve(max_gen + 1);
 
-        Node::Ptr node = best_node_;
+        Node* node = best_node_;
         while (node)
         {
             results_->node_path.push_back(node);
